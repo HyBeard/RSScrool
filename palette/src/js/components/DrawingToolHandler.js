@@ -48,6 +48,16 @@ export default class DrawingToolHandler {
     this.dirtyIndices.length = 0;
   }
 
+  saveCanvasState() {
+    this.state.general.savedState = [...this.state.generale.canvasData];
+  }
+
+  reloadCanvasState(indices) {
+    const savedColors = indices.map((idx) => this.state.general.savedState[idx]);
+
+    this.setDirtyIndices(indices, savedColors);
+  }
+
   updateCoordsInfo(ev) {
     const coordsBox = document.getElementsByClassName('target-coords')[0];
 
