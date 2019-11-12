@@ -105,4 +105,14 @@ export default class StaticTools {
     this.toolSupport.indicesToDraw = [...sameColorIndices];
   }
 
+  mirrorDraw(idx, state) {
+    this.draw(idx);
+    this.toolSupport.indicesToDraw.forEach((index) => {
+      const { row, col } = this.toolSupport.indexToRowCol(index);
+      const mirrorIdx = this.toolSupport.rowColToIndex(row, state.general.sideCellCount - col - 1);
+
+      this.toolSupport.indicesToDraw.push(mirrorIdx);
+    });
+  }
+
 }
