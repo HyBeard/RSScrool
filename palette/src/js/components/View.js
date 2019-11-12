@@ -53,7 +53,7 @@ export default class View {
     this.sizeInfoContainer.innerText = `[${side}x${side}]`;
   }
 
-  updateDisplayedValues(sideLength) {
+  static updateDisplayedValues(sideLength) {
     const [canvasSizeSelector] = document.getElementsByClassName(
       'canvas-size-selector',
     );
@@ -74,7 +74,7 @@ export default class View {
       `li[data-name=${state.activeTool}]`,
     );
 
-    this.updateDisplayedValues(state.general.sideCellCount);
+    View.updateDisplayedValues(state.general.sideCellCount);
     this.updateCanvasSizeInfo(state.general.sideCellCount);
     this.selectTool();
     this.updateLastColors(state);
