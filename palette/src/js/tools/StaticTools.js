@@ -115,4 +115,24 @@ export default class StaticTools {
     });
   }
 
+  dithering(idx, state) {
+    const { activeColor } = state.general;
+    let secColor;
+
+    if (activeColor === state.general.primColor) {
+      ({ secColor } = state.general);
+    } else secColor = state.general.primColor;
+
+    this.draw(idx);
+
+    this.toolSupport.indicesToDraw.forEach((index) => {
+      const { row, col } = this.toolSupport.indexToRowCol(index);
+
+      if ((row + col) % 2 === 0) {
+        this.toolSupport.indicesColors.push(activeColor);
+      } else {
+        this.toolSupport.indicesColors.push(secColor);
+      }
+    });
+  }
 }
