@@ -88,4 +88,21 @@ export default class StaticTools {
     });
   }
 
+  paintAll(idx, state) {
+    const { canvasData } = state.general;
+    const targetColor = canvasData[idx];
+
+    if (targetColor === state.general.activeColor) return;
+
+    const sameColorIndices = canvasData.reduce((acc, color, index) => {
+      if (color !== targetColor) return acc;
+
+      acc.push(index);
+
+      return acc;
+    }, []);
+
+    this.toolSupport.indicesToDraw = [...sameColorIndices];
+  }
+
 }
