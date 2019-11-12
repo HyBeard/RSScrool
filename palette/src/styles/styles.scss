@@ -238,8 +238,9 @@ button:focus {
 }
 
 .canvas-background {
-  width: 768px;
-  height: 768px;
+  position: relative;
+  width: 512px;
+  height: 512px;
   margin: 0 auto;
   background: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAMAAABEpIrGAAAABlBMVEXV1dXb29tFGkCIAAAAHklEQVR4AWNghAIGCMDgjwgFCDDSw2M0PSCD0fQAACRcAgF4ciGUAAAAAElFTkSuQmCC")
     repeat;
@@ -267,4 +268,25 @@ button:focus {
   outline: 5px solid #04a2b348;
   outline-style: inset;
   outline-offset: -5px;
+}
+
+.active {
+  outline: 4px solid #04a2b3;
+  outline-offset: -4px;
+}
+
+.disabled {
+  opacity: 0.1;
+}
+
+.size-coords-box {
+  position: absolute;
+  top: 0;
+  right: -130px;
+  width: 120px;
+  color: #04a2b3;
+}
+
+.canvas-info {
+  font-size: 16px;
 }
