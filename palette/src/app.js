@@ -145,9 +145,23 @@ canvas.addEventListener(
   false,
 );
 
-function initialize() {
-    view.initView(state);
-    drawingToolHandler.changeMainCanvas();
-  }
+sizeSelector.addEventListener('change', (ev) => {
+  const { value } = ev.target;
 
-  initialize();
+  view.updateCanvasSizeInfo(value);
+  drawingToolHandler.changeCanvasSize(value);
+});
+
+toolsContainer.addEventListener('click', ({ target }) => {
+  if (!target.classList.contains('canvas-tool') || target.classList.contains('disabled')) return;
+
+  state.activeTool = target.dataset.name;
+  view.selectTool(target);
+});
+
+function initialize() {
+  view.initView(state);
+  drawingToolHandler.changeMainCanvas();
+}
+
+initialize();

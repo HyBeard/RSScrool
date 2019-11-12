@@ -48,6 +48,12 @@ export default class DrawingToolHandler {
     this.dirtyIndices.length = 0;
   }
 
+  changeMainCanvas() {
+    this.state.general.canvasData.forEach((color, idx) => {
+      this.paintCell(idx, color);
+    });
+  }
+
   saveCanvasState() {
     this.state.general.savedState = [...this.state.generale.canvasData];
   }
@@ -73,4 +79,24 @@ export default class DrawingToolHandler {
     coordsBox.innerText = `${row}:${col}`;
   }
 
+  changeCanvasSize(side) {
+    const emptyCanvasData = new Array(side ** 2).fill(this.state.general.DEFAULT_COLOR);
+    const rowCountDiff = this.state.general.sideCellCount - side;
+    const canvasDataCopy = [...this.state.general.canvasData];
+
+    const newCanvasData = emptyCanvasData.map((_, idx) => {
+      const row = Math.floor(idx / side);
+      const col = idx % side;
+
+      return (
+        canvasDataCopy[this.toolSupport.rowColToIndex(row + rowCountDiff, col + rowCountDiff)]
+        || this.state.general.DEFAULT_COLOR
+      );
+    });
+
+    this.state.general.canvasData = newCanvasData;
+
+    this.state.general.sideCellCount = Number(side);
+    this.changeMainCanvas();
+  }
 }
