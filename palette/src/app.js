@@ -36,6 +36,34 @@ const toolSupport = new ToolSupport(state);
 const drawingToolHandler = new DrawingToolHandler(ctx, state, toolSupport);
 const staticTools = new StaticTools(toolSupport);
 
+header.addEventListener('click', ({ target }) => {
+  if (target.classList.contains('save-state')) {
+    localStorage.setItem('state', JSON.stringify(state));
+  } else if (target.classList.contains('delete-state')) {
+    localStorage.removeItem('state', JSON.stringify(state));
+  }
+});
+
+palette.addEventListener('mousedown', (ev) => {
+  if (ev.target.classList.contains('palette-item')) {
+    const color = ev.target.style.backgroundColor;
+
+    if (ev.button === 0) {
+      toolSupport.updateStateColors(color);
+    } else if (ev.button === 2) {
+      toolSupport.updateStateColors(false, color);
+    }
+  } else if (ev.target.classList.contains('swap-colors')) {
+    toolSupport.updateStateColors(state.general.secColor, state.general.primColor);
+  } else return;
+
+  view.updateLastColors(state);
+});
+
+palette.addEventListener('contextmenu', (ev) => {
+  ev.preventDefault();
+});
+
 canvas.addEventListener(
   'mousedown',
   (ev) => {
