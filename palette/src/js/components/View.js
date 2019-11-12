@@ -49,4 +49,34 @@ export default class View {
     this.secColor.style.background = secBackground;
   }
 
+  updateCanvasSizeInfo(side) {
+    this.sizeInfoContainer.innerText = `[${side}x${side}]`;
+  }
+
+  updateDisplayedValues(sideLength) {
+    const [canvasSizeSelector] = document.getElementsByClassName(
+      'canvas-size-selector',
+    );
+
+    Array.prototype.forEach.call(
+      canvasSizeSelector.options,
+      (option, index) => {
+        if (Number(option.value) === sideLength) {
+          canvasSizeSelector.selectedIndex = index;
+        }
+      },
+    );
+  }
+
+
+  initView(state) {
+    this.currentTool = document.querySelector(
+      `li[data-name=${state.activeTool}]`,
+    );
+
+    this.updateDisplayedValues(state.general.sideCellCount);
+    this.updateCanvasSizeInfo(state.general.sideCellCount);
+    this.selectTool();
+    this.updateLastColors(state);
+  }
 }
