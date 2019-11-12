@@ -75,4 +75,17 @@ export default class StaticTools {
     }
   }
 
+  // eslint-disable-next-line class-methods-use-this
+  getColor(idx, state) {
+    return state.general.canvasData[idx];
+  }
+
+  eraser(idx, state) {
+    this.draw(idx);
+
+    this.toolSupport.indicesToDraw.forEach(() => {
+      this.toolSupport.indicesColors.push(state.general.DEFAULT_COLOR);
+    });
+  }
+
 }
