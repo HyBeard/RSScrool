@@ -20,13 +20,19 @@ export default class View {
     return newElement;
   }
 
-  selectTool(tool = this.currentTool) {
-    const selectedTool = tool;
+  selectTool(tool) {
+    const currentToolBtn = document.querySelector(
+      `li[data-name=${this.currentTool}]`,
+    );
+    const selectedToolBtn = document.querySelector(
+      `li[data-name=${tool}]`,
+    );
 
-    if (this.currentTool) this.currentTool.classList.remove('active');
 
-    selectedTool.classList.add('active');
-    this.currentTool = selectedTool;
+    if (this.currentTool) currentToolBtn.classList.remove('active');
+
+    selectedToolBtn.classList.add('active');
+    this.currentTool = tool;
   }
 
   updateLastColors(state) {
@@ -70,13 +76,11 @@ export default class View {
 
 
   initView(state) {
-    this.currentTool = document.querySelector(
-      `li[data-name=${state.activeTool}]`,
-    );
+    const { activeTool } = state;
 
     View.updateDisplayedValues(state.general.sideCellCount);
     this.updateCanvasSizeInfo(state.general.sideCellCount);
-    this.selectTool();
+    this.selectTool(activeTool);
     this.updateLastColors(state);
   }
 }

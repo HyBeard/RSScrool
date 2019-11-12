@@ -5,6 +5,7 @@ import DrawingToolHandler from './js/components/DrawingToolHandler';
 import ToolSupport from './js/tools/ToolSupport';
 import StaticTools from './js/tools/StaticTools';
 import View from './js/components/View';
+import keyboardShortcuts from './js/shortcuts/keyboardShortcuts';
 
 
 const header = document.getElementsByClassName('header')[0];
@@ -35,6 +36,15 @@ const view = new View(state);
 const toolSupport = new ToolSupport(state);
 const drawingToolHandler = new DrawingToolHandler(ctx, state, toolSupport);
 const staticTools = new StaticTools(toolSupport);
+
+document.addEventListener('keydown', (({ code }) => {
+  if (!Object.prototype.hasOwnProperty.call(keyboardShortcuts, code)) return;
+
+  state.activeTool = keyboardShortcuts[code];
+
+
+  view.selectTool(state.activeTool);
+}));
 
 header.addEventListener('click', ({ target }) => {
   if (target.classList.contains('save-state')) {
@@ -156,7 +166,7 @@ toolsContainer.addEventListener('click', ({ target }) => {
   if (!target.classList.contains('canvas-tool') || target.classList.contains('disabled')) return;
 
   state.activeTool = target.dataset.name;
-  view.selectTool(target);
+  view.selectTool(target.dataset.name);
 });
 
 function initialize() {
