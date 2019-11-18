@@ -40,8 +40,11 @@ header.addEventListener('click', ({ target }) => {
     localStorage.setItem('state', JSON.stringify(state));
   } else if (target.classList.contains('delete-state')) {
     localStorage.removeItem('state', JSON.stringify(state));
+  } else if (target.classList.contains('upload-image')) {
+    drawingToolHandler.uploadImage();
   }
 });
+
 
 palette.addEventListener('mousedown', (ev) => {
   if (ev.target.classList.contains('palette-item')) {

@@ -1,3 +1,8 @@
+import 'babel-polyfill';
+import APILoader from './APILoader';
+
+const apiLoader = new APILoader();
+
 export default class DrawingToolHandler {
   constructor(context, state, toolSupport) {
     this.ctx = context;
@@ -98,5 +103,11 @@ export default class DrawingToolHandler {
 
     this.state.general.sideCellCount = Number(side);
     this.changeMainCanvas();
+  }
+
+  async uploadImage() {
+    const imgUrl = await apiLoader.getImgUrl();
+    const image = new Image();
+    image.src = imgUrl;
   }
 }
