@@ -2,13 +2,13 @@ export default class View {
   constructor() {
     this.FRAME_PREVIEW_SIDE_LENGTH = 128;
     this.currentTool = null;
-    [this.sizeInfoContainer] = document.getElementsByClassName(
-      'canvas-size-info',
+    this.sizeInfoContainer = document.querySelector(
+      '.canvas-size-info',
     );
-    this.layersCollection = document.getElementsByClassName('layer');
-    [this.palette] = document.getElementsByClassName('palette');
-    [this.primColor] = document.getElementsByClassName('primary-color');
-    [this.secColor] = document.getElementsByClassName('secondary-color');
+    this.layersCollection = document.querySelector('.layer');
+    this.palette = document.querySelector('.palette');
+    this.primColor = document.querySelector('.primary-color');
+    this.secColor = document.querySelector('.secondary-color');
   }
 
   static createDomElement(tag, classes, props) {

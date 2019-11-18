@@ -8,29 +8,18 @@ import View from './js/components/View';
 import keyboardShortcuts from './js/shortcuts/keyboardShortcuts';
 
 
-const header = document.getElementsByClassName('header')[0];
-const canvas = document.getElementsByClassName('main-canvas')[0];
+const header = document.querySelector('.header');
+const canvas = document.querySelector('.main-canvas');
 const ctx = canvas.getContext('2d');
-const toolsContainer = document.getElementsByClassName('tools-container')[0];
-const palette = document.getElementsByClassName('palette-container')[0];
-const sizeSelector = document.getElementsByClassName('canvas-size-selector')[0];
-const savedState = JSON.parse(localStorage.getItem('state'));
-const defaultState = {
-  general: new CanvasState(),
-  activeTool: 'draw',
-  mousedown: false,
-};
-const state = (() => {
-  if (savedState) {
-    return {
-      general: new CanvasState(savedState.general),
-      activeTool: savedState.activeTool,
-      mousePressed: false,
-    };
-  }
+const toolsContainer = document.querySelector('.tools-container');
+const palette = document.querySelector('.palette-container');
+const sizeSelector = document.querySelector('.canvas-size-selector');
 
-  return defaultState;
-})();
+const { general, activeTool } = JSON.parse(localStorage.getItem('state')) || {}; const state = {
+  general: new CanvasState(general),
+  activeTool: activeTool || 'draw',
+  mousePressed: false,
+};
 
 const view = new View(state);
 const toolSupport = new ToolSupport(state);
