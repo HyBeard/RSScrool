@@ -31,7 +31,6 @@ document.addEventListener('keydown', (({ code }) => {
 
   state.activeTool = keyboardShortcuts[code];
 
-
   view.selectTool(state.activeTool);
 }));
 
@@ -41,8 +40,12 @@ header.addEventListener('click', ({ target }) => {
   } else if (target.classList.contains('delete-state')) {
     localStorage.removeItem('state', JSON.stringify(state));
   } else if (target.classList.contains('upload-image')) {
-    drawingToolHandler.uploadImage();
-  } else if (target.classList.contains('Grayscaling')) {
+    const filterInput = document.querySelector('.image-filter');
+    const query = {
+      [filterInput.dataset.filter]: filterInput.value,
+    };
+    drawingToolHandler.uploadImage(query);
+  } else if (target.classList.contains('grayscaling')) {
     drawingToolHandler.grayscale();
   }
 });

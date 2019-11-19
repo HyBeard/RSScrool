@@ -105,8 +105,8 @@ export default class DrawingToolHandler {
     this.changeMainCanvas();
   }
 
-  async uploadImage() {
-    const imgUrl = await apiLoader.getImgUrl();
+  async uploadImage(query) {
+    const imgUrl = await apiLoader.getImgUrl(query);
     const image = new Image();
     image.crossOrigin = 'Anonymous';
     const { sideCellCount, CANVAS_SIDE_LENGTH, cellLength } = this.state.general;
