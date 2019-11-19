@@ -167,4 +167,19 @@ export default class DrawingToolHandler {
     return `rgba(${data[indices[0]]},${data[indices[1]]},${data[indices[2]]},${data[indices[3]] / 255})`;
   }
 
+  grayscale() {
+    const { CANVAS_SIDE_LENGTH } = this.state.general;
+    const imageData = this.ctx.getImageData(0, 0, CANVAS_SIDE_LENGTH, CANVAS_SIDE_LENGTH);
+    const { data } = imageData;
+
+    for (let i = 0; i < data.length; i += 4) {
+      const avg = (data[i] + data[i + 1] + data[i + 2]) / 3;
+      data[i] = avg;
+      data[i + 1] = avg;
+      data[i + 2] = avg;
+    }
+
+    this.ctx.putImageData(imageData, 0, 0);
+    this.updateCanvasColors();
+  }
 }

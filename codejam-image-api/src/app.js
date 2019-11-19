@@ -42,6 +42,8 @@ header.addEventListener('click', ({ target }) => {
     localStorage.removeItem('state', JSON.stringify(state));
   } else if (target.classList.contains('upload-image')) {
     drawingToolHandler.uploadImage();
+  } else if (target.classList.contains('Grayscaling')) {
+    drawingToolHandler.grayscale();
   }
 });
 
