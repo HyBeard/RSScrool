@@ -108,6 +108,63 @@ export default class DrawingToolHandler {
   async uploadImage() {
     const imgUrl = await apiLoader.getImgUrl();
     const image = new Image();
+    image.crossOrigin = 'Anonymous';
+    const { sideCellCount, CANVAS_SIDE_LENGTH, cellLength } = this.state.general;
+
+    image.onload = () => {
+      const { width, height } = image;
+      const aspectRatio = width > height ? width / height : height / width;
+      const scaledWidth = Math.round(width > height ? sideCellCount : sideCellCount / aspectRatio);
+      const scaledHeight = Math.round(height > width ? sideCellCount : sideCellCount / aspectRatio);
+      const finalWidth = width > height ? CANVAS_SIDE_LENGTH : scaledWidth * cellLength;
+      const finalHeight = height > width ? CANVAS_SIDE_LENGTH
+        : scaledHeight * cellLength;
+
+      const tempCanvas = document.createElement('canvas');
+      tempCanvas.width = scaledWidth;
+      tempCanvas.height = scaledHeight;
+      const tempCtx = tempCanvas.getContext('2d');
+
+      tempCtx.drawImage(image, 0, 0, tempCanvas.width, tempCanvas.height);
+
+      this.ctx.imageSmoothingEnabled = false;
+      this.ctx.drawImage(tempCanvas,
+        Math.round((sideCellCount - scaledWidth) / 2) * cellLength,
+        Math.round((sideCellCount - scaledHeight) / 2) * cellLength,
+        finalWidth,
+        finalHeight);
+
+      this.updateCanvasColors();
+    };
+
     image.src = imgUrl;
   }
+
+  updateCanvasColors() {
+    const { sideCellCount, CANVAS_SIDE_LENGTH, cellLength } = this.state.general;
+
+    const dataImage = this.ctx.getImageData(0, 0, CANVAS_SIDE_LENGTH, CANVAS_SIDE_LENGTH).data;
+
+    const newCanvasData = this.state.general.canvasData.map((color, idx) => {
+      const colorIndices = DrawingToolHandler.getColorIndicesForCoords(idx,
+        cellLength, sideCellCount);
+      return DrawingToolHandler.imageDataToRgba(dataImage, colorIndices);
+    });
+
+    this.state.general.canvasData = newCanvasData;
+  }
+
+
+  static getColorIndicesForCoords(idx, pixelSize, cellCount) {
+    const red = (Math.floor(idx / cellCount) * cellCount * pixelSize
+      + (idx % cellCount)) * pixelSize * 4;
+
+    return [red, red + 1, red + 2, red + 3];
+  }
+
+
+  static imageDataToRgba(data, indices) {
+    return `rgba(${data[indices[0]]},${data[indices[1]]},${data[indices[2]]},${data[indices[3]] / 255})`;
+  }
+
 }
