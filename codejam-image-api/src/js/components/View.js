@@ -35,10 +35,7 @@ export default class View {
     this.currentTool = tool;
   }
 
-  updateLastColors(state) {
-    const { primColor } = state.general;
-    const { secColor } = state.general;
-
+  updateLastColors(primColor, secColor) {
     function getCorrectBackground(color) {
       if (color === 'rgba(0,0,0,0)') {
         return `url(
@@ -76,11 +73,9 @@ export default class View {
 
 
   initView(state) {
-    const { activeTool } = state;
-
-    View.updateDisplayedValues(state.general.sideCellCount);
-    this.updateCanvasSizeInfo(state.general.sideCellCount);
-    this.selectTool(activeTool);
-    this.updateLastColors(state);
+    View.updateDisplayedValues(state.canvasState.sideCellCount);
+    this.updateCanvasSizeInfo(state.canvasState.sideCellCount);
+    this.selectTool(state.activeTool);
+    this.updateLastColors(state.primColor, state.secColor);
   }
 }
