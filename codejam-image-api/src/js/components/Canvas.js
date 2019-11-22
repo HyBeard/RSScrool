@@ -5,7 +5,6 @@ export default class Canvas {
     this.sideCellCount = savedCanvas.sideCellCount || 16;
     this.canvasData = savedCanvas.canvasData
       || new Array(this.sideCellCount ** 2).fill('rgba(0,0,0,0)');
-    this.savedState = savedCanvas.savedState || null;
     this.activeColor = savedCanvas.activeColor || null;
 
     this.mouseFrom = { row: null, col: null };
@@ -21,13 +20,6 @@ export default class Canvas {
   get cellLength() {
     return this.SIDE_LENGTH / this.sideCellCount;
   }
-
-  // get currentCanvasData() {
-  //   const { currentFrame } = this.this.framesListData;
-  //   const { currentLayerNumb } = this.this.layersListData;
-
-  //   return currentFrame.canvasData[currentLayerNumb];
-  // }
 
   indexToRowCol(idx) {
     const row = Math.floor(idx / this.sideCellCount);
@@ -63,11 +55,6 @@ export default class Canvas {
     }
 
     return row * this.sideCellCount + col;
-  }
-
-  keepCoords(x, y) {
-    Object.assign(this.mouseFrom, this.coordsToRowCol(x, y));
-    this.currentIndex = this.coordsToIndex(x, y);
   }
 
   coordsIsChanged(x, y) {
@@ -151,16 +138,6 @@ export default class Canvas {
     });
   }
 
-  saveCanvasState() {
-    this.savedState = [...this.canvasData];
-  }
-
-  reloadCanvasState(indices) {
-    const savedColors = indices.map((idx) => this.savedState[idx]);
-
-    this.setDirtyIndices(indices, savedColors);
-  }
-
   updateCoordsInfo(ev) {
     const coordsBox = document.getElementsByClassName('target-coords')[0];
 
@@ -195,38 +172,9 @@ export default class Canvas {
 
     this.sideCellCount = Number(side);
     this.changeMainCanvas();
-
-
-    // const imageData = this.ctx.getImageData(
-    //   0,
-    //   0,
-    //   this.SIDE_LENGTH,
-    //   this.SIDE_LENGTH,
-    // );
-
-    // this.sideCellCount = Number(side);
-    // const tempCanvas = document.createElement('canvas');
-    // tempCanvas.width = side;
-    // tempCanvas.height = side;
-    // const tempCtx = tempCanvas.getContext('2d');
-
-    // this.ctx.imageSmoothingEnabled = false;
-    // tempCtx.putImageData(
-    //   imageData,
-    //   0,
-    //   0,
-    //   side,
-    //   side,
-    //   this.SIDE_LENGTH,
-    //   this.SIDE_LENGTH,
-    // );
-    // this.ctx.drawImage(tempCanvas, 0, 0, this.SIDE_LENGTH, this.SIDE_LENGTH);
-    // document.body.appendChild(tempCanvas);
-
-    // this.updateCanvasColors();
   }
 
-  drawImage(image) {
+  insertImage(image) {
     const { width, height } = image;
     const aspectRatio = width > height ? width / height : height / width;
     const scaledWidth = Math.round(
@@ -310,11 +258,6 @@ export default class Canvas {
     this.updateCanvasColors();
   }
 
-  initCanvas() {
-    this.ctx = document.querySelector('.main-canvas').getContext('2d');
-    this.changeMainCanvas();
-  }
-
   drawLine(mouseFrom, mouseTo) {
     const points = [];
     let from = mouseFrom;
@@ -337,17 +280,6 @@ export default class Canvas {
     }
 
     return points;
-  }
-
-  static getRectangleCoords(from, to) {
-    const coords = {
-      colStart: Math.min(from.col, to.col),
-      rowStart: Math.min(from.row, to.row),
-      colEnd: Math.max(from.col, to.col),
-      rowEnd: Math.max(from.row, to.row),
-    };
-
-    return coords;
   }
 
   clearPointsToDraw() {
@@ -479,5 +411,10 @@ export default class Canvas {
         this.indicesColors.push(secColor);
       }
     });
+  }
+
+  initCanvas() {
+    this.ctx = document.querySelector('.main-canvas').getContext('2d');
+    this.changeMainCanvas();
   }
 }

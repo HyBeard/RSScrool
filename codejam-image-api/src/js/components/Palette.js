@@ -32,7 +32,7 @@ export default class Palette {
     const image = new Image();
     image.crossOrigin = 'Anonymous';
 
-    image.onload = () => this.canvasState.drawImage(image);
+    image.onload = () => this.canvasState.insertImage(image);
 
     image.src = imgUrl;
   }
@@ -106,7 +106,10 @@ export default class Palette {
         const query = {
           [filterInput.dataset.filter]: filterInput.value,
         };
-        this.uploadImage(query);
+
+        if (Object.values(query).find((val) => val.length > 0)) {
+          this.uploadImage(query);
+        } else this.uploadImage();
       } else if (target.classList.contains('grayscaling')) {
         this.canvasState.grayscale();
       }

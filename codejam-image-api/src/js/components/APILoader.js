@@ -8,7 +8,7 @@ export default class APILoader {
   }
 
   makeUrlForId(query = this.query) {
-    const finalQuery = Object.entries(query).reduce((str, arr) => `${str}${arr.join('=')}&`, '');
+    const finalQuery = Object.entries(query).reduce((str, arr) => `${str}${arr.join(',')}&`, '');
 
     return `${this.baseLink}query=${finalQuery}client_id=${this.key}`;
   }
@@ -18,6 +18,7 @@ export default class APILoader {
       const url = this.makeUrlForId(query);
       const response = await fetch(url);
       const data = await response.json();
+
       return data.urls.small;
     } catch (error) {
       throw new Error(error);
