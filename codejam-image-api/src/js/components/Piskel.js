@@ -1,16 +1,28 @@
-import Canvas from './Canvas';
+import CanvasComponent from './CanvasComponent';
 import View from './View';
 import keyboardShortcuts from '../shortcuts/keyboardShortcuts';
 import APILoader from './APILoader';
 import 'babel-polyfill';
 
 const apiLoader = new APILoader();
-
 const view = new View();
+
+const handlerToBindMethods = {
+  get(target, prop) {
+    if (typeof target[prop] === 'function') {
+      return target[prop].bind(target);
+    }
+
+    return target[prop];
+  },
+};
 
 export default class Palette {
   constructor(savedState = {}) {
-    this.canvasState = new Canvas(savedState.canvasState || {});
+    this.canvasComponent = new Proxy(
+      new CanvasComponent(savedState.canvasComponent || {}),
+      handlerToBindMethods,
+    );
     this.activeTool = savedState.activeTool || 'draw';
     this.primColor = savedState.primColor || 'rgb(0,0,0)';
     this.secColor = savedState.secColor || 'rgba(0,0,0,0)';
@@ -28,11 +40,14 @@ export default class Palette {
   }
 
   async uploadImage(query) {
-    const imgUrl = await apiLoader.getImgUrl(query);
+    const imgUrl = Object.values(query)[0]
+      ? await apiLoader.getImgUrl(query)
+      : await apiLoader.getImgUrl();
     const image = new Image();
+
     image.crossOrigin = 'Anonymous';
 
-    image.onload = () => this.canvasState.insertImage(image);
+    image.onload = () => this.canvasComponent.insertImage(image);
 
     image.src = imgUrl;
   }
@@ -46,12 +61,12 @@ export default class Palette {
     ).data;
 
     const newCanvasData = this.canvasData.map((color, idx) => {
-      const colorIndices = Canvas.getColorIndicesForCoords(
+      const colorIndices = CanvasComponent.getColorIndicesForCoords(
         idx,
         this.cellLength,
         this.sideCellCount,
       );
-      return Canvas.imageDataToRgba(dataImage, colorIndices);
+      return CanvasComponent.imageDataToRgba(dataImage, colorIndices);
     });
 
     this.canvasData = newCanvasData;
@@ -96,22 +111,32 @@ export default class Palette {
     const header = document.querySelector('.header');
     const sizeSelector = document.querySelector('.canvas-size-selector');
 
-    header.addEventListener('click', ({ target }) => {
-      if (target.classList.contains('save-state')) {
+    header.addEventListener('click', (ev) => {
+      const { classList } = ev.target;
+
+      if (classList.contains('save-state')) {
         localStorage.setItem('state', JSON.stringify(this));
-      } else if (target.classList.contains('delete-state')) {
+        return;
+      }
+
+      if (classList.contains('delete-state')) {
         localStorage.removeItem('state', JSON.stringify(this));
-      } else if (target.classList.contains('upload-image')) {
+        return;
+      }
+
+      if (classList.contains('upload-image')) {
         const filterInput = document.querySelector('.image-filter');
         const query = {
           [filterInput.dataset.filter]: filterInput.value,
         };
 
-        if (Object.values(query).find((val) => val.length > 0)) {
-          this.uploadImage(query);
-        } else this.uploadImage();
-      } else if (target.classList.contains('grayscaling')) {
-        this.canvasState.grayscale();
+        this.uploadImage(query);
+
+        return;
+      }
+
+      if (classList.contains('grayscaling')) {
+        this.canvasComponent.grayscale();
       }
     });
 
@@ -119,7 +144,7 @@ export default class Palette {
       const { value } = ev.target;
 
       view.updateCanvasSizeInfo(value);
-      this.canvasState.changeCanvasSize(value);
+      this.canvasComponent.changeCanvasSize(value);
     });
   }
 
@@ -139,15 +164,17 @@ export default class Palette {
     const palette = document.querySelector('.palette-container');
 
     palette.addEventListener('mousedown', (ev) => {
-      if (ev.target.classList.contains('palette-item')) {
-        const color = ev.target.style.backgroundColor;
+      const { classList, style } = ev.target;
+
+      if (classList.contains('palette-item')) {
+        const color = style.backgroundColor;
 
         if (ev.button === 0) {
           this.updateStateColors(color);
         } else if (ev.button === 2) {
           this.updateStateColors(false, color);
         }
-      } else if (ev.target.classList.contains('swap-colors')) {
+      } else if (classList.contains('swap-colors')) {
         this.updateStateColors(this.secColor, this.primColor);
       } else return;
 
@@ -165,11 +192,17 @@ export default class Palette {
     canvas.addEventListener(
       'mousedown',
       (ev) => {
+        const {
+          getColor,
+          setDirtyIndices,
+          handleDirtyIndices,
+        } = this.canvasComponent;
+
         this.mousePressed = true;
         ev.preventDefault();
 
         if (this.activeTool === 'eyedropper') {
-          const color = this.canvasState.getColor();
+          const color = getColor();
 
           if (ev.button === 0) {
             this.updateStateColors(color);
@@ -183,81 +216,87 @@ export default class Palette {
         }
 
         if (ev.button === 0) {
-          this.canvasState.activeColor = this.primColor;
+          this.canvasComponent.activeColor = this.primColor;
         } else {
-          this.canvasState.activeColor = this.secColor;
+          this.canvasComponent.activeColor = this.secColor;
         }
 
-        this.canvasState[this.activeTool]();
+        this.canvasComponent[this.activeTool]();
 
-        this.canvasState.setDirtyIndices();
-        this.canvasState.handleDirtyIndices(this.mousePressed);
+        setDirtyIndices();
+        handleDirtyIndices(this.mousePressed);
       },
-      false,
     );
 
     canvas.addEventListener(
       'mousemove',
       (ev) => {
-        if (this.canvasState.coordsIsChanged(ev.offsetX, ev.offsetY)) {
-          this.canvasState.updateCoordsInfo(ev);
+        const {
+          clearPointsToDraw,
+          coordsIsChanged,
+          updateCoordsInfo,
+          setDirtyIndices,
+        } = this.canvasComponent;
+
+        if (coordsIsChanged(ev.offsetX, ev.offsetY)) {
+          updateCoordsInfo(ev);
         } else return;
 
         if (!this.mousePressed) return;
 
-        if (this.canvasState[this.activeTool]) {
-          this.canvasState.clearPointsToDraw();
-          this.canvasState[this.activeTool]();
+        if (this.canvasComponent[this.activeTool]) {
+          clearPointsToDraw();
+          this.canvasComponent[this.activeTool]();
         }
 
-        this.canvasState.setDirtyIndices();
+        setDirtyIndices();
       },
-      false,
     );
 
-    canvas.addEventListener('contextmenu', (ev) => {
-      ev.preventDefault();
-    });
+    canvas.addEventListener('contextmenu', (ev) => ev.preventDefault());
 
-    canvas.addEventListener(
-      'mouseleave',
-      () => {
-        this.canvasState.updateCoordsInfo();
-      },
-      false,
-    );
+    canvas.addEventListener('mouseleave', this.canvasComponent.updateCoordsInfo, false);
 
     window.addEventListener(
       'mouseup',
       () => {
+        const {
+          handleDirtyIndices,
+          clearPointsToDraw,
+          reqAnimId,
+          dirtyIndices,
+        } = this.canvasComponent;
+
         if (!this.mousePressed) return;
         this.mousePressed = false;
 
-        if (this.canvasState.dirtyIndices.length !== 0) {
-          this.canvasState.handleDirtyIndices(this.mousePressed);
+        if (dirtyIndices.length !== 0) {
+          handleDirtyIndices(this.mousePressed);
         }
 
-        window.cancelAnimationFrame(this.canvasState.reqAnimId);
-        this.canvasState.clearPointsToDraw();
+        window.cancelAnimationFrame(reqAnimId);
+        clearPointsToDraw();
       },
-      false,
     );
   }
 
   addToolsListeners() {
     const toolsContainer = document.querySelector('.tools-container');
 
-    toolsContainer.addEventListener('click', ({ target }) => {
-      if (
-        !target.classList.contains('canvas-tool')
-        || target.classList.contains('disabled')
-      ) {
-        return;
-      }
+    toolsContainer.addEventListener(
+      'click',
+      ({ target: { classList, dataset } }) => {
+        if (
+          !classList.contains('canvas-tool')
+          || classList.contains('disabled')
+        ) {
+          return;
+        }
 
-      this.activeTool = target.dataset.name;
-      view.selectTool(target.dataset.name);
-    });
+        this.activeTool = dataset.name;
+        view.selectTool(dataset.name);
+      },
+    );
   }
 
   addListeners() {
@@ -269,8 +308,8 @@ export default class Palette {
   }
 
   initialize() {
-    view.initView(this);
-    this.canvasState.initCanvas();
+    view.init(this);
+    this.canvasComponent.initCanvas();
     this.addListeners();
   }
 }

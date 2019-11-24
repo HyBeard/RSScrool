@@ -72,10 +72,19 @@ export default class View {
   }
 
 
-  initView(state) {
-    View.updateDisplayedValues(state.canvasState.sideCellCount);
-    this.updateCanvasSizeInfo(state.canvasState.sideCellCount);
-    this.selectTool(state.activeTool);
-    this.updateLastColors(state.primColor, state.secColor);
+  init(state) {
+    const {
+      activeTool,
+      primColor,
+      secColor,
+      canvasComponent: {
+        sideCellCount,
+      },
+    } = state;
+
+    View.updateDisplayedValues(sideCellCount);
+    this.updateCanvasSizeInfo(sideCellCount);
+    this.selectTool(activeTool);
+    this.updateLastColors(primColor, secColor);
   }
 }

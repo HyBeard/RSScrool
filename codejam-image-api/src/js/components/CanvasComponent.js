@@ -1,4 +1,4 @@
-export default class Canvas {
+export default class CanvasComponent {
   constructor(savedCanvas = {}) {
     this.SIDE_LENGTH = 512;
     this.DEFAULT_COLOR = savedCanvas.DEFAULT_COLOR || 'rgba(0,0,0,0)';
@@ -15,6 +15,7 @@ export default class Canvas {
     this.indicesColors = [];
     this.dirtyIndices = [];
     this.reqAnimId = null;
+    this.ctx = document.querySelector('.main-canvas').getContext('2d');
   }
 
   get cellLength() {
@@ -141,7 +142,7 @@ export default class Canvas {
   updateCoordsInfo(ev) {
     const coordsBox = document.getElementsByClassName('target-coords')[0];
 
-    if (!ev) {
+    if (ev.type === 'mouseleave') {
       this.currentIndex = null;
       coordsBox.innerText = '';
 
@@ -215,7 +216,7 @@ export default class Canvas {
 
     const newCanvasData = this.canvasData.map((color, idx) => {
       const colorIndices = this.getColorIndicesForCoords(idx);
-      return Canvas.imageDataToRgba(dataImage, colorIndices);
+      return CanvasComponent.imageDataToRgba(dataImage, colorIndices);
     });
 
     this.canvasData = newCanvasData;
@@ -414,7 +415,6 @@ export default class Canvas {
   }
 
   initCanvas() {
-    this.ctx = document.querySelector('.main-canvas').getContext('2d');
     this.changeMainCanvas();
   }
 }
