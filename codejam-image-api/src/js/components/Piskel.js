@@ -7,22 +7,9 @@ import 'babel-polyfill';
 const apiLoader = new APILoader();
 const view = new View();
 
-const handlerToBindMethods = {
-  get(target, prop) {
-    if (typeof target[prop] === 'function') {
-      return target[prop].bind(target);
-    }
-
-    return target[prop];
-  },
-};
-
 export default class Palette {
   constructor(savedState = {}) {
-    this.canvasComponent = new Proxy(
-      new CanvasComponent(savedState.canvasComponent || {}),
-      handlerToBindMethods,
-    );
+    this.canvasComponent = new CanvasComponent(savedState.canvasComponent || {});
     this.activeTool = savedState.activeTool || 'draw';
     this.primColor = savedState.primColor || 'rgb(0,0,0)';
     this.secColor = savedState.secColor || 'rgba(0,0,0,0)';
@@ -169,10 +156,12 @@ export default class Palette {
       if (classList.contains('palette-item')) {
         const color = style.backgroundColor;
 
-        if (ev.button === 0) {
-          this.updateStateColors(color);
-        } else if (ev.button === 2) {
-          this.updateStateColors(false, color);
+        switch (ev.button) {
+          case 0:
+            this.updateStateColors(color);
+            break;
+          default:
+            this.updateStateColors(false, color);
         }
       } else if (classList.contains('swap-colors')) {
         this.updateStateColors(this.secColor, this.primColor);
@@ -192,22 +181,20 @@ export default class Palette {
     canvas.addEventListener(
       'mousedown',
       (ev) => {
-        const {
-          getColor,
-          setDirtyIndices,
-          handleDirtyIndices,
-        } = this.canvasComponent;
+        const { canvasComponent } = this;
 
         this.mousePressed = true;
         ev.preventDefault();
 
         if (this.activeTool === 'eyedropper') {
-          const color = getColor();
+          const color = canvasComponent.getColor();
 
-          if (ev.button === 0) {
-            this.updateStateColors(color);
-          } else if (ev.button === 2) {
-            this.updateStateColors(false, color);
+          switch (ev.button) {
+            case 0:
+              this.updateStateColors(color);
+              break;
+            default:
+              this.updateStateColors(false, color);
           }
 
           view.updateLastColors(this.primColor, this.secColor);
@@ -215,41 +202,39 @@ export default class Palette {
           return;
         }
 
-        if (ev.button === 0) {
-          this.canvasComponent.activeColor = this.primColor;
-        } else {
-          this.canvasComponent.activeColor = this.secColor;
+        switch (ev.button) {
+          case 0:
+            this.canvasComponent.activeColor = this.primColor;
+            break;
+          default:
+            this.canvasComponent.activeColor = this.secColor;
         }
+
 
         this.canvasComponent[this.activeTool]();
 
-        setDirtyIndices();
-        handleDirtyIndices(this.mousePressed);
+        canvasComponent.setDirtyIndices();
+        canvasComponent.handleDirtyIndices(this.mousePressed);
       },
     );
 
     canvas.addEventListener(
       'mousemove',
       (ev) => {
-        const {
-          clearPointsToDraw,
-          coordsIsChanged,
-          updateCoordsInfo,
-          setDirtyIndices,
-        } = this.canvasComponent;
+        const { canvasComponent } = this;
 
-        if (coordsIsChanged(ev.offsetX, ev.offsetY)) {
-          updateCoordsInfo(ev);
+        if (canvasComponent.coordsIsChanged(ev.offsetX, ev.offsetY)) {
+          canvasComponent.updateCoordsInfo(ev);
         } else return;
 
         if (!this.mousePressed) return;
 
         if (this.canvasComponent[this.activeTool]) {
-          clearPointsToDraw();
+          canvasComponent.clearPointsToDraw();
           this.canvasComponent[this.activeTool]();
         }
 
-        setDirtyIndices();
+        canvasComponent.setDirtyIndices();
       },
     );
 
@@ -260,22 +245,17 @@ export default class Palette {
     window.addEventListener(
       'mouseup',
       () => {
-        const {
-          handleDirtyIndices,
-          clearPointsToDraw,
-          reqAnimId,
-          dirtyIndices,
-        } = this.canvasComponent;
+        const { canvasComponent } = this;
 
         if (!this.mousePressed) return;
         this.mousePressed = false;
 
-        if (dirtyIndices.length !== 0) {
-          handleDirtyIndices(this.mousePressed);
+        if (canvasComponent.dirtyIndices.length !== 0) {
+          canvasComponent.handleDirtyIndices(this.mousePressed);
         }
 
-        window.cancelAnimationFrame(reqAnimId);
-        clearPointsToDraw();
+        window.cancelAnimationFrame(canvasComponent.reqAnimId);
+        canvasComponent.clearPointsToDraw();
       },
     );
   }
