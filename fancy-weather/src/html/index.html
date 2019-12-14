@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Fancy Weather</title>
+  </head>
+  <body class="body">
+    <div class="wrapper">
+      <div class="controls">
+        <div class="controls--lang_select">
+          <select>
+            <option value="en">en</option>
+            <option value="ru">ru</option>
+            <option value="be">be</option>
+          </select>
+        </div>
+        <div class="controls--temperature_scale_type">
+          <div class="controls--btn controls--btn-active">°C</div>
+          <div class="controls--btn">°F</div>
+        </div>
+        <div class="controls--btn btn-image"></div>
+      </div>
+      <div class="location">
+        <div class="location--name">Belarus, Minsk</div>
+        <div class="location--date_info">
+          <div class="location--date date">
+            <span class="date--day_of_week_short"></span>
+            <span class="date--day"></span>
+            <span class="date--month"></span>
+          </div>
+          <div class="location--time time">
+            <span class="time--hours"></span>:<span class="time--minutes"></span>
+          </div>
+        </div>
+      </div>
+      <div class="weather_wrapper">
+        <div class="weather--temperature">
+          <span class="weather--temperature_value"> </span>
+        </div>
+        <div class="weather--icon_container">
+          <i class="weather--icon"></i>
+        </div>
+        <div class="weather--state state">
+          <div class="state--summary"></div>
+          <div class="state--apparent_temperature">
+            <span class="state--apparent_temp-text">Feels like: </span>
+            <span class="state--apparent_temp-value"></span>
+          </div>
+          <div class="state--wind state">
+            <span class="state--wind-text">Wind:</span>
+            <span class="state--wind-value "> 7.2 </span>
+            <span class="state--wind-units">m/s</span>
+          </div>
+          <div class="state--humidity state">
+            <span class="state--humidity-text">Humidity:</span>
+            <span class="state--humidity-value "> 82%</span>
+          </div>
+        </div>
+      </div>
+      <div class="forecast">
+        <div class="forecast--item">
+          <div class="forecast--day">Sunday</div>
+          <div class="forecast--temperature">
+            <span class="forecast--temp-value">2</span>
+          </div>
+          <div class="forecast--icon_container">
+            <i class="forecast--icon"></i>
+          </div>
+        </div>
+        <div class="forecast--item">
+          <div class="forecast--day">Monday</div>
+          <div class="forecast--temperature">
+            <span class="forecast--temp-value">3</span>
+          </div>
+          <div class="forecast--icon_container">
+            <i class="forecast--icon"></i>
+          </div>
+        </div>
+        <div class="forecast--item">
+          <div class="forecast--day">Tuesday</div>
+          <div class="forecast--temperature">
+            <span class="forecast--temp-value">3</span>
+          </div>
+          <div class="forecast--icon_container">
+            <i class="forecast--icon"></i>
+          </div>
+        </div>
+      </div>
+      <div class="search">
+        <div class="search--microphone"></div>
+        <input class="search--query" />
+        <div class="search--btn"></div>
+      </div>
+      <div class="map_container">
+        <div class="coordinates">
+          <div class="coordinates--latitude">
+            <span class="coordinates--latitude-text">Latitude:</span
+            ><span class="coordinates--latitude-value"> 53°54′</span>
+          </div>
+          <div class="coordinates--longitude">
+            <span class="coordinates--longitude-text">Longitude:</span
+            ><span class="coordinates--longitude-value"> 27°34′</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
