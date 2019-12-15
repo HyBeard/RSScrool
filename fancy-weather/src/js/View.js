@@ -6,6 +6,8 @@ export default class View extends EventEmitter {
     super();
     this.body = document.body;
     this.refreshButton = document.querySelector('.btn-refresh_image');
+
+    this.addEventListeners();
   }
 
   printImage(imgUrl) {
@@ -25,6 +27,11 @@ export default class View extends EventEmitter {
     img.src = url;
   }
 
+  addEventListeners() {
+    this.refreshButton.addEventListener('click', () => {
+      this.emit('refreshImage');
+    });
+  }
 
   // init() {
   //   document.body.insertAdjacentHTML('beforeend', controls());
