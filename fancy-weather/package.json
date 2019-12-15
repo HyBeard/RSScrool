@@ -11,9 +11,11 @@
   },
   "author": "",
   "license": "ISC",
+  "dependencies": {
+    "@babel/polyfill": "^7.7.0"
+  },
   "devDependencies": {
     "@babel/core": "^7.7.4",
-    "@babel/polyfill": "^7.7.0",
     "@babel/preset-env": "^7.7.4",
     "autoprefixer": "^9.7.2",
     "babel-loader": "^8.0.6",
