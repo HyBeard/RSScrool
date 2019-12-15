@@ -11,6 +11,28 @@ const apiLoader = {
 
     return this.getJson(url);
   },
+
+  async getLocation() {
+    const url = 'https://ipinfo.io/json?token=f16cf59763a028';
+
+    const json = await this.getJson(url);
+    const { city } = json;
+    const [latitude, longitude] = json.loc.split(',').map(Number);
+
+    return { latitude, longitude, city };
+  },
+
+  async getCoordinates(city) {
+    const url = `https://api.opencagedata.com/geocode/v1/json?q=${city}&key=9dc8f5a4e2724c3aa83e3d0d471d2ad4&language=en&pretty=1&no_annotations=1&limit=1`;
+
+    return this.getJson(url);
+  },
+
+  async getCity(latitude, longitude) {
+    const url = `https://api.opencagedata.com/geocode/v1/json?q=${latitude}%2C%20${longitude}&key=9dc8f5a4e2724c3aa83e3d0d471d2ad4&language=en&pretty=1&no_annotations=1&limit=1`;
+
+    return this.getJson(url);
+  },
 };
 
 export default apiLoader;
