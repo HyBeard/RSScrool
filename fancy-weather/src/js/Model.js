@@ -1,11 +1,15 @@
 import apiLoader from './helpers/apiLoader';
 
 import EventEmitter from './helpers/EventEmitter';
+import state from './models/state';
 
 export default class Model extends EventEmitter {
   constructor() {
     super();
     this.defaultQuery = 'spring-day-clear';
+    this.apiLoader = apiLoader;
+    // FIXME: ObjectAssign
+    this.state = state;
   }
 
   // async updateQuery(query) {
@@ -17,7 +21,8 @@ export default class Model extends EventEmitter {
   async getImageLink() {
     const query = this.defaultQuery;
 
-    const imageResponse = await this.getImageJson(query);
+    const imageResponse = await this.apiLoader.getImageJson(query);
+    // FIXME: ObjectAssign
     const {
       urls: { regular: imageUrl },
     } = imageResponse;
@@ -25,5 +30,3 @@ export default class Model extends EventEmitter {
     return { imageUrl };
   }
 }
-
-Object.assign(Model.prototype, apiLoader);

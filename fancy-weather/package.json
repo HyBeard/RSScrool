@@ -12,7 +12,9 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@babel/polyfill": "^7.7.0"
+    "@babel/polyfill": "^7.7.0",
+    "lodash": "^4.17.15",
+    "moment-timezone": "^0.5.27"
   },
   "devDependencies": {
     "@babel/core": "^7.7.4",

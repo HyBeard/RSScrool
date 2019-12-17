@@ -3,4 +3,6 @@ import Controller from './js/Controller';
 
 const controller = new Controller();
 
-global.controller = controller;
+window.onload = controller.init.bind(controller);
+
+global.controller = controller; // FIXME: to dev
