@@ -33,6 +33,12 @@ const apiLoader = {
 
     return this.getJson(url);
   },
+
+  async  getWeather({ latitude, longitude, lang = 'en' }) {
+    const url = `https://api.darksky.net/forecast/3b0029e877b4499d720e83528314bf14/${latitude},${longitude}?units=si&lang=${lang}&exclude=hourly,flags,alerts`;
+
+    return this.getJson(url);
+  },
 };
 
 export default apiLoader;
