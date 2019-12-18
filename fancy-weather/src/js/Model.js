@@ -1,7 +1,13 @@
-import apiLoader from './helpers/apiLoader';
+import glossary from './data/glossary';
 
 import EventEmitter from './helpers/EventEmitter';
-import state from './models/state';
+import apiLoader from './helpers/apiLoader';
+import {
+  getTimeOfYear,
+  getTimeOfDay,
+  getBasicCountryTime,
+  getBasicLocalTime,
+} from './helpers/common';
 
 export default class Model extends EventEmitter {
   constructor() {
@@ -9,24 +15,44 @@ export default class Model extends EventEmitter {
     this.defaultQuery = 'spring-day-clear';
     this.apiLoader = apiLoader;
     // FIXME: ObjectAssign
-    this.state = state;
+    this.glossary = glossary;
+    this.state = {
+      lang: 'en',
+      temperatureUnits: 'celsius',
+    };
   }
 
-  // async updateQuery(query) {
-  //   if (query === this.prevQuery) return;
-
-  //   this.prevQuery = query;
-  // }
-
-  async getImageLink() {
-    const query = this.defaultQuery;
-
+  async getImageLink(query) {
     const imageResponse = await this.apiLoader.getImageJson(query);
     // FIXME: ObjectAssign
-    const {
-      urls: { regular: imageUrl },
-    } = imageResponse;
+    const { imageUrl } = imageResponse.urls.regular;
 
     return { imageUrl };
+  }
+
+  getFullTimeDetails({
+    monthNum, dayNum, hour, ...rest
+  }) {
+    const {
+      glossary: glossaryCopy,
+      state: { lang },
+    } = this;
+
+    const timeOfYear = getTimeOfYear(monthNum);
+    const month = glossaryCopy.month[lang][monthNum];
+    const dayOfWeek = glossaryCopy.dayOfWeek[lang][dayNum];
+    const dayOfWeekShort = glossaryCopy.dayOfWeekShort[lang][dayNum];
+    const timeOfDay = getTimeOfDay(hour);
+
+    return {
+      timeOfYear,
+      month,
+      dayNum,
+      dayOfWeek,
+      dayOfWeekShort,
+      timeOfDay,
+      hour,
+      ...rest,
+    };
   }
 }
