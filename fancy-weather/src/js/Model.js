@@ -55,4 +55,16 @@ export default class Model extends EventEmitter {
       ...rest,
     };
   }
+
+  updateState(...props) {
+    Object.assign(this.state, ...props);
+  }
+
+  async init() {
+    const { latitude, longitude, city } = await this.apiLoader.getLocation();
+    const weather = await this.apiLoader.getWeather({ latitude, longitude });
+    const locationInfo = await this.apiLoader.getCityLocationInfo(city);
+
+    this.updateState(weather, locationInfo);
+  }
 }
