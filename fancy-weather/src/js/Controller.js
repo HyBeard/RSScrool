@@ -5,7 +5,7 @@ import Model from './Model';
 import View from './View';
 
 const model = new Model();
-const view = new View();
+const view = new View(model.state);
 
 export default class Controller extends EventEmitter {
   constructor() {
@@ -22,7 +22,8 @@ export default class Controller extends EventEmitter {
     this.view.printPictureAfterUploading(imageUrl);
   }
 
-  // init() {
-  //   this.view.init();
-  // }
+  async init() {
+    // this.view.init();
+    this.model.init();
+  }
 }
