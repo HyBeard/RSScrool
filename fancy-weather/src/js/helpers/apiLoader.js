@@ -38,7 +38,36 @@ const apiLoader = {
     const proxy = 'https://cors-anywhere.herokuapp.com/';
     const url = `${proxy}https://api.darksky.net/forecast/3b0029e877b4499d720e83528314bf14/${latitude},${longitude}?units=si&lang=en&exclude=hourly,flags,alerts`;
 
-    return this.getJson(url);
+    const response = await this.getJson(url);
+    return this.filterWeatherResponse(response);
+  },
+
+  filterWeatherResponse(responseObj) {
+    const {
+      summary,
+      icon,
+      temperature,
+      apparentTemperature,
+      windSpeed,
+      humidity,
+    } = responseObj.currently;
+
+    const daily = responseObj.daily.data.slice(1, 4).map((dayObj) => {
+      const { icon: dailyIcon, temperatureMax, temperatureMin } = dayObj;
+      const temperatureAverage = Math.ceil((temperatureMax + temperatureMin) / 2);
+
+      return { icon: dailyIcon, temperature: temperatureAverage };
+    });
+
+    return {
+      summary,
+      icon,
+      temperature: Math.ceil(temperature),
+      apparentTemperature: Math.ceil(apparentTemperature),
+      windSpeed: Math.ceil(windSpeed),
+      humidity: humidity * 100,
+      daily,
+    };
   },
 };
 
