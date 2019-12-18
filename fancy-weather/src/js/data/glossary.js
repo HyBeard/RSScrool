@@ -1,6 +1,4 @@
 const glossary = {
-  currentLang: 'en',
-
   dayOfWeek: {
     en: ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
     ru: ['Воскресенье', 'Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота'],
@@ -75,6 +73,24 @@ const glossary = {
     sleet: 'wi-rain-mix',
     snow: 'wi-snow',
     wind: 'wi-cloudy-gusts',
+  },
+
+  errors: {
+    en: [
+      'Incorrect query!',
+      'Images have ended, please, wait for next hour.',
+      'Sorry, service temporary unavailable. Please try again later.',
+    ],
+    ru: [
+      'Неверный запрос!',
+      'Изображения закончились, пожалуйста, подождите следующего часа.',
+      'Извините, сервис временно недоступен. Пожалуйста, попробуйте позже.',
+    ],
+    be: [
+      'Няправільны запыт!',
+      'Выявы скончыліся, пачакайце, наступную гадзіну.',
+      'На жаль, служба часова недаступная. Калі ласка паспрабуйце зноў пазней.',
+    ],
   },
 };
 

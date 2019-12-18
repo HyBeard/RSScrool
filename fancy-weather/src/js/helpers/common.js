@@ -6,10 +6,9 @@ function getNextDays(count, now) {
   nextDates.fill(null);
   return nextDates.map(() => {
     const nextDayTime = now.add(1, 'day');
-    const date = nextDayTime.date();
-    const monthNum = nextDayTime.month();
+    const day = nextDayTime.day();
 
-    return { date, monthNum };
+    return day;
   });
 }
 

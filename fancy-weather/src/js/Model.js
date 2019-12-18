@@ -22,6 +22,15 @@ export default class Model extends EventEmitter {
     };
   }
 
+  getGlossaryFieldData(fieldName, positionInField) {
+    const {
+      glossary: glossaryCopy,
+      state: { lang },
+    } = this;
+    // FIXME: copy????
+    return glossaryCopy[fieldName][lang][positionInField];
+  }
+
   async getImageLink(query) {
     const imageResponse = await this.apiLoader.getImageJson(query);
     // FIXME: ObjectAssign
@@ -31,18 +40,14 @@ export default class Model extends EventEmitter {
   }
 
   getFullTimeDetails({
-    monthNum, dayNum, hour, ...rest
+    monthNum, dayNum, hour, nextDays, ...rest
   }) {
-    const {
-      glossary: glossaryCopy,
-      state: { lang },
-    } = this;
-
     const timeOfYear = getTimeOfYear(monthNum);
-    const month = glossaryCopy.month[lang][monthNum];
-    const dayOfWeek = glossaryCopy.dayOfWeek[lang][dayNum];
-    const dayOfWeekShort = glossaryCopy.dayOfWeekShort[lang][dayNum];
+    const month = this.getGlossaryFieldData('month', monthNum);
+    const dayOfWeek = this.getGlossaryFieldData('dayOfWeek', dayNum);
+    const dayOfWeekShort = this.getGlossaryFieldData('dayOfWeekShort', dayNum);
     const timeOfDay = getTimeOfDay(hour);
+    const nextDaysOfWeek = nextDays.map((num) => this.getGlossaryFieldData('dayOfWeek', num)); // FIXME: no-shadow eslint
 
     return {
       timeOfYear,
@@ -52,6 +57,7 @@ export default class Model extends EventEmitter {
       dayOfWeekShort,
       timeOfDay,
       hour,
+      nextDaysOfWeek,
       ...rest,
     };
   }
@@ -64,7 +70,11 @@ export default class Model extends EventEmitter {
     const { latitude, longitude, city } = await this.apiLoader.getLocation();
     const weather = await this.apiLoader.getWeather({ latitude, longitude });
     const locationInfo = await this.apiLoader.getCityLocationInfo(city);
+    const basicTimeInfo = getBasicLocalTime();
+    const timeDetails = this.getFullTimeDetails(basicTimeInfo);
 
-    this.updateState(weather, locationInfo);
+    this.updateState(weather, locationInfo, { timeDetails });
+
+    console.log(this.state);
   }
 }
