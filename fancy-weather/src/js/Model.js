@@ -5,14 +5,12 @@ import apiLoader from './helpers/apiLoader';
 import {
   getTimeOfYear,
   getTimeOfDay,
-  getBasicCountryTime,
   getBasicLocalTime,
 } from './helpers/common';
 
 export default class Model extends EventEmitter {
   constructor() {
     super();
-    this.defaultQuery = 'spring-day-clear';
     this.apiLoader = apiLoader;
     // FIXME: ObjectAssign
     this.glossary = glossary;
@@ -31,12 +29,15 @@ export default class Model extends EventEmitter {
     return glossaryCopy[fieldName][lang][positionInField];
   }
 
-  async getImageLink(query) {
-    const imageResponse = await this.apiLoader.getImageJson(query);
-    // FIXME: ObjectAssign
-    const { imageUrl } = imageResponse.urls.regular;
+  async getImageUrlByQuery() {
+    const {
+      summary,
+      timeDetails: { timeOfYear, timeOfDay },
+    } = this.state;
 
-    return { imageUrl };
+    const query = `${timeOfYear}-${summary}-${timeOfDay}`;
+
+    return this.apiLoader.getImageUrl(query);
   }
 
   getFullTimeDetails({
@@ -74,7 +75,5 @@ export default class Model extends EventEmitter {
     const timeDetails = this.getFullTimeDetails(basicTimeInfo);
 
     this.updateState(weather, locationInfo, { timeDetails });
-
-    console.log(this.state);
   }
 }

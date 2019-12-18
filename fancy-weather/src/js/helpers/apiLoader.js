@@ -6,10 +6,18 @@ const apiLoader = {
     return json;
   },
 
-  async getImageJson(query) {
-    const url = `https://cors-anywhere.herokuapp.com/https://api.unsplash.com/photos/random?query=${query}&client_id=ae8d7de6acc767654ce496c4d3cc5e08da2f74bae163d354d682e400d8cee33e`;
+  passThroughProxy(url) {
+    const proxy = 'https://cors-anywhere.herokuapp.com/';
 
-    return this.getJson(url);
+    return `${proxy}${url}`;
+  },
+
+  async getImageUrl(query) {
+    const url = `https://api.unsplash.com/photos/random?query=${query}&client_id=ae8d7de6acc767654ce496c4d3cc5e08da2f74bae163d354d682e400d8cee33e`;
+    const trustedUrl = this.passThroughProxy(url);
+    const response = await this.getJson(trustedUrl);
+
+    return response.urls.regular;
   },
 
   async getLocation() {
@@ -42,10 +50,10 @@ const apiLoader = {
   },
 
   async getWeather({ latitude, longitude }) {
-    const proxy = 'https://cors-anywhere.herokuapp.com/';
-    const url = `${proxy}https://api.darksky.net/forecast/3b0029e877b4499d720e83528314bf14/${latitude},${longitude}?units=si&lang=en&exclude=hourly,flags,alerts`;
+    const url = `https://api.darksky.net/forecast/3b0029e877b4499d720e83528314bf14/${latitude},${longitude}?units=si&lang=en&exclude=hourly,flags,alerts`;
+    const trustedUrl = this.passThroughProxy(url);
+    const response = await this.getJson(trustedUrl);
 
-    const response = await this.getJson(url);
     return this.filterWeatherResponse(response);
   },
 

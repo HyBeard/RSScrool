@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "webpack-dev-server --history-api-fallback --inline --progress --open",
     "build": "npm run clear -s && webpack --progress",
-    "lint": "eslint ./**/*.js",
+    "lint": "npx eslint src",
     "clear": "del-cli dist"
   },
   "author": "",
