@@ -22,10 +22,17 @@ const apiLoader = {
     return { latitude, longitude, city };
   },
 
-  async getCoordinates(city) {
+  async getCityLocationInfo(city) {
     const url = `https://api.opencagedata.com/geocode/v1/json?q=${city}&key=9dc8f5a4e2724c3aa83e3d0d471d2ad4&language=en&pretty=1&no_annotations=1&limit=1`;
 
-    return this.getJson(url);
+    const response = await this.getJson(url);
+    const { results: [responseResult] } = response;
+
+    return {
+      cityFormatted: responseResult.formatted,
+      latitude: responseResult.geometry.lat.toFixed(2),
+      longitude: responseResult.geometry.lng.toFixed(2),
+    };
   },
 
   async getCity(latitude, longitude) {
