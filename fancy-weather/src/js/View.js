@@ -3,6 +3,7 @@ import EventEmitter from './helpers/EventEmitter';
 import buildControls from './templates/сontrols';
 import Location from './widgets/Location';
 import DayWeather from './widgets/DayWeather';
+import DailyForecast from './widgets/DailyForecast';
 
 export default class View extends EventEmitter {
   constructor() {
@@ -35,7 +36,9 @@ export default class View extends EventEmitter {
     this.controls = buildControls(state);
     this.location = new Location(state);
     this.dayWeather = new DayWeather(state, glossary);
+    this.dailyForecast = new DailyForecast(state, glossary);
 
+    wrapper.insertAdjacentElement('afterbegin', this.dailyForecast.node);
     wrapper.insertAdjacentElement('afterbegin', this.dayWeather.node);
     wrapper.insertAdjacentElement('afterbegin', this.location.node);
     wrapper.insertAdjacentElement('afterbegin', this.controls);
