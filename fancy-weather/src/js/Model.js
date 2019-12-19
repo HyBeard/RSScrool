@@ -75,5 +75,7 @@ export default class Model extends EventEmitter {
     const timeDetails = this.getFullTimeDetails(basicTimeInfo);
 
     this.updateState(weather, locationInfo, { timeDetails });
+
+    console.log(this.state);
   }
 }

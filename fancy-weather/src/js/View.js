@@ -6,6 +6,7 @@ export default class View extends EventEmitter {
     super();
     this.body = document.body;
     this.refreshButton = document.querySelector('.btn-refresh_image');
+    // this.layout = new Layout(state);
 
     this.addEventListeners();
   }
@@ -32,8 +33,4 @@ export default class View extends EventEmitter {
       this.emit('refreshImage');
     });
   }
-
-  // init() {
-  //   document.body.insertAdjacentHTML('beforeend', controls());
-  // }
 }

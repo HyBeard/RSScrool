@@ -17,13 +17,14 @@ export default class Controller extends EventEmitter {
   }
 
   async fillBackground() {
-    const { imageUrl } = await this.model.getImageLink();
+    const imageUrl = await this.model.getImageUrlByQuery();
 
     this.view.printPictureAfterUploading(imageUrl);
   }
 
   async init() {
     // this.view.init();
-    this.model.init();
+    await this.model.init();
+    await this.fillBackground();
   }
 }
