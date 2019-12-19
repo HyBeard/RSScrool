@@ -23,8 +23,10 @@ export default class Controller extends EventEmitter {
   }
 
   async init() {
-    // this.view.init();
+    const { glossary, state: currentState } = this.model;
+
     await this.model.init();
+    await this.view.init(currentState, glossary);
     await this.fillBackground();
   }
 }

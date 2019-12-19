@@ -2,11 +2,7 @@ import glossary from './data/glossary';
 
 import EventEmitter from './helpers/EventEmitter';
 import apiLoader from './helpers/apiLoader';
-import {
-  getTimeOfYear,
-  getTimeOfDay,
-  getBasicLocalTime,
-} from './helpers/common';
+import { getTimeOfYear, getTimeOfDay, getBasicLocalTime } from './helpers/timeFormatters';
 
 export default class Model extends EventEmitter {
   constructor() {
