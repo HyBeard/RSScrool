@@ -8,57 +8,6 @@
   </head>
   <body class="body">
     <div class="wrapper">
-      <div class="controls">
-        <div class="controls--lang_select">
-          <select>
-            <option value="en">en</option>
-            <option value="ru">ru</option>
-            <option value="be">be</option>
-          </select>
-        </div>
-        <div class="controls--temperature_scale_type">
-          <div class="controls--btn controls--btn-active">°C</div>
-          <div class="controls--btn">°F</div>
-        </div>
-        <div class="controls--btn btn-image"></div>
-      </div>
-      <div class="location">
-        <div class="location--name">Belarus, Minsk</div>
-        <div class="location--date_info">
-          <div class="location--date date">
-            <span class="date--day_of_week_short"></span>
-            <span class="date--day"></span>
-            <span class="date--month"></span>
-          </div>
-          <div class="location--time time">
-            <span class="time--hours"></span>:<span class="time--minutes"></span>
-          </div>
-        </div>
-      </div>
-      <div class="weather_wrapper">
-        <div class="weather--temperature">
-          <span class="weather--temperature_value"> </span>
-        </div>
-        <div class="weather--icon_container">
-          <i class="weather--icon"></i>
-        </div>
-        <div class="weather--state state">
-          <div class="state--summary"></div>
-          <div class="state--apparent_temperature">
-            <span class="state--apparent_temp-text">Feels like: </span>
-            <span class="state--apparent_temp-value"></span>
-          </div>
-          <div class="state--wind state">
-            <span class="state--wind-text">Wind:</span>
-            <span class="state--wind-value "> 7.2 </span>
-            <span class="state--wind-units">m/s</span>
-          </div>
-          <div class="state--humidity state">
-            <span class="state--humidity-text">Humidity:</span>
-            <span class="state--humidity-value "> 82%</span>
-          </div>
-        </div>
-      </div>
       <div class="forecast">
         <div class="forecast--item">
           <div class="forecast--day">Sunday</div>
@@ -66,7 +15,7 @@
             <span class="forecast--temp-value">2</span>
           </div>
           <div class="forecast--icon_container">
-            <i class="forecast--icon"></i>
+            <i class="forecast--icon wi"></i>
           </div>
         </div>
         <div class="forecast--item">
@@ -75,7 +24,7 @@
             <span class="forecast--temp-value">3</span>
           </div>
           <div class="forecast--icon_container">
-            <i class="forecast--icon"></i>
+            <i class="forecast--icon wi"></i>
           </div>
         </div>
         <div class="forecast--item">
@@ -84,7 +33,7 @@
             <span class="forecast--temp-value">3</span>
           </div>
           <div class="forecast--icon_container">
-            <i class="forecast--icon"></i>
+            <i class="forecast--icon wi"></i>
           </div>
         </div>
       </div>
@@ -94,6 +43,51 @@
         <div class="search--btn"></div>
       </div>
       <div class="map_container">
+        <div class="map mapboxgl-map" id="map">
+          <div class="mapboxgl-canary" style="visibility: hidden;"></div>
+          <div
+            class="mapboxgl-canvas-container mapboxgl-interactive mapboxgl-touch-drag-pan mapboxgl-touch-zoom-rotate"
+          >
+            <canvas
+              class="mapboxgl-canvas"
+              tabindex="0"
+              aria-label="Map"
+              width="972"
+              height="445"
+              style="position: absolute; width: 972px; height: 445px;"
+            ></canvas>
+          </div>
+          <div class="mapboxgl-control-container">
+            <div class="mapboxgl-ctrl-top-left"></div>
+            <div class="mapboxgl-ctrl-top-right"></div>
+            <div class="mapboxgl-ctrl-bottom-left">
+              <div class="mapboxgl-ctrl" style="display: block;">
+                <a
+                  class="mapboxgl-ctrl-logo"
+                  target="_blank"
+                  rel="noopener nofollow"
+                  href="https://www.mapbox.com/"
+                  aria-label="Mapbox logo"
+                ></a>
+              </div>
+            </div>
+            <div class="mapboxgl-ctrl-bottom-right">
+              <div class="mapboxgl-ctrl mapboxgl-ctrl-attrib">
+                <div class="mapboxgl-ctrl-attrib-inner">
+                  <a href="https://www.mapbox.com/about/maps/" target="_blank">© Mapbox</a>
+                  <a href="http://www.openstreetmap.org/about/" target="_blank">© OpenStreetMap</a>
+                  <a
+                    class="mapbox-improve-map"
+                    href="https://apps.mapbox.com/feedback/?owner=mapbox&amp;id=streets-v9&amp;access_token=pk.eyJ1IjoiZm9tZW5rb2dyZWdvcnkiLCJhIjoiY2szN2x4czZzMDA2cTNkcWZiNW1ndHIyOCJ9.UiXTKAdFNeYZ2YWSxGMSlg"
+                    target="_blank"
+                    rel="noopener nofollow"
+                    >Improve this map</a
+                  >
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
         <div class="coordinates">
           <div class="coordinates--latitude">
             <span class="coordinates--latitude-text">Latitude:</span

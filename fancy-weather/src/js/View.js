@@ -1,23 +1,13 @@
 // import controls from './views/templates/controls';
 import EventEmitter from './helpers/EventEmitter';
+import buildControls from './templates/сontrols';
+import Location from './widgets/Location';
+import DayWeather from './widgets/DayWeather';
 
 export default class View extends EventEmitter {
-  constructor() {
-    super();
-    this.body = document.body;
-    this.refreshButton = document.querySelector('.btn-refresh_image');
-    // this.layout = new Layout(state);
-
-    this.addEventListeners();
-  }
-
   printImage(imgUrl) {
     this.body.style.backgroundImage = `url(${imgUrl})`;
   }
-
-  // toggleBackgroundBlur() {
-  //   this.wrap.classList.toggle('wrap--blur');
-  // }
 
   printPictureAfterUploading(url) {
     const img = new Image();
@@ -32,5 +22,17 @@ export default class View extends EventEmitter {
     this.refreshButton.addEventListener('click', () => {
       this.emit('refreshImage');
     });
+  }
+
+  init(state, glossary) {
+    const wrapper = document.querySelector('.wrapper');
+
+    this.controls = buildControls(state);
+    this.location = new Location(state);
+    this.dayWeather = new DayWeather(state, glossary);
+
+    wrapper.insertAdjacentElement('afterbegin', this.dayWeather.node);
+    wrapper.insertAdjacentElement('afterbegin', this.location.node);
+    wrapper.insertAdjacentElement('afterbegin', this.controls);
   }
 }
