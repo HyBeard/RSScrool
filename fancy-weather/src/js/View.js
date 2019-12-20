@@ -4,6 +4,7 @@ import buildControls from './templates/сontrols';
 import Location from './widgets/Location';
 import DayWeather from './widgets/DayWeather';
 import DailyForecast from './widgets/DailyForecast';
+import Map from './widgets/Map';
 
 export default class View extends EventEmitter {
   constructor() {
@@ -37,10 +38,14 @@ export default class View extends EventEmitter {
     this.location = new Location(state);
     this.dayWeather = new DayWeather(state, glossary);
     this.dailyForecast = new DailyForecast(state, glossary);
+    this.map = new Map(state, glossary);
 
+    wrapper.insertAdjacentElement('afterbegin', this.map.node);
     wrapper.insertAdjacentElement('afterbegin', this.dailyForecast.node);
     wrapper.insertAdjacentElement('afterbegin', this.dayWeather.node);
     wrapper.insertAdjacentElement('afterbegin', this.location.node);
     wrapper.insertAdjacentElement('afterbegin', this.controls);
+
+    this.map.load(state);
   }
 }

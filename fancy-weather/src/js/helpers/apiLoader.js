@@ -1,5 +1,3 @@
-import mapboxgl from 'mapbox-gl/dist/mapbox-gl';
-
 const apiLoader = {
   async getJson(url) {
     const response = await fetch(url);
@@ -87,22 +85,6 @@ const apiLoader = {
       humidity: humidity * 100,
       daily,
     };
-  },
-
-  getMap(latitude, longitude) {
-    mapboxgl.accessToken = 'pk.eyJ1Ijoia2FwdHNldmljaCIsImEiOiJjazRkOXVrcmQwMHI0M21sOXlhMHFhOWJpIn0.-O7Ii-s-ZOZQuG20VId3nQ';
-
-    const map = new mapboxgl.Map({
-      container: 'map',
-      style: 'mapbox://styles/mapbox/outdoors-v11',
-      center: [longitude, latitude],
-      zoom: 10,
-    });
-    map.addControl(
-      new mapboxgl.NavigationControl(),
-    );
-
-    return map;
   },
 };
 

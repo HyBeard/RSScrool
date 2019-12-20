@@ -69,7 +69,6 @@ export default class Model extends EventEmitter {
     const locationInfo = await this.apiLoader.getCityLocationInfo(city);
     const basicTimeInfo = getBasicLocalTime();
     const timeDetails = this.getFullTimeDetails(basicTimeInfo);
-    this.map = apiLoader.getMap(latitude, longitude);
 
     this.updateState(weather, locationInfo, { timeDetails });
 
