@@ -1,3 +1,5 @@
+import mapboxgl from 'mapbox-gl/dist/mapbox-gl';
+
 const apiLoader = {
   async getJson(url) {
     const response = await fetch(url);
@@ -34,7 +36,9 @@ const apiLoader = {
     const url = `https://api.opencagedata.com/geocode/v1/json?q=${city}&key=9dc8f5a4e2724c3aa83e3d0d471d2ad4&language=en&pretty=1&no_annotations=1&limit=1`;
 
     const response = await this.getJson(url);
-    const { results: [responseResult] } = response;
+    const {
+      results: [responseResult],
+    } = response;
 
     return {
       cityFormatted: responseResult.formatted,
@@ -83,6 +87,22 @@ const apiLoader = {
       humidity: humidity * 100,
       daily,
     };
+  },
+
+  getMap(latitude, longitude) {
+    mapboxgl.accessToken = 'pk.eyJ1Ijoia2FwdHNldmljaCIsImEiOiJjazRkOXVrcmQwMHI0M21sOXlhMHFhOWJpIn0.-O7Ii-s-ZOZQuG20VId3nQ';
+
+    const map = new mapboxgl.Map({
+      container: 'map',
+      style: 'mapbox://styles/mapbox/outdoors-v11',
+      center: [longitude, latitude],
+      zoom: 10,
+    });
+    map.addControl(
+      new mapboxgl.NavigationControl(),
+    );
+
+    return map;
   },
 };
 
