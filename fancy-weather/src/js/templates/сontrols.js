@@ -12,14 +12,15 @@ export default function buildControls(state) {
     </div>
     <div class="controls--temperature_scale_type">
       <div 
-      class="controls--btn ${
-  isActive(('temperatureUnits', 'celsius')) ? 'controls--btn-active' : ''
-} ">°C</div>
-      <div class="controls--btn  ${
-  isActive(('temperatureUnits', 'fahrenheit')) ? 'controls--btn-active' : ''
-}">°F</div>
+      class="controls--btn temp_units_btn
+      ${isActive('temperatureUnits', 'celsius') ? 'controls--btn-active' : ''}
+      "
+      data-units='celsius' >°C</div>
+      <div class="controls--btn temp_units_btn
+      ${isActive('temperatureUnits', 'fahrenheit') ? 'controls--btn-active' : ''}" 
+      data-units='fahrenheit'>°F</div>
     </div>
-    <div class="controls--btn btn-refresh_image">refresh</div>
+    <div class="controls--btn refresh_image_btn">refresh</div>
   </div>
   `;
   const fragment = document.createRange().createContextualFragment(htmlStringOfElement);

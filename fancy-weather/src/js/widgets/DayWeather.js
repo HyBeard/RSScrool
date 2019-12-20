@@ -1,15 +1,22 @@
 import Widget from './Widget';
+import { celsiusToFahrenheit } from '../helpers/common';
 
 function buildDayWeatherTemplate(state, glossary) {
+  let { apparentTemperature, temperature } = state;
   const {
-    lang, summary, icon, apparentTemperature, windSpeed, humidity,
+    temperatureUnits, lang, summary, icon, windSpeed, humidity,
   } = state;
   const { icons, general } = glossary;
+
+  if (temperatureUnits === 'fahrenheit') {
+    temperature = celsiusToFahrenheit(temperature);
+    apparentTemperature = celsiusToFahrenheit(apparentTemperature);
+  }
 
   return `
   <div class="weather_wrapper">
     <div class="weather--temperature">
-      <span class="weather--temperature_value"> </span>
+      <span class="weather--temperature_value">${temperature}</span>
     </div>
     <div class="weather--icon_container">
       <i class="weather--icon wi ${icons[icon]}"></i>

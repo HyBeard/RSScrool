@@ -12,8 +12,6 @@ export default class Controller extends EventEmitter {
     super();
     this.view = view;
     this.model = model;
-
-    view.on('refreshImage', this.fillBackground.bind(this));
   }
 
   async fillBackground() {
@@ -27,6 +25,22 @@ export default class Controller extends EventEmitter {
 
     await this.model.init();
     await this.view.init(currentState, glossary);
-    await this.fillBackground();
+    // await this.fillBackground();
+    this.view.addEventListeners();
+    this.addEventsToEmitter();
+  }
+
+  changeTempUnits(units) {
+    const { state, glossary } = this.model;
+
+    this.model.updateState({ temperatureUnits: units });
+    this.view.dayWeather.update(state, glossary);
+    this.view.dailyForecast.update(state, glossary);
+  }
+
+  addEventsToEmitter() {
+    this.view.on('refreshImage', this.fillBackground.bind(this));
+    this.view.on('changeCity', this.fillBackground.bind(this));
+    this.view.on('changeTempUnits', this.changeTempUnits.bind(this));
   }
 }

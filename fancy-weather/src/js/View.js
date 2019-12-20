@@ -1,4 +1,3 @@
-// import controls from './views/templates/controls';
 import EventEmitter from './helpers/EventEmitter';
 import buildControls from './templates/сontrols';
 import buildSearchBar from './templates/searchBar';
@@ -26,12 +25,6 @@ export default class View extends EventEmitter {
     img.src = url;
   }
 
-  addEventListeners() {
-    this.refreshButton.addEventListener('click', () => {
-      this.emit('refreshImage');
-    });
-  }
-
   init(state, glossary) {
     const wrapper = document.querySelector('.wrapper');
 
@@ -50,5 +43,21 @@ export default class View extends EventEmitter {
     wrapper.insertAdjacentElement('afterbegin', this.controls);
 
     this.map.load(state);
+  }
+
+  addEventListeners() {
+    this.controls.addEventListener('click', ({ target }) => {
+      if (target.closest('.refresh_image_btn')) {
+        this.emit('refreshImage');
+      }
+
+      if (target.closest('.temp_units_btn') && !target.closest('.controls--btn-active')) {
+        this.controls.querySelector('.controls--btn-active').classList.remove('controls--btn-active');
+        target.closest('.temp_units_btn').classList.add('controls--btn-active');
+
+        const newTempUnits = target.dataset.units;
+        this.emit('changeTempUnits', newTempUnits);
+      }
+    });
   }
 }

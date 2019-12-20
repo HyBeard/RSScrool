@@ -20,14 +20,13 @@ const apiLoader = {
     return response.urls.regular;
   },
 
-  async getLocation() {
+  async getLaunchingCity() {
     const url = 'https://ipinfo.io/json?token=f16cf59763a028';
 
     const json = await this.getJson(url);
     const { city } = json;
-    const [latitude, longitude] = json.loc.split(',').map(Number);
 
-    return { latitude, longitude, city };
+    return city;
   },
 
   async getCityLocationInfo(city) {

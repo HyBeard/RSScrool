@@ -1,15 +1,20 @@
 import Widget from './Widget';
+import { celsiusToFahrenheit } from '../helpers/common';
 
 function buildDailyForecast(state, glossary) {
   const {
+    temperatureUnits,
     daily,
     timeDetails: { nextDaysOfWeek },
   } = state;
 
   const dayForecastTemplate = (nextDayNum) => {
+    let { temperature } = daily[nextDayNum];
+    const { icon } = daily[nextDayNum];
     const dayOfWeek = nextDaysOfWeek[nextDayNum];
-    const { temperature, icon } = daily[nextDayNum];
     const iconClassName = glossary.icons[icon];
+
+    if (temperatureUnits === 'fahrenheit') temperature = celsiusToFahrenheit(temperature);
 
     return `
     <div class="forecast--item">
