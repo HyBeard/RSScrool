@@ -1,9 +1,12 @@
 import mapboxgl from 'mapbox-gl/dist/mapbox-gl';
 
 import Widget from './Widget';
+import { formatCoords } from '../helpers/common';
 
 function buildMapTemplate(state, glossary) {
   const { latitude, longitude, lang } = state;
+  const formattedLatitude = formatCoords(latitude);
+  const formattedLongitude = formatCoords(longitude);
 
   return `
   <div class="map_container container">
@@ -11,12 +14,12 @@ function buildMapTemplate(state, glossary) {
     </div>
     <div class="coordinates">
       <div class="coordinates--latitude">
-        <span class="coordinates--latitude-text">${glossary.general[lang][4]}</span
-        ><span class="coordinates--latitude-value">${latitude}</span>
+        <span class="coordinates--latitude-text">${glossary.general[lang][4]} </span
+        ><span class="coordinates--latitude-value">${formattedLatitude}</span>
       </div>
       <div class="coordinates--longitude">
-        <span class="coordinates--longitude-text">${glossary.general[lang][5]}</span
-        ><span class="coordinates--longitude-value">${longitude}</span>
+        <span class="coordinates--longitude-text">${glossary.general[lang][5]} </span
+        ><span class="coordinates--longitude-value">${formattedLongitude}</span>
       </div>
     </div>
   </div>
@@ -51,5 +54,6 @@ export default class Map extends Widget {
 
     prevCoords.replaceWith(updatedCoords);
     this.map.setCenter([longitude, latitude]);
+    this.map.setZoom(10);
   }
 }

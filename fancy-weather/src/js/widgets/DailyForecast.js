@@ -20,7 +20,7 @@ function buildDailyForecast(state, glossary) {
     <div class="forecast--item container">
     <div class="forecast--day">${dayOfWeek}</div>
     <div class="forecast--temperature">
-      <span class="forecast--temp-value">${temperature}</span>
+      <span class="forecast--temp-value">${temperature}°</span>
     </div>
     <div class="forecast--icon_container">
       <i class="forecast--icon wi ${iconClassName}"></i>

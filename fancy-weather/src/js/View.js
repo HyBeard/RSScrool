@@ -45,6 +45,13 @@ export default class View extends EventEmitter {
     this.map.load(state);
   }
 
+  redrawComponents(state, glossary) {
+    this.location.update(state, glossary);
+    this.dayWeather.update(state, glossary);
+    this.dailyForecast.update(state, glossary);
+    this.map.update(state, glossary);
+  }
+
   addEventListeners() {
     const langSelector = document.querySelector('.controls--lang_select');
     const searchBar = document.querySelector('.search--fake_input');

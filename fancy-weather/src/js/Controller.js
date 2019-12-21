@@ -25,7 +25,7 @@ export default class Controller extends EventEmitter {
 
     await this.model.init();
     await this.view.init(currentState, glossary);
-    // await this.fillBackground();
+    await this.fillBackground();
     this.view.addEventListeners();
     this.addEventsToEmitter();
   }
@@ -50,10 +50,7 @@ export default class Controller extends EventEmitter {
     this.model.updateState({ lang });
     const translatedTimeDetails = this.model.getFullTimeDetails(currentTimeDetails);
     this.model.updateState({ timeDetails: translatedTimeDetails });
-    this.view.dayWeather.update(state, glossary);
-    this.view.location.update(state, glossary);
-    this.view.dailyForecast.update(state, glossary);
-    this.view.map.update(state, glossary);
+    this.view.redrawComponents(state, glossary);
   }
 
   async searchCity(city) {
@@ -62,11 +59,7 @@ export default class Controller extends EventEmitter {
     await this.model.updateAllDataForCity(city);
     await this.model.translateCity(state.lang);
 
-    this.view.dayWeather.update(state, glossary);
-    this.view.location.update(state, glossary);
-    this.view.dailyForecast.update(state, glossary);
-    this.view.map.update(state, glossary);
-
+    this.view.redrawComponents(state, glossary);
     this.fillBackground();
   }
 
