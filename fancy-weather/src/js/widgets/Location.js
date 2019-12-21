@@ -18,7 +18,7 @@ function buildLocationTemplate(state) {
         <span class="date--month">${month}</span>
       </div>
       <div class="location--time time">
-        <span class="time--hours">${hour}</span><span class="time--minutes">${minute}</span>
+        <span class="time--hours">${hour}</span>:<span class="time--minutes">${minute}</span>
       </div>
     </div>
   </div>

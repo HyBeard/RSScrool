@@ -38,10 +38,18 @@ export default class Map extends Widget {
       center: [longitude, latitude],
       zoom: 10,
     });
-    map.addControl(
-      new mapboxgl.NavigationControl(),
-    );
+    map.addControl(new mapboxgl.NavigationControl());
 
-    return map;
+    this.map = map;
+  }
+
+  update(state, glossary) {
+    const { longitude, latitude } = state;
+    const updatedNode = this.build(state, glossary);
+    const prevCoords = this.node.querySelector('.coordinates');
+    const updatedCoords = updatedNode.querySelector('.coordinates');
+
+    prevCoords.replaceWith(updatedCoords);
+    this.map.setCenter([longitude, latitude]);
   }
 }

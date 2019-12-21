@@ -340,6 +340,8 @@ html {
 
     &-loupe {
       background: url('../assets/icons/search.svg') center no-repeat;
+      border: none;
+      outline: none;
     }
   }
 }

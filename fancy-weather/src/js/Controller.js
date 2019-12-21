@@ -50,16 +50,29 @@ export default class Controller extends EventEmitter {
     this.model.updateState({ lang });
     const translatedTimeDetails = this.model.getFullTimeDetails(currentTimeDetails);
     this.model.updateState({ timeDetails: translatedTimeDetails });
-
     this.view.dayWeather.update(state, glossary);
     this.view.location.update(state, glossary);
     this.view.dailyForecast.update(state, glossary);
     this.view.map.update(state, glossary);
   }
 
+  async searchCity(city) {
+    const { state, glossary } = this.model;
+
+    await this.model.updateAllDataForCity(city);
+    await this.model.translateCity(state.lang);
+
+    this.view.dayWeather.update(state, glossary);
+    this.view.location.update(state, glossary);
+    this.view.dailyForecast.update(state, glossary);
+    this.view.map.update(state, glossary);
+
+    this.fillBackground();
+  }
+
   addEventsToEmitter() {
     this.view.on('refreshImage', this.fillBackground.bind(this));
-    this.view.on('changeCity', this.fillBackground.bind(this));
+    this.view.on('searchCity', this.searchCity.bind(this));
     this.view.on('changeTempUnits', this.changeTempUnits.bind(this));
     this.view.on('changeLanguage', this.changeLanguage.bind(this));
   }

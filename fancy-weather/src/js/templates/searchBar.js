@@ -1,11 +1,11 @@
 export default function buildSearchBar() {
   const htmlStringOfElement = `
   <div class="search container">
-    <div class="search--fake_input">
-      <input class="search--query"/>
+    <form class="search--fake_input">
+      <input class="search--query" required/>
       <div class="search--icon search--icon-microphone"></div>
-      <div class="search--icon search--icon-loupe"></div>
-    </div>
+      <button class="search--icon search--icon-loupe" type="submit"></button>
+    </form>
   </div>
   `;
 

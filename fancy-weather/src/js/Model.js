@@ -87,7 +87,5 @@ export default class Model extends EventEmitter {
   async init() {
     const city = await this.apiLoader.getLaunchingCity();
     await this.updateAllDataForCity(city);
-
-    console.log(this.state);
   }
 }
