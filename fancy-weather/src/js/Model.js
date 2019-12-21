@@ -47,6 +47,7 @@ export default class Model extends EventEmitter {
     const nextDaysOfWeek = nextDays.map((num) => this.getGlossaryFieldData('dayOfWeek', num)); // FIXME: no-shadow eslint
 
     return {
+      ...rest,
       timeOfYear,
       month,
       dayNum,
@@ -55,12 +56,23 @@ export default class Model extends EventEmitter {
       timeOfDay,
       hour,
       nextDaysOfWeek,
-      ...rest,
+      monthNum,
+      nextDays,
     };
   }
 
   updateState(...props) {
     Object.assign(this.state, ...props);
+  }
+
+  async translateCity(lang) {
+    const { lang: prevLang, cityFormatted } = this.state;
+
+    const translatedCity = await this.apiLoader.getTranslate(cityFormatted, prevLang, lang);
+    // this.updateState({ lang });
+    // const translatedTimeDetails = this.getFullTimeDetails(currentTimeDetails);
+    // this.updateState({ timeDetails: translatedTimeDetails });
+    this.updateState({ cityFormatted: translatedCity });
   }
 
   async updateAllDataForCity(city) {

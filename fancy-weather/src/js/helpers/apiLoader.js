@@ -85,6 +85,14 @@ const apiLoader = {
       daily,
     };
   },
+
+  async getTranslate(text, currentLang, lang) {
+    const url = `https://translate.yandex.net/api/v1.5/tr.json/translate?key=trnsl.1.1.20191221T102000Z.c245c54bdeb89ff3.d5a49e3c6e952118a8401b3c1d7e18bd4a2ba856&text=${text}&lang=${currentLang}-${lang}`;
+
+    const response = await this.getJson(url);
+
+    return response.text[0];
+  },
 };
 
 export default apiLoader;

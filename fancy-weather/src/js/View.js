@@ -49,9 +49,12 @@ export default class View extends EventEmitter {
     this.controls.addEventListener('click', ({ target }) => {
       if (target.closest('.refresh_image_btn')) {
         this.emit('refreshImage');
+
+        return;
       }
 
       if (target.closest('.temp_units_btn') && !target.closest('.controls--btn-active')) {
+        // FIXME:
         this.controls.querySelector('.controls--btn-active').classList.remove('controls--btn-active');
         target.closest('.temp_units_btn').classList.add('controls--btn-active');
 
@@ -59,5 +62,12 @@ export default class View extends EventEmitter {
         this.emit('changeTempUnits', newTempUnits);
       }
     });
+
+    const langSelector = document.querySelector('.controls--lang_select');
+    langSelector.addEventListener('change', (({ target }) => {
+      const newLang = target.value;
+
+      this.emit('changeLanguage', newLang);
+    }));
   }
 }

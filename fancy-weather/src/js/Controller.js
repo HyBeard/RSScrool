@@ -38,9 +38,29 @@ export default class Controller extends EventEmitter {
     this.view.dailyForecast.update(state, glossary);
   }
 
+  async changeLanguage(lang) {
+    // FIXME: destructuring methods, no-shadow
+    const {
+      state,
+      glossary,
+      state: { timeDetails: currentTimeDetails },
+    } = this.model;
+
+    await this.model.translateCity(lang);
+    this.model.updateState({ lang });
+    const translatedTimeDetails = this.model.getFullTimeDetails(currentTimeDetails);
+    this.model.updateState({ timeDetails: translatedTimeDetails });
+
+    this.view.dayWeather.update(state, glossary);
+    this.view.location.update(state, glossary);
+    this.view.dailyForecast.update(state, glossary);
+    this.view.map.update(state, glossary);
+  }
+
   addEventsToEmitter() {
     this.view.on('refreshImage', this.fillBackground.bind(this));
     this.view.on('changeCity', this.fillBackground.bind(this));
     this.view.on('changeTempUnits', this.changeTempUnits.bind(this));
+    this.view.on('changeLanguage', this.changeLanguage.bind(this));
   }
 }
