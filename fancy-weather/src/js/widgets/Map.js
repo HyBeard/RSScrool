@@ -6,7 +6,7 @@ function buildMapTemplate(state, glossary) {
   const { latitude, longitude, lang } = state;
 
   return `
-  <div class="map_container">
+  <div class="map_container container">
     <div class="map" id="map">
     </div>
     <div class="coordinates">
@@ -34,7 +34,7 @@ export default class Map extends Widget {
     const nodeToInsertMap = this.node.querySelector('.map');
     const map = new mapboxgl.Map({
       container: nodeToInsertMap,
-      style: 'mapbox://styles/mapbox/outdoors-v11',
+      style: 'mapbox://styles/mapbox/dark-v10?optimize=true',
       center: [longitude, latitude],
       zoom: 10,
     });

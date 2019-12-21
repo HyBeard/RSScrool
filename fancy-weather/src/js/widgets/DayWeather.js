@@ -14,7 +14,7 @@ function buildDayWeatherTemplate(state, glossary) {
   }
 
   return `
-  <div class="weather_wrapper">
+  <div class="weather container">
     <div class="weather--temperature">
       <span class="weather--temperature_value">${temperature}</span>
     </div>
@@ -22,17 +22,17 @@ function buildDayWeatherTemplate(state, glossary) {
       <i class="weather--icon wi ${icons[icon]}"></i>
     </div>
     <div class="weather--state state">
-      <div class="state--summary">${summary}</div>
-      <div class="state--apparent_temperature">
+      <div class="state--summary weather--state_elem">${summary}</div>
+      <div class="state--apparent_temperature weather--state_elem">
         <span class="state--apparent_temp-text">${general[lang][0]}</span>
         <span class="state--apparent_temp-value">${apparentTemperature}</span>
       </div>
-      <div class="state--wind state">
+      <div class="state--wind weather--state_elem">
         <span class="state--wind-text">${general[lang][1]}</span>
         <span class="state--wind-value ">${windSpeed}</span>
         <span class="state--wind-units">${general[lang][2]}</span>
       </div>
-      <div class="state--humidity state">
+      <div class="state--humidity weather--state_elem">
         <span class="state--humidity-text">${general[lang][3]}</span>
         <span class="state--humidity-value ">${humidity}</span>
       </div>

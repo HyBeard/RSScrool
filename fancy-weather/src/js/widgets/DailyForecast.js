@@ -17,7 +17,7 @@ function buildDailyForecast(state, glossary) {
     if (temperatureUnits === 'fahrenheit') temperature = celsiusToFahrenheit(temperature);
 
     return `
-    <div class="forecast--item">
+    <div class="forecast--item container">
     <div class="forecast--day">${dayOfWeek}</div>
     <div class="forecast--temperature">
       <span class="forecast--temp-value">${temperature}</span>
