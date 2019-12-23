@@ -12,7 +12,8 @@ function getNextDays(count, now) {
   });
 }
 
-export function getBasicLocalTime(momentObj = moment()) {
+export function getBasicTime(timezone) {
+  const momentObj = moment.tz(timezone);
   const monthNum = momentObj.month();
   const date = momentObj.date();
   const dayNum = momentObj.day();
@@ -30,10 +31,6 @@ export function getBasicLocalTime(momentObj = moment()) {
     second,
     nextDays,
   };
-}
-
-export function getBasicCountryTime({ timezone }) {
-  return getBasicLocalTime(moment.tz(timezone));
 }
 
 export function getTimeOfYear(monthNum) {

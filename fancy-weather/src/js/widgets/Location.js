@@ -29,4 +29,43 @@ export default class Location extends Widget {
   constructor(state, glossary = {}) {
     super(state, glossary, buildLocationTemplate);
   }
+
+  static startClock(state, elem) {
+    let {
+      timeDetails: { hour, minute, second },
+    } = state;
+
+    const hoursElement = elem.querySelector('.time--hours');
+    const minutesElement = elem.querySelector('.time--minutes');
+
+    function printClock() {
+      hoursElement.innerText = hour;
+      minutesElement.innerText = minute;
+    }
+
+    setInterval(() => {
+      if (second < 59) {
+        second += 1;
+      } else {
+        second = 0;
+        if (minute < 59) {
+          minute += 1;
+        } else {
+          minute = 0;
+          if (hour < 23) {
+            hour += 1;
+          } else hour = 0;
+        }
+        printClock();
+      }
+    }, 1000);
+  }
+
+  build(state, glossary) {
+    const string = this.buildFunction(state, glossary);
+    const elem = Widget.stringToHTML(string);
+
+    Location.startClock(state, elem);
+    return elem;
+  }
 }

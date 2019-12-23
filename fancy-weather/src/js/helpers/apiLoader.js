@@ -60,13 +60,11 @@ const apiLoader = {
 
   filterWeatherResponse(responseObj) {
     const {
-      summary,
-      icon,
-      temperature,
-      apparentTemperature,
-      windSpeed,
-      humidity,
-    } = responseObj.currently;
+      timezone,
+      currently: {
+        summary, icon, temperature, apparentTemperature, windSpeed, humidity,
+      },
+    } = responseObj;
 
     const daily = responseObj.daily.data.slice(1, 4).map((dayObj) => {
       const { icon: dailyIcon, temperatureMax, temperatureMin } = dayObj;
@@ -83,6 +81,7 @@ const apiLoader = {
       windSpeed: Math.ceil(windSpeed),
       humidity: humidity * 100,
       daily,
+      timezone,
     };
   },
 

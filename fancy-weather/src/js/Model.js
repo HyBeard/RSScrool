@@ -2,7 +2,7 @@ import glossary from './data/glossary';
 
 import EventEmitter from './helpers/EventEmitter';
 import apiLoader from './helpers/apiLoader';
-import { getTimeOfYear, getTimeOfDay, getBasicLocalTime } from './helpers/timeFormatters';
+import { getTimeOfYear, getTimeOfDay, getBasicTime } from './helpers/timeFormatters';
 
 export default class Model extends EventEmitter {
   constructor() {
@@ -78,7 +78,7 @@ export default class Model extends EventEmitter {
   async updateAllDataForCity(city) {
     const locationInfo = await this.apiLoader.getCityLocationInfo(city);
     const weather = await this.apiLoader.getWeather(locationInfo);
-    const basicTimeInfo = getBasicLocalTime();
+    const basicTimeInfo = getBasicTime(weather.timezone);
     const timeDetails = this.getFullTimeDetails(basicTimeInfo);
 
     this.updateState(weather, locationInfo, { timeDetails });
