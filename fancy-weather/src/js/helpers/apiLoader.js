@@ -52,7 +52,7 @@ const apiLoader = {
   },
 
   async getWeather({ latitude, longitude, lang }) {
-    const url = `https://api.darksky.net/forecast/3b0029e877b4499d720e83528314bf14/${latitude},${longitude}?units=si&lang=${lang}&exclude=hourly,flags,alerts`;
+    const url = `https://api.darksky.net/forecast/f98630c0901ea282ea311703ad5e077b/${latitude},${longitude}?units=si&lang=${lang}&exclude=hourly,flags,alerts`;
     const trustedUrl = this.passThroughProxy(url);
     const response = await this.getJson(trustedUrl);
 

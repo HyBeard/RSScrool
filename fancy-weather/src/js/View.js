@@ -43,6 +43,8 @@ export default class View extends EventEmitter {
     wrapper.insertAdjacentElement('afterbegin', this.controls);
 
     this.map.load(state);
+
+    View.removePreloader();
   }
 
   redrawComponents(state, glossary) {
@@ -55,6 +57,7 @@ export default class View extends EventEmitter {
   addEventListeners() {
     const langSelector = document.querySelector('.controls--lang_select');
     const searchBar = document.querySelector('.search--fake_input');
+    const microphoneElem = document.querySelector('.search--icon-microphone');
 
     this.controls.addEventListener('click', ({ target }) => {
       if (target.closest('.refresh_image_btn')) {
@@ -88,5 +91,20 @@ export default class View extends EventEmitter {
 
       this.emit('searchCity', value);
     });
+
+    microphoneElem.addEventListener('click', () => {
+      this.emit('recordSpeech', microphoneElem);
+    });
+  }
+
+  toggleRecording() {
+    const elem = this.searchBar.querySelector('.search--icon-microphone');
+
+    elem.classList.toggle('search--icon-microphone-active');
+  }
+
+  static removePreloader() {
+    document.body.classList.remove('body--preloader');
+    document.querySelector('.wrapper').classList.remove('wrapper--hidden');
   }
 }

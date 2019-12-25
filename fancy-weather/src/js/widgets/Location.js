@@ -1,4 +1,5 @@
 import Widget from './Widget';
+import { formatTime } from '../helpers/timeFormatters';
 
 function buildLocationTemplate(state) {
   const {
@@ -18,7 +19,9 @@ function buildLocationTemplate(state) {
         <span class="date--month">${month}</span>
       </div>
       <div class="location--time time">
-        <span class="time--hours">${hour}</span>:<span class="time--minutes">${minute}</span>
+        <span class="time--hours">${formatTime(
+    hour,
+  )}</span>:<span class="time--minutes">${formatTime(minute)}</span>
       </div>
     </div>
   </div>
@@ -39,8 +42,8 @@ export default class Location extends Widget {
     const minutesElement = elem.querySelector('.time--minutes');
 
     function printClock() {
-      hoursElement.innerText = hour;
-      minutesElement.innerText = minute;
+      hoursElement.innerText = formatTime(hour);
+      minutesElement.innerText = formatTime(minute);
     }
 
     setInterval(() => {

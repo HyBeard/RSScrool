@@ -67,10 +67,40 @@ export default class Controller extends EventEmitter {
     this.fillBackground();
   }
 
+  speechRecognitionInit() {
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    this.recognition = new SpeechRecognition();
+
+    this.recognition.addEventListener('start', () => {
+      this.view.toggleRecording();
+    });
+    this.recognition.addEventListener('end', () => {
+      this.view.toggleRecording();
+    });
+    this.recognition.addEventListener('result', ({ results }) => {
+      const { transcript } = results[0][0];
+
+      this.searchCity(transcript);
+    });
+
+    return this.recognition;
+  }
+
+  recordSpeech() {
+    const { lang } = this.model.state;
+
+    this.recognition = this.recognition || this.speechRecognitionInit();
+    this.recognition.lang = lang;
+
+    this.recognition.start();
+  }
+
   addEventsToEmitter() {
     this.view.on('refreshImage', this.fillBackground.bind(this));
     this.view.on('searchCity', this.searchCity.bind(this));
     this.view.on('changeTempUnits', this.changeTempUnits.bind(this));
     this.view.on('changeLanguage', this.changeLanguage.bind(this));
+    this.view.on('loadingComplete', this.changeLanguage.bind(this));
+    this.view.on('recordSpeech', this.recordSpeech.bind(this));
   }
 }
