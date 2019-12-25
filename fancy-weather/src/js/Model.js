@@ -1,5 +1,6 @@
 import glossary from './data/glossary';
 
+import { load } from './helpers/common';
 import EventEmitter from './helpers/EventEmitter';
 import apiLoader from './helpers/apiLoader';
 import { getTimeOfYear, getTimeOfDay, getBasicTime } from './helpers/timeFormatters';
@@ -11,8 +12,8 @@ export default class Model extends EventEmitter {
     // FIXME: ObjectAssign
     this.glossary = glossary;
     this.state = {
-      lang: 'en',
-      temperatureUnits: 'celsius',
+      lang: load('lang') || 'en',
+      temperatureUnits: load('temperatureUnits') || 'celsius',
     };
   }
 
@@ -31,8 +32,7 @@ export default class Model extends EventEmitter {
       timeDetails: { timeOfYear, timeOfDay },
     } = this.state;
 
-    const query = `${timeOfYear}-${summary}-${timeOfDay}`;
-
+    const query = `${timeOfYear}+${summary}+${timeOfDay}`;
     return this.apiLoader.getImageUrl(query);
   }
 
@@ -65,18 +65,20 @@ export default class Model extends EventEmitter {
     Object.assign(this.state, ...props);
   }
 
-  async translateCity(lang) {
-    const { lang: prevLang, cityFormatted } = this.state;
+  async translateCityAndWeather(lang) {
+    const { cityFormatted, summary } = this.state;
 
-    const translatedCity = await this.apiLoader.getTranslate(cityFormatted, prevLang, lang);
-    // this.updateState({ lang });
-    // const translatedTimeDetails = this.getFullTimeDetails(currentTimeDetails);
-    // this.updateState({ timeDetails: translatedTimeDetails });
-    this.updateState({ cityFormatted: translatedCity });
+    const translatedArr = await this.apiLoader.getTranslate([cityFormatted, summary], lang);
+    const translatedCity = translatedArr[0];
+    const translatedWeather = translatedArr[1];
+
+    this.updateState({ cityFormatted: translatedCity, summary: translatedWeather });
   }
 
   async updateAllDataForCity(city) {
-    const locationInfo = await this.apiLoader.getCityLocationInfo(city);
+    const { lang } = this.state;
+
+    const locationInfo = await this.apiLoader.getCityLocationInfo(city, lang);
     const weather = await this.apiLoader.getWeather(locationInfo);
     const basicTimeInfo = getBasicTime(weather.timezone);
     const timeDetails = this.getFullTimeDetails(basicTimeInfo);

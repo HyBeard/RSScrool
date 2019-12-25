@@ -9,3 +9,19 @@ export function fahrenheitToCelsius(fahrenheit) {
 export function formatCoords(coordsValue) {
   return `${coordsValue.split('.').join('°')}'`;
 }
+
+export function save(state) {
+  const string = JSON.stringify(state);
+
+  localStorage.setItem('state', string);
+}
+
+export function load(field) {
+  const string = localStorage.getItem('state');
+
+  if (!string) return null;
+
+  const data = JSON.parse(string);
+
+  return data[field];
+}

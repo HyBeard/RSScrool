@@ -1,5 +1,6 @@
 import '@babel/polyfill';
 
+import { save } from './helpers/common';
 import EventEmitter from './helpers/EventEmitter';
 import Model from './Model';
 import View from './View';
@@ -36,6 +37,8 @@ export default class Controller extends EventEmitter {
     this.model.updateState({ temperatureUnits: units });
     this.view.dayWeather.update(state, glossary);
     this.view.dailyForecast.update(state, glossary);
+
+    save(state);
   }
 
   async changeLanguage(lang) {
@@ -46,18 +49,19 @@ export default class Controller extends EventEmitter {
       state: { timeDetails: currentTimeDetails },
     } = this.model;
 
-    await this.model.translateCity(lang);
+    await this.model.translateCityAndWeather(lang);
     this.model.updateState({ lang });
     const translatedTimeDetails = this.model.getFullTimeDetails(currentTimeDetails);
     this.model.updateState({ timeDetails: translatedTimeDetails });
     this.view.redrawComponents(state, glossary);
+
+    save(state);
   }
 
   async searchCity(city) {
     const { state, glossary } = this.model;
 
     await this.model.updateAllDataForCity(city);
-    await this.model.translateCity(state.lang);
 
     this.view.redrawComponents(state, glossary);
     this.fillBackground();
