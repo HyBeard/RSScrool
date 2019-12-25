@@ -50,3 +50,7 @@ export function getTimeOfYear(monthNum) {
 export function getTimeOfDay(hour) {
   return hour < 6 || hour > 21 ? 'night' : 'day';
 }
+
+export function formatTime(units) {
+  return units < 10 ? `0${units}` : units;
+}
