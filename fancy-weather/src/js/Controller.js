@@ -16,9 +16,10 @@ export default class Controller extends EventEmitter {
   }
 
   async fillBackground() {
-    const imageUrl = await this.model.getImageUrlByQuery();
+    const { state } = this.model;
 
-    this.view.printPictureAfterUploading(imageUrl);
+    this.model.updateImageUrl();
+    this.view.printPictureAfterUploading(state);
   }
 
   async init() {
@@ -26,8 +27,6 @@ export default class Controller extends EventEmitter {
 
     await this.model.init();
     await this.view.init(currentState, glossary);
-    await this.fillBackground();
-    this.view.addEventListeners();
     this.addEventsToEmitter();
   }
 
@@ -63,8 +62,8 @@ export default class Controller extends EventEmitter {
 
     await this.model.updateAllDataForCity(city);
 
-    this.view.redrawComponents(state, glossary);
     this.fillBackground();
+    this.view.redrawComponents(state, glossary);
   }
 
   speechRecognitionInit() {
@@ -100,7 +99,6 @@ export default class Controller extends EventEmitter {
     this.view.on('searchCity', this.searchCity.bind(this));
     this.view.on('changeTempUnits', this.changeTempUnits.bind(this));
     this.view.on('changeLanguage', this.changeLanguage.bind(this));
-    this.view.on('loadingComplete', this.changeLanguage.bind(this));
     this.view.on('recordSpeech', this.recordSpeech.bind(this));
   }
 }

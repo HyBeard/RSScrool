@@ -33,6 +33,7 @@ export default class Model extends EventEmitter {
     } = this.state;
 
     const query = `${timeOfYear}+${summary}+${timeOfDay}`;
+
     return this.apiLoader.getImageUrl(query);
   }
 
@@ -84,10 +85,18 @@ export default class Model extends EventEmitter {
     const timeDetails = this.getFullTimeDetails(basicTimeInfo);
 
     this.updateState(weather, locationInfo, { timeDetails });
+    await this.updateImageUrl();
+  }
+
+  async updateImageUrl() {
+    const imageUrl = await this.getImageUrlByQuery();
+
+    this.updateState({ imageUrl });
   }
 
   async init() {
     const city = await this.apiLoader.getLaunchingCity();
     await this.updateAllDataForCity(city);
+    await this.updateImageUrl();
   }
 }

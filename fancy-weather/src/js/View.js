@@ -16,7 +16,7 @@ export default class View extends EventEmitter {
     this.body.style.backgroundImage = `url(${imgUrl})`;
   }
 
-  printPictureAfterUploading(url) {
+  printPictureAfterUploading({ imageUrl: url }) {
     const img = new Image();
     img.onload = () => {
       this.printImage(url);
@@ -43,6 +43,8 @@ export default class View extends EventEmitter {
     wrapper.insertAdjacentElement('afterbegin', this.controls);
 
     this.map.load(state);
+    this.printPictureAfterUploading(state);
+    this.addEventListeners();
 
     View.removePreloader();
   }
