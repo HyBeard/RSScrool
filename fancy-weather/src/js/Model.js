@@ -1,6 +1,6 @@
 import glossary from './data/glossary';
 
-import { load } from './helpers/common';
+import { load, errorHandlingDecorator } from './helpers/common';
 import EventEmitter from './helpers/EventEmitter';
 import apiLoader from './helpers/apiLoader';
 import { getTimeOfYear, getTimeOfDay, getBasicTime } from './helpers/timeFormatters';
@@ -85,7 +85,6 @@ export default class Model extends EventEmitter {
     const timeDetails = this.getFullTimeDetails(basicTimeInfo);
 
     this.updateState(weather, locationInfo, { timeDetails });
-    await this.updateImageUrl();
   }
 
   async updateImageUrl() {
@@ -95,8 +94,20 @@ export default class Model extends EventEmitter {
   }
 
   async init() {
+    this.addErrorHandlings();
     const city = await this.apiLoader.getLaunchingCity();
     await this.updateAllDataForCity(city);
     await this.updateImageUrl();
+  }
+
+  addErrorHandlings() {
+    this.updateAllDataForCity = errorHandlingDecorator(
+      this.updateAllDataForCity.bind(this),
+      'Проверьте правильность введенных данных',
+    );
+    this.getImageUrlByQuery = errorHandlingDecorator(
+      this.getImageUrlByQuery.bind(this),
+      'Unsplash себя исчерпал. Пожалуйста, подождите часок)',
+    );
   }
 }

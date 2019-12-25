@@ -25,3 +25,13 @@ export function load(field) {
 
   return data[field];
 }
+
+export function errorHandlingDecorator(fn, errMessage) {
+  return async (...args) => {
+    try {
+      await fn.call(this, args);
+    } catch (error) {
+      alert(`${errMessage} (${error})`);
+    }
+  };
+}
