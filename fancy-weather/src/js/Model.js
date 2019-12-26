@@ -96,8 +96,10 @@ export default class Model extends EventEmitter {
   async init() {
     this.addErrorHandlings();
     const city = await this.apiLoader.getLaunchingCity();
-    await this.updateAllDataForCity(city);
-    await this.updateImageUrl();
+    const a = await this.updateAllDataForCity(city);
+    console.log('TCL: Model -> init -> a', a);
+    const b = await this.updateImageUrl();
+    console.log('TCL: Model -> init -> b', b);
   }
 
   addErrorHandlings() {
@@ -105,8 +107,8 @@ export default class Model extends EventEmitter {
       this.updateAllDataForCity.bind(this),
       'Проверьте правильность введенных данных',
     );
-    this.getImageUrlByQuery = errorHandlingDecorator(
-      this.getImageUrlByQuery.bind(this),
+    this.updateImageUrl = errorHandlingDecorator(
+      this.updateImageUrl.bind(this),
       'Unsplash себя исчерпал. Пожалуйста, подождите часок)',
     );
   }

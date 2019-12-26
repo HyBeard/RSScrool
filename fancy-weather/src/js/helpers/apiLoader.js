@@ -13,7 +13,7 @@ const apiLoader = {
   },
 
   async getImageUrl(query) {
-    const url = `https://api.unsplash.com/photos/random?sig=${Math.random().toFixed(3)}&query=${query}&client_id=9a2a3a79ec7c1ff612c4f80e49d689119d1957beb8df77d0a20403f26dedaa1c`;
+    const url = `https://api.unsplash.com/photos/random?sig=${Math.random().toFixed(3)}&query=${query}&client_id=ae8d7de6acc767654ce496c4d3cc5e08da2f74bae163d354d682e400d8cee33e`;
     const trustedUrl = this.passThroughProxy(url);
     const response = await this.getJson(trustedUrl);
 
