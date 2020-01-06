@@ -1,14 +1,21 @@
-export default class View {
+import EventEmitter from '../helpers/EventEmitter';
+
+export default class View extends EventEmitter {
   constructor() {
+    super();
     this.FRAME_PREVIEW_SIDE_LENGTH = 128;
     this.currentTool = null;
-    this.sizeInfoContainer = document.querySelector(
-      '.canvas-size-info',
-    );
+    this.sizeInfoContainer = document.querySelector('.canvas-size-info');
     this.layersCollection = document.querySelector('.layer');
     this.palette = document.querySelector('.palette');
     this.primColor = document.querySelector('.primary-color');
     this.secColor = document.querySelector('.secondary-color');
+
+    this.coordsContainer = document.querySelector('.target-coords');
+    this.activeColor = null;
+    this.mousePressed = false;
+    this.toolsContainer = document.querySelector('.tools-container');
+    this.canvas = document.querySelector('.main-canvas');
   }
 
   static createDomElement(tag, classes, props) {
@@ -21,13 +28,8 @@ export default class View {
   }
 
   selectTool(tool) {
-    const currentToolBtn = document.querySelector(
-      `li[data-name=${this.currentTool}]`,
-    );
-    const selectedToolBtn = document.querySelector(
-      `li[data-name=${tool}]`,
-    );
-
+    const currentToolBtn = document.querySelector(`li[data-name=${this.currentTool}]`);
+    const selectedToolBtn = document.querySelector(`li[data-name=${tool}]`);
 
     if (this.currentTool) currentToolBtn.classList.remove('active');
 
@@ -57,29 +59,21 @@ export default class View {
   }
 
   static updateDisplayedValues(sideLength) {
-    const [canvasSizeSelector] = document.getElementsByClassName(
-      'canvas-size-selector',
-    );
+    const [canvasSizeSelector] = document.getElementsByClassName('canvas-size-selector');
 
-    Array.prototype.forEach.call(
-      canvasSizeSelector.options,
-      (option, index) => {
-        if (Number(option.value) === sideLength) {
-          canvasSizeSelector.selectedIndex = index;
-        }
-      },
-    );
+    Array.prototype.forEach.call(canvasSizeSelector.options, (option, index) => {
+      if (Number(option.value) === sideLength) {
+        canvasSizeSelector.selectedIndex = index;
+      }
+    });
   }
-
 
   init(state) {
     const {
       activeTool,
       primColor,
       secColor,
-      canvasComponent: {
-        sideCellCount,
-      },
+      canvasComponent: { sideCellCount },
     } = state;
 
     View.updateDisplayedValues(sideCellCount);

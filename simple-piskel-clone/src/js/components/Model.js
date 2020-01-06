@@ -7,11 +7,9 @@ import 'babel-polyfill';
 const apiLoader = new APILoader();
 const view = new View();
 
-export default class Palette {
+export default class Model {
   constructor(savedState = {}) {
-    this.canvasComponent = new CanvasComponent(
-      savedState.canvasComponent || {},
-    );
+    this.canvasComponent = new CanvasComponent(savedState.canvasComponent || {});
     this.activeTool = savedState.activeTool || 'draw';
     this.primColor = savedState.primColor || 'rgb(0,0,0)';
     this.secColor = savedState.secColor || 'rgba(0,0,0,0)';
@@ -42,12 +40,7 @@ export default class Palette {
   }
 
   updateCanvasColors() {
-    const dataImage = this.ctx.getImageData(
-      0,
-      0,
-      this.SIDE_LENGTH,
-      this.SIDE_LENGTH,
-    ).data;
+    const dataImage = this.ctx.getImageData(0, 0, this.SIDE_LENGTH, this.SIDE_LENGTH).data;
 
     const newCanvasData = this.canvasData.map((color, idx) => {
       const colorIndices = CanvasComponent.getColorIndicesForCoords(
@@ -62,27 +55,19 @@ export default class Palette {
   }
 
   static getColorIndicesForCoords(idx, pixelSize, cellCount) {
-    const red = (Math.floor(idx / cellCount) * cellCount * pixelSize
-        + (idx % cellCount))
-      * pixelSize
-      * 4;
+    const red = (Math.floor(idx / cellCount)
+      * cellCount * pixelSize + (idx % cellCount)) * pixelSize * 4;
 
     return [red, red + 1, red + 2, red + 3];
   }
 
   static imageDataToRgba(data, indices) {
-    return `rgba(${data[indices[0]]},${data[indices[1]]},${
-      data[indices[2]]
-    },${data[indices[3]] / 255})`;
+    return `rgba(${data[indices[0]]},${data[indices[1]]},${data[indices[2]]},${data[indices[3]]
+      / 255})`;
   }
 
   grayscale() {
-    const imageData = this.ctx.getImageData(
-      0,
-      0,
-      this.SIDE_LENGTH,
-      this.SIDE_LENGTH,
-    );
+    const imageData = this.ctx.getImageData(0, 0, this.SIDE_LENGTH, this.SIDE_LENGTH);
     const { data } = imageData;
 
     for (let i = 0; i < data.length; i += 4) {
@@ -94,6 +79,10 @@ export default class Palette {
 
     this.ctx.putImageData(imageData, 0, 0);
     this.updateCanvasColors();
+  }
+
+  changeActiveTool(tool) {
+    this.activeTool = tool;
   }
 
   addHeaderListeners() {
@@ -234,11 +223,7 @@ export default class Palette {
 
     canvas.addEventListener('contextmenu', (ev) => ev.preventDefault());
 
-    canvas.addEventListener(
-      'mouseleave',
-      this.canvasComponent.updateCoordsInfo,
-      false,
-    );
+    canvas.addEventListener('mouseleave', this.canvasComponent.updateCoordsInfo, false);
 
     window.addEventListener('mouseup', () => {
       const { canvasComponent } = this;
@@ -251,24 +236,6 @@ export default class Palette {
     });
   }
 
-  addToolsListeners() {
-    const toolsContainer = document.querySelector('.tools-container');
-
-    toolsContainer.addEventListener(
-      'click',
-      ({ target: { classList, dataset } }) => {
-        if (
-          !classList.contains('canvas-tool')
-          || classList.contains('disabled')
-        ) {
-          return;
-        }
-
-        this.activeTool = dataset.name;
-        view.selectTool(dataset.name);
-      },
-    );
-  }
 
   addListeners() {
     this.addHeaderListeners();
@@ -278,7 +245,7 @@ export default class Palette {
     this.addToolsListeners();
   }
 
-  initialize() {
+  init() {
     view.init(this);
     this.canvasComponent.initCanvas();
     this.addListeners();
