@@ -9,7 +9,9 @@ const view = new View();
 
 export default class Palette {
   constructor(savedState = {}) {
-    this.canvasComponent = new CanvasComponent(savedState.canvasComponent || {});
+    this.canvasComponent = new CanvasComponent(
+      savedState.canvasComponent || {},
+    );
     this.activeTool = savedState.activeTool || 'draw';
     this.primColor = savedState.primColor || 'rgb(0,0,0)';
     this.secColor = savedState.secColor || 'rgba(0,0,0,0)';
@@ -178,86 +180,75 @@ export default class Palette {
   addCanvasListeners() {
     const canvas = document.querySelector('.main-canvas');
 
-    canvas.addEventListener(
-      'mousedown',
-      (ev) => {
-        const { canvasComponent } = this;
+    canvas.addEventListener('mousedown', (ev) => {
+      const { canvasComponent } = this;
 
-        this.mousePressed = true;
-        ev.preventDefault();
+      this.mousePressed = true;
+      ev.preventDefault();
 
-        if (this.activeTool === 'eyedropper') {
-          const color = canvasComponent.getColor();
-
-          switch (ev.button) {
-            case 0:
-              this.updateStateColors(color);
-              break;
-            default:
-              this.updateStateColors(false, color);
-          }
-
-          view.updateLastColors(this.primColor, this.secColor);
-
-          return;
-        }
+      if (this.activeTool === 'eyedropper') {
+        const color = canvasComponent.getColor();
 
         switch (ev.button) {
           case 0:
-            this.canvasComponent.activeColor = this.primColor;
+            this.updateStateColors(color);
             break;
           default:
-            this.canvasComponent.activeColor = this.secColor;
+            this.updateStateColors(false, color);
         }
 
+        view.updateLastColors(this.primColor, this.secColor);
 
+        return;
+      }
+
+      switch (ev.button) {
+        case 0:
+          this.canvasComponent.activeColor = this.primColor;
+          break;
+        default:
+          this.canvasComponent.activeColor = this.secColor;
+      }
+
+      this.canvasComponent[this.activeTool]();
+
+      canvasComponent.handleIndicesToDraw();
+    });
+
+    canvas.addEventListener('mousemove', (ev) => {
+      const { canvasComponent } = this;
+
+      if (canvasComponent.coordsIsChanged(ev.offsetX, ev.offsetY)) {
+        canvasComponent.updateCoordsInfo(ev);
+      } else return;
+
+      if (!this.mousePressed) return;
+
+      if (this.canvasComponent[this.activeTool]) {
+        canvasComponent.clearPointsToDraw();
         this.canvasComponent[this.activeTool]();
+      }
 
-        canvasComponent.setDirtyIndices();
-        canvasComponent.handleDirtyIndices(this.mousePressed);
-      },
-    );
-
-    canvas.addEventListener(
-      'mousemove',
-      (ev) => {
-        const { canvasComponent } = this;
-
-        if (canvasComponent.coordsIsChanged(ev.offsetX, ev.offsetY)) {
-          canvasComponent.updateCoordsInfo(ev);
-        } else return;
-
-        if (!this.mousePressed) return;
-
-        if (this.canvasComponent[this.activeTool]) {
-          canvasComponent.clearPointsToDraw();
-          this.canvasComponent[this.activeTool]();
-        }
-
-        canvasComponent.setDirtyIndices();
-      },
-    );
+      canvasComponent.handleIndicesToDraw();
+    });
 
     canvas.addEventListener('contextmenu', (ev) => ev.preventDefault());
 
-    canvas.addEventListener('mouseleave', this.canvasComponent.updateCoordsInfo, false);
-
-    window.addEventListener(
-      'mouseup',
-      () => {
-        const { canvasComponent } = this;
-
-        if (!this.mousePressed) return;
-        this.mousePressed = false;
-
-        if (canvasComponent.dirtyIndices.length !== 0) {
-          canvasComponent.handleDirtyIndices(this.mousePressed);
-        }
-
-        window.cancelAnimationFrame(canvasComponent.reqAnimId);
-        canvasComponent.clearPointsToDraw();
-      },
+    canvas.addEventListener(
+      'mouseleave',
+      this.canvasComponent.updateCoordsInfo,
+      false,
     );
+
+    window.addEventListener('mouseup', () => {
+      const { canvasComponent } = this;
+
+      if (!this.mousePressed) return;
+      this.mousePressed = false;
+
+      window.cancelAnimationFrame(canvasComponent.reqAnimId);
+      canvasComponent.clearPointsToDraw();
+    });
   }
 
   addToolsListeners() {
