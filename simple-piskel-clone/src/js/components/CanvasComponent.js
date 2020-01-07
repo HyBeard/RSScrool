@@ -1,66 +1,65 @@
 export default class CanvasComponent {
   constructor(savedCanvas = {}) {
-    this.SIDE_LENGTH = 512;
-    this.TRANSPARENT_COLOR = savedCanvas.TRANSPARENT_COLOR || 'rgba(0,0,0,0)';
-    this.sideCellCount = savedCanvas.sideCellCount || 16;
-    this.canvasData = savedCanvas.canvasData
-      || new Array(this.sideCellCount ** 2).fill(this.TRANSPARENT_COLOR);
-    this.activeColor = savedCanvas.activeColor || null;
+    this.state = {
+      SIDE_LENGTH: 512,
+      sideCellCount: savedCanvas.sideCellCount || 16,
 
+      get cellLength() {
+        return this.SIDE_LENGTH / this.sideCellCount;
+      },
+    };
+
+    this.TRANSPARENT_COLOR = 'rgba(0,0,0,0)';
+    this.activeColor = null;
     this.mouseFrom = { row: null, col: null };
     this.currentIndex = null;
     this.prevIndex = null;
-
     this.indicesToDraw = [];
     this.indicesColors = [];
     this.reqAnimId = null;
     this.ctx = document.querySelector('.main-canvas').getContext('2d');
+    this.state.canvasData = savedCanvas.canvasData || this.createEmptyCanvasData(); // FIXME:
   }
 
-  get cellLength() {
-    return this.SIDE_LENGTH / this.sideCellCount;
+  createEmptyCanvasData() {
+    return new Array(this.state.sideCellCount ** 2).fill(this.TRANSPARENT_COLOR);
   }
 
   indexToRowCol(idx) {
-    const row = Math.floor(idx / this.sideCellCount);
-    const col = idx % this.sideCellCount;
+    const row = Math.floor(idx / this.state.sideCellCount);
+    const col = idx % this.state.sideCellCount;
 
     return { row, col };
   }
 
   coordsToIndex(x, y) {
-    if (x < 0 || y < 0) return null;
-
     const { row, col } = this.coordsToRowCol(x, y);
 
-    return row * this.sideCellCount + col;
+    return row * this.state.sideCellCount + col;
   }
 
   coordsToRowCol(x, y) {
-    const col = Math.floor(x / this.cellLength);
-    const row = Math.floor(y / this.cellLength);
+    const col = Math.floor(x / this.state.cellLength);
+    const row = Math.floor(y / this.state.cellLength);
 
     return { row, col };
   }
 
   rowColToIndex(row, col) {
-    if (row < 0 || row >= this.sideCellCount || col < 0 || col >= this.sideCellCount) {
+    if (row < 0 || row >= this.state.sideCellCount || col < 0 || col >= this.state.sideCellCount) {
       return null;
     }
 
-    return row * this.sideCellCount + col;
+    return row * this.state.sideCellCount + col;
   }
 
-  coordsIsChanged(x, y) {
-    const idx = this.coordsToIndex(x, y);
-    if (this.currentIndex !== idx) {
-      this.prevIndex = this.currentIndex;
-      this.currentIndex = idx;
+  currentIndexIsChanged(idx) {
+    return this.currentIndex !== idx;
+  }
 
-      return true;
-    }
-
-    return false;
+  setNewCurrentIndex(idx) {
+    this.prevIndex = this.currentIndex;
+    this.currentIndex = idx;
   }
 
   indicesAreMissed() {
@@ -81,10 +80,10 @@ export default class CanvasComponent {
   paintCell(idx, color) {
     const { row, col } = this.indexToRowCol(idx);
     const argsToCanvasDrawing = [
-      col * this.cellLength,
-      row * this.cellLength,
-      this.cellLength,
-      this.cellLength,
+      col * this.state.cellLength,
+      row * this.state.cellLength,
+      this.state.cellLength,
+      this.state.cellLength,
     ];
 
     this.ctx.fillStyle = color;
@@ -93,11 +92,11 @@ export default class CanvasComponent {
   }
 
   setUniqueColorIndicesInCanvasData(idx, newColor) {
-    const cellColor = this.canvasData[idx];
+    const cellColor = this.state.canvasData[idx];
 
     if (cellColor === newColor || idx === null) return;
 
-    this.canvasData[idx] = newColor;
+    this.state.canvasData[idx] = newColor;
   }
 
   handleIndicesToDraw() {
@@ -110,30 +109,15 @@ export default class CanvasComponent {
   }
 
   fullCanvasRedraw() {
-    this.canvasData.forEach((color, idx) => {
+    this.state.canvasData.forEach((color, idx) => {
       this.paintCell(idx, color);
     });
   }
 
-  updateCoordsInfo(ev) {
-    const coordsBox = document.getElementsByClassName('target-coords')[0];
-
-    if (ev.type === 'mouseleave') {
-      this.currentIndex = null;
-      coordsBox.innerText = '';
-
-      return;
-    }
-
-    const { row, col } = this.coordsToRowCol(ev.offsetX, ev.offsetY);
-
-    coordsBox.innerText = `${row}:${col}`;
-  }
-
   changeCanvasSize(side) {
     const emptyCanvasData = new Array(side ** 2).fill(this.TRANSPARENT_COLOR);
-    const rowCountDiff = this.sideCellCount - side;
-    const canvasDataCopy = [...this.canvasData];
+    const rowCountDiff = this.state.sideCellCount - side;
+    const canvasDataCopy = [...this.state.canvasData];
 
     const newCanvasData = emptyCanvasData.map((_, idx) => {
       const row = Math.floor(idx / side);
@@ -145,23 +129,23 @@ export default class CanvasComponent {
       );
     });
 
-    this.canvasData = newCanvasData;
+    this.state.canvasData = newCanvasData;
 
-    this.sideCellCount = Number(side);
+    this.state.sideCellCount = Number(side);
     this.fullCanvasRedraw();
   }
 
   insertImage(image) {
     const { width, height } = image;
+    const {
+      ctx,
+      state: { sideCellCount, SIDE_LENGTH, cellLength },
+    } = this;
     const aspectRatio = width > height ? width / height : height / width;
-    const scaledWidth = Math.round(
-      width > height ? this.sideCellCount : this.sideCellCount / aspectRatio,
-    );
-    const scaledHeight = Math.round(
-      height > width ? this.sideCellCount : this.sideCellCount / aspectRatio,
-    );
-    const finalWidth = width > height ? this.SIDE_LENGTH : scaledWidth * this.cellLength;
-    const finalHeight = height > width ? this.SIDE_LENGTH : scaledHeight * this.cellLength;
+    const scaledWidth = Math.round(width > height ? sideCellCount : sideCellCount / aspectRatio);
+    const scaledHeight = Math.round(height > width ? sideCellCount : sideCellCount / aspectRatio);
+    const finalWidth = width > height ? SIDE_LENGTH : scaledWidth * cellLength;
+    const finalHeight = height > width ? SIDE_LENGTH : scaledHeight * cellLength;
 
     const tempCanvas = document.createElement('canvas');
     tempCanvas.width = scaledWidth;
@@ -170,11 +154,11 @@ export default class CanvasComponent {
 
     tempCtx.drawImage(image, 0, 0, tempCanvas.width, tempCanvas.height);
 
-    this.ctx.imageSmoothingEnabled = false;
-    this.ctx.drawImage(
+    ctx.imageSmoothingEnabled = false;
+    ctx.drawImage(
       tempCanvas,
-      Math.round((this.sideCellCount - scaledWidth) / 2) * this.cellLength,
-      Math.round((this.sideCellCount - scaledHeight) / 2) * this.cellLength,
+      Math.round((sideCellCount - scaledWidth) / 2) * cellLength,
+      Math.round((sideCellCount - scaledHeight) / 2) * cellLength,
       finalWidth,
       finalHeight,
     );
@@ -183,20 +167,23 @@ export default class CanvasComponent {
   }
 
   updateCanvasColors() {
-    const dataImage = this.ctx.getImageData(0, 0, this.SIDE_LENGTH, this.SIDE_LENGTH).data;
+    const dataImage = this.ctx.getImageData(0, 0, this.state.SIDE_LENGTH, this.state.SIDE_LENGTH)
+      .data;
 
-    const newCanvasData = this.canvasData.map((color, idx) => {
+    const newCanvasData = this.state.canvasData.map((color, idx) => {
       const colorIndices = this.getColorIndicesForCoords(idx);
       return CanvasComponent.imageDataToRgba(dataImage, colorIndices);
     });
 
-    this.canvasData = newCanvasData;
+    this.state.canvasData = newCanvasData;
   }
 
   getColorIndicesForCoords(idx) {
-    const red = (Math.floor(idx / this.sideCellCount) * this.sideCellCount * this.cellLength
-        + (idx % this.sideCellCount))
-      * this.cellLength
+    const red = (Math.floor(idx / this.state.sideCellCount)
+        * this.state.sideCellCount
+        * this.state.cellLength
+        + (idx % this.state.sideCellCount))
+      * this.state.cellLength
       * 4;
 
     return [red, red + 1, red + 2, red + 3];
@@ -208,7 +195,7 @@ export default class CanvasComponent {
   }
 
   grayscale() {
-    const imageData = this.ctx.getImageData(0, 0, this.SIDE_LENGTH, this.SIDE_LENGTH);
+    const imageData = this.ctx.getImageData(0, 0, this.state.SIDE_LENGTH, this.state.SIDE_LENGTH);
     const { data } = imageData;
 
     for (let i = 0; i < data.length; i += 4) {
@@ -265,9 +252,9 @@ export default class CanvasComponent {
   paintBucket() {
     const cellsStack = [this.currentIndex];
     const colouredCells = [];
-    const startColor = this.canvasData[this.currentIndex];
+    const startColor = this.state.canvasData[this.currentIndex];
 
-    const matchStartColor = (cellIdx) => this.canvasData[cellIdx] === startColor;
+    const matchStartColor = (cellIdx) => this.state.canvasData[cellIdx] === startColor;
 
     while (cellsStack.length) {
       let checkedIdx = cellsStack.pop();
@@ -275,9 +262,9 @@ export default class CanvasComponent {
       let reachRight = false;
 
       while (checkedIdx >= 0 && matchStartColor(checkedIdx)) {
-        checkedIdx -= this.sideCellCount;
+        checkedIdx -= this.state.sideCellCount;
       }
-      checkedIdx += this.sideCellCount;
+      checkedIdx += this.state.sideCellCount;
 
       while (matchStartColor(checkedIdx)) {
         const { row } = this.indexToRowCol(checkedIdx);
@@ -314,13 +301,13 @@ export default class CanvasComponent {
           reachLeft = false;
         }
 
-        checkedIdx += this.sideCellCount;
+        checkedIdx += this.state.sideCellCount;
       }
     }
   }
 
   getColor() {
-    return this.canvasData[this.currentIndex];
+    return this.state.canvasData[this.currentIndex];
   }
 
   eraser() {
@@ -332,9 +319,9 @@ export default class CanvasComponent {
   }
 
   paintAll() {
-    const targetColor = this.canvasData[this.currentIndex];
+    const targetColor = this.state.canvasData[this.currentIndex];
 
-    this.canvasData.forEach((color, index) => {
+    this.state.canvasData.forEach((color, index) => {
       if (color !== targetColor) return;
 
       this.indicesToDraw.push(index);
@@ -345,7 +332,7 @@ export default class CanvasComponent {
     this.draw();
     this.indicesToDraw.forEach((index) => {
       const { row, col } = this.indexToRowCol(index);
-      const mirrorIdx = this.rowColToIndex(row, this.sideCellCount - col - 1);
+      const mirrorIdx = this.rowColToIndex(row, this.state.sideCellCount - col - 1);
 
       this.indicesToDraw.push(mirrorIdx);
     });
@@ -371,7 +358,7 @@ export default class CanvasComponent {
     });
   }
 
-  initCanvas() {
+  init() {
     this.fullCanvasRedraw();
   }
 }

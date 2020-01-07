@@ -1,6 +1,6 @@
 import CanvasComponent from './CanvasComponent';
 import View from './View';
-import keyboardShortcuts from '../shortcuts/keyboardShortcuts';
+import keyboardShortcuts from '../data/keyboardShortcuts';
 import APILoader from './APILoader';
 import 'babel-polyfill';
 
@@ -8,11 +8,12 @@ const apiLoader = new APILoader();
 const view = new View();
 
 export default class Model {
-  constructor(savedState = {}) {
-    this.canvasComponent = new CanvasComponent(savedState.canvasComponent || {});
+  constructor(savedState) {
+    this.canvasComponent = new CanvasComponent(/* savedState.canvasComponent || */ {});
     this.activeTool = savedState.activeTool || 'draw';
     this.primColor = savedState.primColor || 'rgb(0,0,0)';
     this.secColor = savedState.secColor || 'rgba(0,0,0,0)';
+    this.activeColor = null;
 
     this.mousePressed = false;
   }
@@ -55,8 +56,7 @@ export default class Model {
   }
 
   static getColorIndicesForCoords(idx, pixelSize, cellCount) {
-    const red = (Math.floor(idx / cellCount)
-      * cellCount * pixelSize + (idx % cellCount)) * pixelSize * 4;
+    const red = (Math.floor(idx / cellCount) * cellCount * pixelSize + (idx % cellCount)) * pixelSize * 4;
 
     return [red, red + 1, red + 2, red + 3];
   }
@@ -166,88 +166,59 @@ export default class Model {
     });
   }
 
-  addCanvasListeners() {
-    const canvas = document.querySelector('.main-canvas');
+  startDrawing(mouseBtnCode) {
+    const LEFT_MOUSE_BUTTON_CODE = 0;
+    const {
+      canvasComponent, activeTool, primColor, secColor,
+    } = this;
 
-    canvas.addEventListener('mousedown', (ev) => {
-      const { canvasComponent } = this;
+    switch (mouseBtnCode) {
+      case LEFT_MOUSE_BUTTON_CODE:
+        this.canvasComponent.activeColor = primColor;
+        break;
+      default:
+        this.canvasComponent.activeColor = secColor;
+    }
 
-      this.mousePressed = true;
-      ev.preventDefault();
-
-      if (this.activeTool === 'eyedropper') {
-        const color = canvasComponent.getColor();
-
-        switch (ev.button) {
-          case 0:
-            this.updateStateColors(color);
-            break;
-          default:
-            this.updateStateColors(false, color);
-        }
-
-        view.updateLastColors(this.primColor, this.secColor);
-
-        return;
-      }
-
-      switch (ev.button) {
-        case 0:
-          this.canvasComponent.activeColor = this.primColor;
-          break;
-        default:
-          this.canvasComponent.activeColor = this.secColor;
-      }
-
-      this.canvasComponent[this.activeTool]();
-
-      canvasComponent.handleIndicesToDraw();
-    });
-
-    canvas.addEventListener('mousemove', (ev) => {
-      const { canvasComponent } = this;
-
-      if (canvasComponent.coordsIsChanged(ev.offsetX, ev.offsetY)) {
-        canvasComponent.updateCoordsInfo(ev);
-      } else return;
-
-      if (!this.mousePressed) return;
-
-      if (this.canvasComponent[this.activeTool]) {
-        canvasComponent.clearPointsToDraw();
-        this.canvasComponent[this.activeTool]();
-      }
-
-      canvasComponent.handleIndicesToDraw();
-    });
-
-    canvas.addEventListener('contextmenu', (ev) => ev.preventDefault());
-
-    canvas.addEventListener('mouseleave', this.canvasComponent.updateCoordsInfo, false);
-
-    window.addEventListener('mouseup', () => {
-      const { canvasComponent } = this;
-
-      if (!this.mousePressed) return;
-      this.mousePressed = false;
-
-      window.cancelAnimationFrame(canvasComponent.reqAnimId);
-      canvasComponent.clearPointsToDraw();
-    });
+    canvasComponent[activeTool]();
+    canvasComponent.handleIndicesToDraw();
   }
 
+  updateCurrentIndexIfChanged(x, y) {
+    const { canvasComponent } = this;
+    const idx = canvasComponent.coordsToIndex(x, y);
+
+    if (canvasComponent.currentIndexIsChanged(idx)) {
+      canvasComponent.setNewCurrentIndex(idx);
+
+      return true;
+    }
+
+    return false;
+  }
+
+  drawNextIndices() {
+    const { canvasComponent } = this;
+
+    canvasComponent.clearPointsToDraw();
+    canvasComponent[this.activeTool]();
+    canvasComponent.handleIndicesToDraw();
+  }
+
+  endDrawing() {
+    const { canvasComponent } = this;
+
+    canvasComponent.clearPointsToDraw();
+  }
 
   addListeners() {
     this.addHeaderListeners();
     this.addShortcutsListeners();
     this.addPaletteListeners();
-    this.addCanvasListeners();
-    this.addToolsListeners();
   }
 
   init() {
-    view.init(this);
-    this.canvasComponent.initCanvas();
+    this.canvasComponent.init();
     this.addListeners();
   }
 }
