@@ -45,6 +45,19 @@ export default class Controller extends EventEmitter {
     view.updateLastColors(primColor, secColor);
   }
 
+  addShortcutsListeners() {
+    // FIXME:
+    document.addEventListener('keydown', ({ code }) => {
+      if (!Object.prototype.hasOwnProperty.call(this.model.keyboardShortcuts, code)) {
+        return;
+      }
+
+      this.model.activeTool = this.model.keyboardShortcuts[code];
+
+      this.view.selectTool(this.model.activeTool);
+    });
+  }
+
   addEventsToEmitter() {
     const {
       view,
@@ -70,10 +83,10 @@ export default class Controller extends EventEmitter {
 
   init() {
     const { model, view } = this;
-    const appState = model.getAppState();
 
-    view.init(appState);
+    view.init(model.appState);
     model.init();
     this.addEventsToEmitter();
+    this.addShortcutsListeners();
   }
 }

@@ -1,11 +1,9 @@
 import CanvasComponent from './CanvasComponent';
-import View from './View';
 import keyboardShortcuts from '../data/keyboardShortcuts';
 import APILoader from './APILoader';
 import 'babel-polyfill';
 
 const apiLoader = new APILoader();
-const view = new View();
 
 export default class Model {
   constructor(savedState) {
@@ -13,23 +11,21 @@ export default class Model {
     this.activeTool = savedState.activeTool || 'draw';
     this.primColor = savedState.primColor || 'rgb(0,0,0)';
     this.secColor = savedState.secColor || 'rgba(0,0,0,0)';
-    this.activeColor = null;
-
-    this.mousePressed = false;
+    this.keyboardShortcuts = keyboardShortcuts;
   }
 
-  getAppState() {
+  get appState() {
     return {
+      canvasState: this.canvasComponent.state,
       activeTool: this.activeTool,
       primColor: this.primColor,
       secColor: this.secColor,
-      canvasState: this.canvasComponent.state,
+      keyboardShortcuts: this.keyboardShortcuts,
     };
   }
 
   saveState() {
-    const appState = this.getAppState();
-    localStorage.setItem('piskelState', JSON.stringify(appState));
+    localStorage.setItem('piskelState', JSON.stringify(this.appState));
   }
 
   static clearState() {
@@ -63,18 +59,6 @@ export default class Model {
 
   changeActiveTool(toolName) {
     this.activeTool = toolName;
-  }
-
-  addShortcutsListeners() {
-    document.addEventListener('keydown', ({ code }) => {
-      if (!Object.prototype.hasOwnProperty.call(keyboardShortcuts, code)) {
-        return;
-      }
-
-      this.activeTool = keyboardShortcuts[code];
-
-      view.selectTool(this.activeTool);
-    });
   }
 
   startDrawing(mouseBtnCode) {
@@ -122,13 +106,8 @@ export default class Model {
     canvasComponent.clearPointsToDraw();
   }
 
-  addListeners() {
-    this.addShortcutsListeners();
-  }
-
   init() {
     this.canvasComponent.init();
-    this.addListeners();
   }
 
   async uploadImage(query) {
