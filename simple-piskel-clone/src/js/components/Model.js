@@ -1,6 +1,7 @@
 import CanvasComponent from './CanvasComponent';
-import keyboardShortcuts from '../data/keyboardShortcuts';
 import APILoader from './APILoader';
+import FramesComponent from './FramesComponent';
+import keyboardShortcuts from '../data/keyboardShortcuts';
 import 'babel-polyfill';
 
 const apiLoader = new APILoader();
@@ -8,9 +9,11 @@ const apiLoader = new APILoader();
 export default class Model {
   constructor(savedState) {
     this.canvasComponent = new CanvasComponent(savedState.canvasState || {});
+    this.framesComponent = new FramesComponent(savedState.framesState || {});
     this.activeTool = savedState.activeTool || 'draw';
     this.primColor = savedState.primColor || 'rgb(0,0,0)';
     this.secColor = savedState.secColor || 'rgba(0,0,0,0)';
+    // this.fpsValue = savedState.fpsValue;
     this.keyboardShortcuts = keyboardShortcuts;
   }
 
@@ -61,6 +64,41 @@ export default class Model {
     this.activeTool = toolName;
   }
 
+  // addFramesListeners() {
+  //   this.framesListColumn.addEventListener('click', ({ target }) => {
+  //     if (!target.closest('.frame-preview') && !target.closest('.add-frame')) return;
+
+  //     const clickedFrame = target.closest('.frame-preview');
+  //     const framesCollection = document.getElementsByClassName('frame-preview');
+  //     const clickedFrameNumber = Array.prototype.indexOf.call(framesCollection, clickedFrame);
+
+  //     if (target.classList.contains('add-frame')) {
+  //       state.framesListData.addFrameData(
+  //         state.general.sideCellCount,
+  //         state.layersListData.listOfLayers.length,
+  //       );
+  //       view.addFrame();
+  //     } else if (target.classList.contains('delete-frame')) {
+  //       state.framesListData.deleteFrame(clickedFrameNumber);
+  //       view.deleteFrame(clickedFrame);
+  //     } else if (target.classList.contains('duplicate-frame')) {
+  //       const newFrameNum = clickedFrameNumber + 1;
+
+  //       view.duplicateFrame(clickedFrame);
+  //       state.framesListData.duplicateFrame(clickedFrameNumber);
+  //       drawingToolHandler.redrawFramePreview(view.currentFramePreview, newFrameNum);
+  //     } else if (target.classList.contains('toggle-frame')) {
+  //       state.framesListData.toggleFrame(clickedFrameNumber);
+  //       View.toggleFrame(clickedFrame);
+  //     } else if (target.parentNode.classList.contains('frame-preview')) {
+  //       view.selectFrame(clickedFrame);
+  //       state.framesListData.changeCurrentFrameNumber(clickedFrameNumber);
+  //     }
+
+  //     drawingToolHandler.changeMainCanvas();
+  //   });
+  // }
+
   startDrawing(mouseBtnCode) {
     const LEFT_MOUSE_BUTTON_CODE = 0;
     const {
@@ -107,7 +145,16 @@ export default class Model {
   }
 
   init() {
-    this.canvasComponent.init();
+    const {
+      canvasComponent,
+      framesComponent,
+      canvasComponent: {
+        state: { sideCellCount },
+      },
+    } = this;
+
+    canvasComponent.init();
+    framesComponent.addFrameData(sideCellCount);
   }
 
   async uploadImage(query) {

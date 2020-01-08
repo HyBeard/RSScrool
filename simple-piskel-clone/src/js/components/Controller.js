@@ -45,6 +45,58 @@ export default class Controller extends EventEmitter {
     view.updateLastColors(primColor, secColor);
   }
 
+  handleFrameAdding() {
+    const {
+      framesComponent,
+      canvasComponent: {
+        state: { sideCellCount },
+      },
+    } = this.model;
+
+    framesComponent.addFrameData(sideCellCount);
+    this.view.addFrame();
+  }
+
+  handleFrameDeleting(frameNum) {
+    const {
+      model: { framesComponent },
+      view,
+    } = this;
+
+    framesComponent.deleteFrame(frameNum);
+    view.deleteFrame(frameNum);
+  }
+
+  handleFrameCloning(frameNum) {
+    const {
+      model: { framesComponent },
+      view,
+    } = this;
+
+    framesComponent.duplicateFrame(frameNum);
+    view.duplicateFrame(frameNum);
+  }
+
+  handleFrameToggling(frameNum) {
+    const {
+      model: { framesComponent },
+    } = this;
+
+    framesComponent.toggleFrame(frameNum);
+    View.toggleFrame(frameNum);
+  }
+
+  handleFrameSelecting(frameNum) {
+    const {
+      model: { framesComponent },
+      view,
+    } = this;
+
+    framesComponent.changeCurrentFrameNumber(frameNum);
+    view.selectFrame(frameNum);
+  }
+
+
   addShortcutsListeners() {
     // FIXME:
     document.addEventListener('keydown', ({ code }) => {
@@ -67,25 +119,32 @@ export default class Controller extends EventEmitter {
 
     view.on('saveState', model.saveState.bind(model));
     view.on('clearState', Model.clearState.bind(model));
-    view.on('uploadImage', model.uploadImage.bind(model));
-    view.on('grayscaleCanvas', canvasComponent.grayscale.bind(canvasComponent));
-    view.on('changeCanvasSize', this.handleCanvasSizeChanging.bind(this));
-    view.on('drawingEnded', model.endDrawing.bind(model));
+
+    view.on('addFrame', this.handleFrameAdding.bind(this));
+    view.on('selectFrame', this.handleFrameSelecting.bind(this));
+    view.on('deleteFrame', this.handleFrameDeleting.bind(this));
+    view.on('cloneFrame', this.handleFrameCloning.bind(this));
+    view.on('toggleFrame', this.handleFrameToggling.bind(this));
 
     view.on('toolChanged', this.handleToolChanging.bind(this));
+    view.on('pickNewColor', this.handleColorChange.bind(this));
+    view.on('swapColors', this.handleColorChange.bind(this));
+
     view.on('drawingStarted', model.startDrawing.bind(model));
     view.on('cursorPositionChanged', this.handleCoordsChanging.bind(this));
     view.on('continueDrawing', model.drawNextIndices.bind(model));
+    view.on('drawingEnded', model.endDrawing.bind(model));
 
-    view.on('pickNewColor', this.handleColorChange.bind(this));
-    view.on('swapColors', this.handleColorChange.bind(this));
+    view.on('changeCanvasSize', this.handleCanvasSizeChanging.bind(this));
+    view.on('uploadImage', model.uploadImage.bind(model));
+    view.on('grayscaleCanvas', canvasComponent.grayscale.bind(canvasComponent));
   }
 
   init() {
     const { model, view } = this;
 
-    view.init(model.appState);
     model.init();
+    view.init(model.appState);
     this.addEventsToEmitter();
     this.addShortcutsListeners();
   }
