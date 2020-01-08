@@ -54,22 +54,27 @@ export default class Controller extends EventEmitter {
   handleFrameAdding() {
     const {
       framesComponent,
+      canvasComponent,
       canvasComponent: {
         state: { sideCellCount },
       },
     } = this.model;
 
     framesComponent.addFrameData(sideCellCount);
+    canvasComponent.canvasData = framesComponent.currentFrameData;
+    canvasComponent.fullCanvasRedraw();
     this.view.addFrame();
   }
 
   handleFrameDeleting(frameNum) {
     const {
-      model: { framesComponent },
+      model: { framesComponent, canvasComponent },
       view,
     } = this;
 
     framesComponent.deleteFrame(frameNum);
+    canvasComponent.canvasData = framesComponent.currentFrameData;
+    canvasComponent.fullCanvasRedraw();
     view.deleteFrame(frameNum);
   }
 
@@ -94,11 +99,13 @@ export default class Controller extends EventEmitter {
 
   handleFrameSelecting(frameNum) {
     const {
-      model: { framesComponent },
+      model: { framesComponent, canvasComponent },
       view,
     } = this;
 
     framesComponent.changeCurrentFrameNumber(frameNum);
+    canvasComponent.canvasData = framesComponent.currentFrameData;
+    canvasComponent.fullCanvasRedraw();
     view.selectFrame(frameNum);
   }
 
@@ -116,11 +123,7 @@ export default class Controller extends EventEmitter {
   }
 
   addEventsToEmitter() {
-    const {
-      view,
-      model,
-      model: { canvasComponent },
-    } = this;
+    const { view, model } = this;
 
     view.on('saveState', model.saveState.bind(model));
     view.on('clearState', Model.clearState.bind(model));
@@ -142,7 +145,7 @@ export default class Controller extends EventEmitter {
 
     view.on('changeCanvasSize', this.handleCanvasSizeChanging.bind(this));
     view.on('uploadImage', model.uploadImage.bind(model));
-    view.on('grayscaleCanvas', model.grayscale.bind(canvasComponent));
+    view.on('grayscaleCanvas', model.grayscale.bind(model));
   }
 
   init() {
