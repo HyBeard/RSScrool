@@ -32,8 +32,25 @@ export default class Controller extends EventEmitter {
     this.view.updateCanvasSizeInfo(size);
   }
 
+  handleColorChange(color, mouseBtnCode) {
+    const { view, model } = this;
+    if (color) {
+      model.pickColor(color, mouseBtnCode);
+    } else {
+      model.swapColors();
+    }
+
+    const { primColor, secColor } = model;
+
+    view.updateLastColors(primColor, secColor);
+  }
+
   addEventsToEmitter() {
-    const { view, model, model: { canvasComponent } } = this;
+    const {
+      view,
+      model,
+      model: { canvasComponent },
+    } = this;
 
     view.on('saveState', model.saveState.bind(model));
     view.on('clearState', Model.clearState.bind(model));
@@ -46,6 +63,9 @@ export default class Controller extends EventEmitter {
     view.on('drawingStarted', model.startDrawing.bind(model));
     view.on('cursorPositionChanged', this.handleCoordsChanging.bind(this));
     view.on('continueDrawing', model.drawNextIndices.bind(model));
+
+    view.on('pickNewColor', this.handleColorChange.bind(this));
+    view.on('swapColors', this.handleColorChange.bind(this));
   }
 
   init() {

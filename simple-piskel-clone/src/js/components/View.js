@@ -9,7 +9,7 @@ export default class View extends EventEmitter {
     this.ImageQueryInput = document.querySelector('.image-query');
     this.canvas = document.querySelector('.main-canvas');
     this.toolsContainer = document.querySelector('.tools-container');
-    this.palette = document.querySelector('.palette');
+    this.palette = document.querySelector('.palette-container');
     this.primColorElem = document.querySelector('.primary-color');
     this.secColorElem = document.querySelector('.secondary-color');
     this.sizeInfoContainer = document.querySelector('.canvas-size-info');
@@ -141,15 +141,41 @@ export default class View extends EventEmitter {
     });
   }
 
+  addPaletteListeners() {
+    this.palette.addEventListener(
+      'mousedown',
+      ({ target: { classList, style }, button: mouseBtnCode }) => {
+        if (classList.contains('palette-item')) {
+          const color = style.backgroundColor;
+          this.emit('pickNewColor', color, mouseBtnCode);
+
+          return;
+        }
+
+        if (classList.contains('swap-colors')) {
+          this.emit('swapColors');
+        }
+      },
+    );
+
+    this.palette.addEventListener('contextmenu', (ev) => {
+      ev.preventDefault();
+    });
+  }
+
   addListeners() {
-    this.addCanvasListeners();
-    this.addToolsListeners();
     this.addHeaderListeners();
+    this.addToolsListeners();
+    this.addPaletteListeners();
+    this.addCanvasListeners();
   }
 
   init(AppState) {
     const {
-      activeTool, primColor, secColor, canvasState: { sideCellCount },
+      activeTool,
+      primColor,
+      secColor,
+      canvasState: { sideCellCount },
     } = AppState;
 
     View.updateDisplayedValues(sideCellCount);

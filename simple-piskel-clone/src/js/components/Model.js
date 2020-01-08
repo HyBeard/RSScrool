@@ -36,6 +36,22 @@ export default class Model {
     localStorage.removeItem('piskelState');
   }
 
+  pickColor(color, mouseBtnCode) {
+    const LEFT_MOUSE_BUTTON_CODE = 0;
+
+    switch (mouseBtnCode) {
+      case LEFT_MOUSE_BUTTON_CODE:
+        this.primColor = color;
+        break;
+      default:
+        this.secColor = color;
+    }
+  }
+
+  swapColors() {
+    [this.primColor, this.secColor] = [this.secColor, this.primColor];
+  }
+
   updateStateColors(prim, sec) {
     if (prim) {
       this.primColor = prim;
@@ -58,34 +74,6 @@ export default class Model {
       this.activeTool = keyboardShortcuts[code];
 
       view.selectTool(this.activeTool);
-    });
-  }
-
-  addPaletteListeners() {
-    const palette = document.querySelector('.palette-container');
-
-    palette.addEventListener('mousedown', (ev) => {
-      const { classList, style } = ev.target;
-
-      if (classList.contains('palette-item')) {
-        const color = style.backgroundColor;
-
-        switch (ev.button) {
-          case 0:
-            this.updateStateColors(color);
-            break;
-          default:
-            this.updateStateColors(false, color);
-        }
-      } else if (classList.contains('swap-colors')) {
-        this.updateStateColors(this.secColor, this.primColor);
-      } else return;
-
-      view.updateLastColors(this.primColor, this.secColor);
-    });
-
-    palette.addEventListener('contextmenu', (ev) => {
-      ev.preventDefault();
     });
   }
 
@@ -135,9 +123,7 @@ export default class Model {
   }
 
   addListeners() {
-    // this.addHeaderListeners();
     this.addShortcutsListeners();
-    this.addPaletteListeners();
   }
 
   init() {
