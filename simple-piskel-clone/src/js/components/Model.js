@@ -20,6 +20,10 @@ export default class Model {
   get appState() {
     return {
       canvasState: this.canvasComponent.state,
+      framesState: {
+        listOfFrames: this.framesComponent.listOfFrames,
+        currentFrameNumb: this.framesComponent.currentFrameNumb,
+      },
       activeTool: this.activeTool,
       primColor: this.primColor,
       secColor: this.secColor,
@@ -64,41 +68,6 @@ export default class Model {
     this.activeTool = toolName;
   }
 
-  // addFramesListeners() {
-  //   this.framesListColumn.addEventListener('click', ({ target }) => {
-  //     if (!target.closest('.frame-preview') && !target.closest('.add-frame')) return;
-
-  //     const clickedFrame = target.closest('.frame-preview');
-  //     const framesCollection = document.getElementsByClassName('frame-preview');
-  //     const clickedFrameNumber = Array.prototype.indexOf.call(framesCollection, clickedFrame);
-
-  //     if (target.classList.contains('add-frame')) {
-  //       state.framesListData.addFrameData(
-  //         state.general.sideCellCount,
-  //         state.layersListData.listOfLayers.length,
-  //       );
-  //       view.addFrame();
-  //     } else if (target.classList.contains('delete-frame')) {
-  //       state.framesListData.deleteFrame(clickedFrameNumber);
-  //       view.deleteFrame(clickedFrame);
-  //     } else if (target.classList.contains('duplicate-frame')) {
-  //       const newFrameNum = clickedFrameNumber + 1;
-
-  //       view.duplicateFrame(clickedFrame);
-  //       state.framesListData.duplicateFrame(clickedFrameNumber);
-  //       drawingToolHandler.redrawFramePreview(view.currentFramePreview, newFrameNum);
-  //     } else if (target.classList.contains('toggle-frame')) {
-  //       state.framesListData.toggleFrame(clickedFrameNumber);
-  //       View.toggleFrame(clickedFrame);
-  //     } else if (target.parentNode.classList.contains('frame-preview')) {
-  //       view.selectFrame(clickedFrame);
-  //       state.framesListData.changeCurrentFrameNumber(clickedFrameNumber);
-  //     }
-
-  //     drawingToolHandler.changeMainCanvas();
-  //   });
-  // }
-
   startDrawing(mouseBtnCode) {
     const LEFT_MOUSE_BUTTON_CODE = 0;
     const {
@@ -139,30 +108,43 @@ export default class Model {
   }
 
   endDrawing() {
-    const { canvasComponent } = this;
+    const { canvasComponent, framesComponent } = this;
+    const updatedCurrentFrameData = canvasComponent.canvasData;
 
     canvasComponent.clearPointsToDraw();
+    framesComponent.currentFrameData = updatedCurrentFrameData;
   }
 
   init() {
     const {
-      canvasComponent,
       framesComponent,
+      canvasComponent,
       canvasComponent: {
         state: { sideCellCount },
       },
     } = this;
 
-    canvasComponent.init();
-    framesComponent.addFrameData(sideCellCount);
+    framesComponent.init(sideCellCount);
+    canvasComponent.init(framesComponent.currentFrameData);
   }
 
   async uploadImage(query) {
+    const { canvasComponent, framesComponent } = this;
     const imgUrl = await apiLoader.getImgUrl(query);
     const image = new Image();
 
     image.crossOrigin = 'Anonymous';
-    image.onload = () => this.canvasComponent.insertImage(image);
+    image.onload = () => {
+      canvasComponent.insertImage(image);
+      framesComponent.currentFrameData = canvasComponent.canvasData;
+    };
     image.src = imgUrl;
+  }
+
+  grayscale() {
+    const { canvasComponent, framesComponent } = this;
+
+    canvasComponent.grayscale();
+    framesComponent.currentFrameData = canvasComponent.canvasData;
   }
 }

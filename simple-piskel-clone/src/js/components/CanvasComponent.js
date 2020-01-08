@@ -18,11 +18,14 @@ export default class CanvasComponent {
     this.indicesColors = [];
     this.reqAnimId = null;
     this.ctx = document.querySelector('.main-canvas').getContext('2d');
-    this.state.canvasData = savedCanvasState.canvasData || this.createEmptyCanvasData(); // FIXME:
   }
 
-  createEmptyCanvasData() {
-    return new Array(this.state.sideCellCount ** 2).fill(this.TRANSPARENT_COLOR);
+  get canvasData() {
+    return this.state.canvasData;
+  }
+
+  set canvasData(newData) {
+    this.state.canvasData = [...newData];
   }
 
   indexToRowCol(idx) {
@@ -284,7 +287,8 @@ export default class CanvasComponent {
     });
   }
 
-  init() {
+  init(currentFrameCanvasData) {
+    this.canvasData = currentFrameCanvasData;
     this.fullCanvasRedraw();
   }
 

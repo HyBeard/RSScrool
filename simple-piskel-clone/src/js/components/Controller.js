@@ -28,8 +28,14 @@ export default class Controller extends EventEmitter {
   }
 
   handleCanvasSizeChanging(size) {
-    this.model.canvasComponent.changeCanvasSize(size);
-    this.view.updateCanvasSizeInfo(size);
+    const {
+      view,
+      model: { canvasComponent, framesComponent },
+    } = this;
+
+    canvasComponent.changeCanvasSize(size);
+    framesComponent.currentFrameData = canvasComponent.canvasData;
+    view.updateCanvasSizeInfo(size);
   }
 
   handleColorChange(color, mouseBtnCode) {
@@ -96,7 +102,6 @@ export default class Controller extends EventEmitter {
     view.selectFrame(frameNum);
   }
 
-
   addShortcutsListeners() {
     // FIXME:
     document.addEventListener('keydown', ({ code }) => {
@@ -137,7 +142,7 @@ export default class Controller extends EventEmitter {
 
     view.on('changeCanvasSize', this.handleCanvasSizeChanging.bind(this));
     view.on('uploadImage', model.uploadImage.bind(model));
-    view.on('grayscaleCanvas', canvasComponent.grayscale.bind(canvasComponent));
+    view.on('grayscaleCanvas', model.grayscale.bind(canvasComponent));
   }
 
   init() {
