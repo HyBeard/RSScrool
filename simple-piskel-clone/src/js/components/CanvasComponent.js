@@ -1,8 +1,8 @@
 export default class CanvasComponent {
-  constructor(savedCanvas = {}) {
+  constructor(savedCanvasState = {}) {
     this.state = {
       SIDE_LENGTH: 512,
-      sideCellCount: savedCanvas.sideCellCount || 16,
+      sideCellCount: savedCanvasState.sideCellCount || 16,
 
       get cellLength() {
         return this.SIDE_LENGTH / this.sideCellCount;
@@ -18,7 +18,7 @@ export default class CanvasComponent {
     this.indicesColors = [];
     this.reqAnimId = null;
     this.ctx = document.querySelector('.main-canvas').getContext('2d');
-    this.state.canvasData = savedCanvas.canvasData || this.createEmptyCanvasData(); // FIXME:
+    this.state.canvasData = savedCanvasState.canvasData || this.createEmptyCanvasData(); // FIXME:
   }
 
   createEmptyCanvasData() {
@@ -133,80 +133,6 @@ export default class CanvasComponent {
 
     this.state.sideCellCount = Number(side);
     this.fullCanvasRedraw();
-  }
-
-  insertImage(image) {
-    const { width, height } = image;
-    const {
-      ctx,
-      state: { sideCellCount, SIDE_LENGTH, cellLength },
-    } = this;
-    const aspectRatio = width > height ? width / height : height / width;
-    const scaledWidth = Math.round(width > height ? sideCellCount : sideCellCount / aspectRatio);
-    const scaledHeight = Math.round(height > width ? sideCellCount : sideCellCount / aspectRatio);
-    const finalWidth = width > height ? SIDE_LENGTH : scaledWidth * cellLength;
-    const finalHeight = height > width ? SIDE_LENGTH : scaledHeight * cellLength;
-
-    const tempCanvas = document.createElement('canvas');
-    tempCanvas.width = scaledWidth;
-    tempCanvas.height = scaledHeight;
-    const tempCtx = tempCanvas.getContext('2d');
-
-    tempCtx.drawImage(image, 0, 0, tempCanvas.width, tempCanvas.height);
-
-    ctx.imageSmoothingEnabled = false;
-    ctx.drawImage(
-      tempCanvas,
-      Math.round((sideCellCount - scaledWidth) / 2) * cellLength,
-      Math.round((sideCellCount - scaledHeight) / 2) * cellLength,
-      finalWidth,
-      finalHeight,
-    );
-
-    this.updateCanvasColors();
-  }
-
-  updateCanvasColors() {
-    const dataImage = this.ctx.getImageData(0, 0, this.state.SIDE_LENGTH, this.state.SIDE_LENGTH)
-      .data;
-
-    const newCanvasData = this.state.canvasData.map((color, idx) => {
-      const colorIndices = this.getColorIndicesForCoords(idx);
-      return CanvasComponent.imageDataToRgba(dataImage, colorIndices);
-    });
-
-    this.state.canvasData = newCanvasData;
-  }
-
-  getColorIndicesForCoords(idx) {
-    const red = (Math.floor(idx / this.state.sideCellCount)
-        * this.state.sideCellCount
-        * this.state.cellLength
-        + (idx % this.state.sideCellCount))
-      * this.state.cellLength
-      * 4;
-
-    return [red, red + 1, red + 2, red + 3];
-  }
-
-  static imageDataToRgba(data, indices) {
-    return `rgba(${data[indices[0]]},${data[indices[1]]},${data[indices[2]]},${data[indices[3]]
-      / 255})`;
-  }
-
-  grayscale() {
-    const imageData = this.ctx.getImageData(0, 0, this.state.SIDE_LENGTH, this.state.SIDE_LENGTH);
-    const { data } = imageData;
-
-    for (let i = 0; i < data.length; i += 4) {
-      const avg = (data[i] + data[i + 1] + data[i + 2]) / 3;
-      data[i] = avg;
-      data[i + 1] = avg;
-      data[i + 2] = avg;
-    }
-
-    this.ctx.putImageData(imageData, 0, 0);
-    this.updateCanvasColors();
   }
 
   drawLine(mouseFrom, mouseTo) {
@@ -360,5 +286,79 @@ export default class CanvasComponent {
 
   init() {
     this.fullCanvasRedraw();
+  }
+
+  insertImage(image) {
+    const { width, height } = image;
+    const {
+      ctx,
+      state: { sideCellCount, SIDE_LENGTH, cellLength },
+    } = this;
+    const aspectRatio = width > height ? width / height : height / width;
+    const scaledWidth = Math.round(width > height ? sideCellCount : sideCellCount / aspectRatio);
+    const scaledHeight = Math.round(height > width ? sideCellCount : sideCellCount / aspectRatio);
+    const finalWidth = width > height ? SIDE_LENGTH : scaledWidth * cellLength;
+    const finalHeight = height > width ? SIDE_LENGTH : scaledHeight * cellLength;
+
+    const tempCanvas = document.createElement('canvas');
+    tempCanvas.width = scaledWidth;
+    tempCanvas.height = scaledHeight;
+    const tempCtx = tempCanvas.getContext('2d');
+
+    tempCtx.drawImage(image, 0, 0, tempCanvas.width, tempCanvas.height);
+
+    ctx.imageSmoothingEnabled = false;
+    ctx.drawImage(
+      tempCanvas,
+      Math.round((sideCellCount - scaledWidth) / 2) * cellLength,
+      Math.round((sideCellCount - scaledHeight) / 2) * cellLength,
+      finalWidth,
+      finalHeight,
+    );
+
+    this.updateCanvasColors();
+  }
+
+  updateCanvasColors() {
+    const dataImage = this.ctx.getImageData(0, 0, this.state.SIDE_LENGTH, this.state.SIDE_LENGTH)
+      .data;
+
+    const newCanvasData = this.state.canvasData.map((color, idx) => {
+      const colorIndices = this.getColorIndicesForCoords(idx);
+      return CanvasComponent.imageDataToRgba(dataImage, colorIndices);
+    });
+
+    this.state.canvasData = newCanvasData;
+  }
+
+  getColorIndicesForCoords(idx) {
+    const red = (Math.floor(idx / this.state.sideCellCount)
+        * this.state.sideCellCount
+        * this.state.cellLength
+        + (idx % this.state.sideCellCount))
+      * this.state.cellLength
+      * 4;
+
+    return [red, red + 1, red + 2, red + 3];
+  }
+
+  static imageDataToRgba(data, indices) {
+    return `rgba(${data[indices[0]]},${data[indices[1]]},${data[indices[2]]},${data[indices[3]]
+      / 255})`;
+  }
+
+  grayscale() {
+    const imageData = this.ctx.getImageData(0, 0, this.state.SIDE_LENGTH, this.state.SIDE_LENGTH);
+    const { data } = imageData;
+
+    for (let i = 0; i < data.length; i += 4) {
+      const avg = (data[i] + data[i + 1] + data[i + 2]) / 3;
+      data[i] = avg;
+      data[i + 1] = avg;
+      data[i + 2] = avg;
+    }
+
+    this.ctx.putImageData(imageData, 0, 0);
+    this.updateCanvasColors();
   }
 }

@@ -2,13 +2,18 @@ import EventEmitter from '../helpers/EventEmitter';
 import Model from './Model';
 import View from './View';
 
-const savedState = JSON.parse(localStorage.getItem('state')) || {};
+const savedState = JSON.parse(localStorage.getItem('piskelState')) || {};
 
 export default class Controller extends EventEmitter {
   constructor() {
     super();
     this.view = new View();
     this.model = new Model(savedState);
+  }
+
+  handleToolChanging(toolName) {
+    this.model.changeActiveTool(toolName);
+    this.view.selectTool(toolName);
   }
 
   handleCoordsChanging(x, y) {
@@ -22,29 +27,33 @@ export default class Controller extends EventEmitter {
     }
   }
 
+  handleCanvasSizeChanging(size) {
+    this.model.canvasComponent.changeCanvasSize(size);
+    this.view.updateCanvasSizeInfo(size);
+  }
+
   addEventsToEmitter() {
-    this.view.on('toolChanged', this.model.changeActiveTool);
-    this.view.on('drawingStarted', this.model.startDrawing.bind(this.model));
-    this.view.on('cursorPositionChanged', this.handleCoordsChanging.bind(this));
-    this.view.on('continueDrawing', this.model.drawNextIndices.bind(this.model));
-    this.view.on('drawingEnded', this.model.endDrawing.bind(this.model));
+    const { view, model, model: { canvasComponent } } = this;
+
+    view.on('saveState', model.saveState.bind(model));
+    view.on('clearState', Model.clearState.bind(model));
+    view.on('uploadImage', model.uploadImage.bind(model));
+    view.on('grayscaleCanvas', canvasComponent.grayscale.bind(canvasComponent));
+    view.on('changeCanvasSize', this.handleCanvasSizeChanging.bind(this));
+    view.on('drawingEnded', model.endDrawing.bind(model));
+
+    view.on('toolChanged', this.handleToolChanging.bind(this));
+    view.on('drawingStarted', model.startDrawing.bind(model));
+    view.on('cursorPositionChanged', this.handleCoordsChanging.bind(this));
+    view.on('continueDrawing', model.drawNextIndices.bind(model));
   }
 
   init() {
-    const appState = (({
-      canvasComponent: { state: canvasState },
-      activeTool,
-      secColor,
-      primColor,
-    }) => ({
-      activeTool,
-      secColor,
-      primColor,
-      ...canvasState,
-    }))(this.model);
+    const { model, view } = this;
+    const appState = model.getAppState();
 
-    this.view.init(appState);
-    this.model.init();
+    view.init(appState);
+    model.init();
     this.addEventsToEmitter();
   }
 }

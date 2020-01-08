@@ -4,6 +4,9 @@ export default class View extends EventEmitter {
   constructor() {
     super();
     this.FRAME_PREVIEW_SIDE_LENGTH = 128;
+    this.header = document.querySelector('.header');
+    this.sizeSelector = document.querySelector('.canvas-size-selector');
+    this.ImageQueryInput = document.querySelector('.image-query');
     this.canvas = document.querySelector('.main-canvas');
     this.toolsContainer = document.querySelector('.tools-container');
     this.palette = document.querySelector('.palette');
@@ -11,8 +14,8 @@ export default class View extends EventEmitter {
     this.secColorElem = document.querySelector('.secondary-color');
     this.sizeInfoContainer = document.querySelector('.canvas-size-info');
     this.coordsContainer = document.querySelector('.target-coords');
+    this.currentToolElem = null;
 
-    this.currentTool = null;
     this.mousePressed = false;
   }
 
@@ -26,37 +29,29 @@ export default class View extends EventEmitter {
   }
 
   selectTool(tool) {
-    const currentToolBtn = document.querySelector(`li[data-name=${this.currentTool}]`);
     const selectedToolBtn = document.querySelector(`li[data-name=${tool}]`);
 
-    if (this.currentTool) currentToolBtn.classList.remove('active');
+    if (this.currentToolElem) this.currentToolElem.classList.remove('active');
 
     selectedToolBtn.classList.add('active');
-    this.currentTool = tool;
+    this.currentToolElem = selectedToolBtn;
   }
 
   updateLastColors(primColor, secColor) {
-    function getCorrectBackground(color) {
-      if (color === 'rgba(0,0,0,0)') {
-        return `url(
-        'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAMAAABEpIrGAAAABlBMVEXV1dXb29tFGkCIAAAAHklEQVR4AWNghAIGCMDgjwgFCDDSw2M0PSCD0fQAACRcAgF4ciGUAAAAAElFTkSuQmCC'
-      ) repeat`;
-      }
-      return color;
+    function setBgIfNotTransparent(color) {
+      return color !== 'rgba(0,0,0,0)' ? color : '';
     }
 
-    const primBackground = getCorrectBackground(primColor);
-    const secBackground = getCorrectBackground(secColor);
-
-    this.primColorElem.style.background = primBackground;
-    this.secColorElem.style.background = secBackground;
+    this.primColorElem.style.background = setBgIfNotTransparent(primColor);
+    this.secColorElem.style.background = setBgIfNotTransparent(secColor);
   }
 
   updateCanvasSizeInfo(side) {
     this.sizeInfoContainer.innerText = `[${side}x${side}]`;
   }
 
-  static updateDisplayedValues(sideLength) { // FIXME: [...opt.map...]
+  static updateDisplayedValues(sideLength) {
+    // FIXME: [...opt.map...]
     const [canvasSizeSelector] = document.getElementsByClassName('canvas-size-selector');
 
     Array.prototype.forEach.call(canvasSizeSelector.options, (option, index) => {
@@ -64,18 +59,6 @@ export default class View extends EventEmitter {
         canvasSizeSelector.selectedIndex = index;
       }
     });
-  }
-
-  init(AppState) {
-    const {
-      activeTool, primColor, secColor, sideCellCount,
-    } = AppState;
-
-    View.updateDisplayedValues(sideCellCount);
-    this.updateCanvasSizeInfo(sideCellCount);
-    this.selectTool(activeTool);
-    this.updateLastColors(primColor, secColor);
-    this.addListeners();
   }
 
   clearCoordsContainer() {
@@ -93,7 +76,6 @@ export default class View extends EventEmitter {
       const toolName = dataset.name;
 
       this.emit('toolChanged', toolName);
-      this.selectTool(toolName);
     });
   }
 
@@ -129,9 +111,51 @@ export default class View extends EventEmitter {
     this.canvas.addEventListener('contextmenu', (ev) => ev.preventDefault());
   }
 
+  addHeaderListeners() {
+    this.header.addEventListener('click', ({ target: { classList } }) => {
+      if (classList.contains('save-state')) {
+        this.emit('saveState');
+        return;
+      }
+
+      if (classList.contains('delete-state')) {
+        this.emit('clearState');
+        return;
+      }
+
+      if (classList.contains('upload-image')) {
+        const query = this.ImageQueryInput.value;
+
+        this.emit('uploadImage', query);
+
+        return;
+      }
+
+      if (classList.contains('grayscaling')) {
+        this.emit('grayscaleCanvas');
+      }
+    });
+
+    this.sizeSelector.addEventListener('change', ({ target: { value } }) => {
+      this.emit('changeCanvasSize', value);
+    });
+  }
 
   addListeners() {
     this.addCanvasListeners();
     this.addToolsListeners();
+    this.addHeaderListeners();
+  }
+
+  init(AppState) {
+    const {
+      activeTool, primColor, secColor, canvasState: { sideCellCount },
+    } = AppState;
+
+    View.updateDisplayedValues(sideCellCount);
+    this.updateCanvasSizeInfo(sideCellCount);
+    this.selectTool(activeTool);
+    this.updateLastColors(primColor, secColor);
+    this.addListeners();
   }
 }
