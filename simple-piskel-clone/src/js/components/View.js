@@ -12,6 +12,12 @@ export default class View extends EventEmitter {
     this.palette = document.querySelector('.palette-container');
     this.primColorElem = document.querySelector('.primary-color');
     this.secColorElem = document.querySelector('.secondary-color');
+    this.framesListColumn = document.querySelector('.frames-list-column');
+    this.framesList = document.querySelector('.frames-list');
+    this.framesCollection = document.getElementsByClassName('frame-preview');
+    this.currentFrame = null;
+    this.fpsSlider = document.querySelector('.fps-slider');
+    this.sizeSelector = document.querySelector('.canvas-size-selector');
     this.sizeInfoContainer = document.querySelector('.canvas-size-info');
     this.coordsContainer = document.querySelector('.target-coords');
     this.currentToolElem = null;
@@ -69,6 +75,82 @@ export default class View extends EventEmitter {
     this.coordsContainer.innerText = `${row}:${col}`;
   }
 
+  createFrameLayout(frameNumber = 0) {
+    const frameLayout = View.createDomElement('li', 'frame-preview');
+    const frameCanvas = View.createDomElement('canvas', 'frame-canvas', {
+      width: this.FRAME_PREVIEW_SIDE_LENGTH,
+      height: this.FRAME_PREVIEW_SIDE_LENGTH,
+    });
+    const deleteFrameBtn = View.createDomElement('button', 'frame-preview-button delete-frame');
+    const duplicateFrameBtn = View.createDomElement(
+      'button',
+      'frame-preview-button duplicate-frame',
+    );
+    const toggleFrameBtn = View.createDomElement('button', 'frame-preview-button toggle-frame');
+    const moveFrameBtn = View.createDomElement('div', 'frame-preview-button move-frame');
+
+    toggleFrameBtn.innerText = frameNumber + 1;
+    frameLayout.appendChild(frameCanvas);
+    frameLayout.appendChild(deleteFrameBtn);
+    frameLayout.appendChild(duplicateFrameBtn);
+    frameLayout.appendChild(toggleFrameBtn);
+    frameLayout.appendChild(moveFrameBtn);
+
+    return frameLayout;
+  }
+
+  selectFrame(frameNum) {
+    const selectedFrame = this.framesCollection[frameNum] || this.createFrameLayout();
+
+    if (this.currentFrame) this.currentFrame.classList.remove('active-frame');
+
+    selectedFrame.classList.add('active-frame');
+    this.currentFrame = selectedFrame;
+    [this.currentFramePreview] = this.currentFrame.getElementsByTagName('canvas');
+  }
+
+  addFrame() {
+    const newFrame = this.createFrameLayout(this.framesCollection.length);
+    const newFrameNum = this.framesCollection.length;
+
+    this.framesList.appendChild(newFrame);
+    this.selectFrame(newFrameNum);
+  }
+
+  renumberFrames() {
+    Array.prototype.forEach.call(this.framesCollection, (item, pos) => {
+      const numberContainer = item.getElementsByClassName('toggle-frame')[0];
+
+      numberContainer.innerText = pos + 1;
+    });
+  }
+
+  deleteFrame(frameNum) {
+    const deletingFrame = this.framesCollection[frameNum];
+
+    if (deletingFrame === this.currentFrame) {
+      const nextFrame = this.currentFrame.nextElementSibling;
+      const prevFrame = this.currentFrame.previousElementSibling;
+
+      this.selectFrame(nextFrame || prevFrame);
+    }
+
+    this.framesList.removeChild(deletingFrame);
+    this.renumberFrames();
+  }
+
+  duplicateFrame(frameNum) {
+    const targetFrame = this.framesCollection[frameNum];
+    const duplicate = this.createFrameLayout(this.framesCollection.length);
+
+    this.framesList.insertBefore(duplicate, targetFrame.nextElementSibling);
+    this.renumberFrames();
+  }
+
+  static toggleFrame(frame) {
+    frame.classList.toggle('disabled');
+  }
+
   addToolsListeners() {
     this.toolsContainer.addEventListener('click', ({ target: { classList, dataset } }) => {
       if (!classList.contains('canvas-tool') || classList.contains('disabled')) return;
@@ -76,6 +158,40 @@ export default class View extends EventEmitter {
       const toolName = dataset.name;
 
       this.emit('toolChanged', toolName);
+    });
+  }
+
+  addFramesListeners() {
+    this.framesListColumn.addEventListener('click', ({ target }) => {
+      if (!target.closest('.frame-preview') && !target.closest('.add-frame')) return;
+
+      const clickedFrame = target.closest('.frame-preview');
+      const clickedFrameNumber = [...this.framesCollection].indexOf(clickedFrame);
+      const { classList } = target;
+
+      if (classList.contains('add-frame')) {
+        this.emit('addFrame');
+        return;
+      }
+
+      if (classList.contains('delete-frame')) {
+        this.emit('deleteFrame', clickedFrameNumber);
+        return;
+      }
+
+      if (classList.contains('duplicate-frame')) {
+        this.emit('cloneFrame', clickedFrameNumber);
+        return;
+      }
+
+      if (classList.contains('toggle-frame')) {
+        this.emit('toggleFrame', clickedFrameNumber);
+        return;
+      }
+
+      if (target.closest('.frame-preview')) {
+        this.emit('selectFrame', clickedFrameNumber);
+      }
     });
   }
 
@@ -167,6 +283,7 @@ export default class View extends EventEmitter {
     this.addHeaderListeners();
     this.addToolsListeners();
     this.addPaletteListeners();
+    this.addFramesListeners();
     this.addCanvasListeners();
   }
 
@@ -182,6 +299,7 @@ export default class View extends EventEmitter {
     this.updateCanvasSizeInfo(sideCellCount);
     this.selectTool(activeTool);
     this.updateLastColors(primColor, secColor);
+    this.addFrame();
     this.addListeners();
   }
 }
