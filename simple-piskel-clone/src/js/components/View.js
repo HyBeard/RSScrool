@@ -100,7 +100,7 @@ export default class View extends EventEmitter {
   }
 
   selectFrame(frameNum) {
-    const selectedFrame = this.framesCollection[frameNum] || this.createFrameLayout();
+    const selectedFrame = this.framesCollection[frameNum];
 
     if (this.currentFrame) this.currentFrame.classList.remove('active-frame');
 
@@ -195,6 +195,20 @@ export default class View extends EventEmitter {
     });
   }
 
+  paintFramePreview(dataURL, frameNum) {
+    const img = new Image();
+    const frame = this.framesCollection[frameNum];
+    const preview = frame.querySelector('canvas');
+    const previewCtx = preview.getContext('2d');
+    const side = this.FRAME_PREVIEW_SIDE_LENGTH;
+
+    img.onload = () => {
+      previewCtx.clearRect(0, 0, side, side);
+      previewCtx.drawImage(img, 0, 0, side, side);
+    };
+    img.src = dataURL || '';
+  }
+
   addCanvasListeners() {
     this.canvas.addEventListener('mousedown', (ev) => {
       const mouseBtnCode = ev.button;
@@ -287,19 +301,23 @@ export default class View extends EventEmitter {
     this.addCanvasListeners();
   }
 
-  init(AppState) {
-    const {
-      activeTool,
-      primColor,
-      secColor,
-      canvasState: { sideCellCount },
-    } = AppState;
-
+  init({
+    activeTool,
+    primColor,
+    secColor,
+    canvasState: { sideCellCount },
+    framesState: { currentFrameNumber, listOfFrames },
+  }) {
     View.updateDisplayedValues(sideCellCount);
     this.updateCanvasSizeInfo(sideCellCount);
     this.selectTool(activeTool);
     this.updateLastColors(primColor, secColor);
-    this.addFrame();
     this.addListeners();
+
+    listOfFrames.forEach(({ dataURL }, frameNum) => {
+      this.addFrame();
+      this.paintFramePreview(dataURL, frameNum);
+    });
+    this.selectFrame(currentFrameNumber);
   }
 }

@@ -1,15 +1,23 @@
 export default class FramesListData {
   constructor(savedData = {}) {
     this.listOfFrames = savedData.listOfFrames || [];
-    this.currentFrameNumb = null || savedData.currentFrameNumb;
+    this.currentFrameNumber = null || savedData.currentFrameNumber;
   }
 
   set currentFrameData(data) {
-    this.listOfFrames[this.currentFrameNumb].canvasData = [...data];
+    this.listOfFrames[this.currentFrameNumber].canvasData = [...data];
   }
 
   get currentFrameData() {
-    return this.listOfFrames[this.currentFrameNumb].canvasData;
+    return [...this.listOfFrames[this.currentFrameNumber].canvasData];
+  }
+
+  set currentFrameDataURL(dataURL) {
+    this.listOfFrames[this.currentFrameNumber].dataURL = dataURL;
+  }
+
+  get currentFrameDataURL() {
+    return this.listOfFrames[this.currentFrameNumber].dataURL;
   }
 
   static createEmptyCanvasData(cellCount) {
@@ -21,7 +29,7 @@ export default class FramesListData {
   static createFrameProps(cellCount) {
     return {
       canvasData: FramesListData.createEmptyCanvasData(cellCount),
-      image: null,
+      dataURL: null,
       disabled: false,
     };
   }
@@ -30,28 +38,24 @@ export default class FramesListData {
     const newFrameData = FramesListData.createFrameProps(cellCount);
 
     this.listOfFrames.push(newFrameData);
-    this.currentFrameNumb = this.listOfFrames.length - 1;
+    this.currentFrameNumber = this.listOfFrames.length - 1;
   }
 
   changeCurrentFrameNumber(frameNum) {
-    this.currentFrameNumb = frameNum;
-  }
-
-  updateFrameImgURL(framePreview, frameNum) {
-    this.listOfFrames[frameNum].image = framePreview.toDataURL();
+    this.currentFrameNumber = frameNum;
   }
 
   deleteFrame(frameNum) {
     this.listOfFrames.splice(frameNum, 1);
 
-    if (frameNum === this.currentFrameNumb) {
+    if (frameNum === this.currentFrameNumber) {
       const nextFrameNumber = frameNum + 1;
       const prevFrameNumber = frameNum - 1;
       const correctFrameNumber = this.listOfFrames[nextFrameNumber]
         ? nextFrameNumber
         : prevFrameNumber;
 
-      this.currentFrameNumb = correctFrameNumber;
+      this.currentFrameNumber = correctFrameNumber;
     }
   }
 
@@ -59,7 +63,7 @@ export default class FramesListData {
     const newFrameData = JSON.parse(JSON.stringify(this.listOfFrames[frameNum]));
 
     this.listOfFrames.splice(frameNum + 1, 0, newFrameData);
-    this.currentFrameNumb = frameNum + 1;
+    this.currentFrameNumber = frameNum + 1;
   }
 
   changeFramePosition(movedFrameNum, targetFrameNum) {

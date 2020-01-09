@@ -4,12 +4,11 @@ import FramesComponent from './FramesComponent';
 import keyboardShortcuts from '../data/keyboardShortcuts';
 import 'babel-polyfill';
 
-const apiLoader = new APILoader();
-
 export default class Model {
   constructor(savedState) {
     this.canvasComponent = new CanvasComponent(savedState.canvasState || {});
     this.framesComponent = new FramesComponent(savedState.framesState || {});
+    this.apiLoader = new APILoader();
     this.activeTool = savedState.activeTool || 'draw';
     this.primColor = savedState.primColor || 'rgb(0,0,0)';
     this.secColor = savedState.secColor || 'rgba(0,0,0,0)';
@@ -22,7 +21,7 @@ export default class Model {
       canvasState: this.canvasComponent.state,
       framesState: {
         listOfFrames: this.framesComponent.listOfFrames,
-        currentFrameNumb: this.framesComponent.currentFrameNumb,
+        currentFrameNumber: this.framesComponent.currentFrameNumber,
       },
       activeTool: this.activeTool,
       primColor: this.primColor,
@@ -113,6 +112,7 @@ export default class Model {
 
     canvasComponent.clearPointsToDraw();
     framesComponent.currentFrameData = updatedCurrentFrameData;
+    framesComponent.currentFrameDataURL = canvasComponent.cachedDataUrl;
   }
 
   init() {
@@ -129,16 +129,21 @@ export default class Model {
   }
 
   async uploadImage(query) {
-    const { canvasComponent, framesComponent } = this;
+    const { canvasComponent, framesComponent, apiLoader } = this;
     const imgUrl = await apiLoader.getImgUrl(query);
     const image = new Image();
 
-    image.crossOrigin = 'Anonymous';
-    image.onload = () => {
-      canvasComponent.insertImage(image);
-      framesComponent.currentFrameData = canvasComponent.canvasData;
-    };
-    image.src = imgUrl;
+    return new Promise((resolve) => {
+      image.crossOrigin = 'Anonymous';
+      image.onload = () => {
+        canvasComponent.insertImage(image);
+        framesComponent.currentFrameData = canvasComponent.canvasData;
+        framesComponent.currentFrameDataURL = canvasComponent.cachedDataUrl;
+
+        resolve();
+      };
+      image.src = imgUrl;
+    });
   }
 
   grayscale() {
@@ -146,5 +151,6 @@ export default class Model {
 
     canvasComponent.grayscale();
     framesComponent.currentFrameData = canvasComponent.canvasData;
+    framesComponent.currentFrameDataURL = canvasComponent.cachedDataUrl;
   }
 }

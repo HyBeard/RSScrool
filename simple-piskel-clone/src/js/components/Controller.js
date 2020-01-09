@@ -7,8 +7,8 @@ const savedState = JSON.parse(localStorage.getItem('piskelState')) || {};
 export default class Controller extends EventEmitter {
   constructor() {
     super();
-    this.view = new View();
     this.model = new Model(savedState);
+    this.view = new View();
   }
 
   handleToolChanging(toolName) {
@@ -25,6 +25,36 @@ export default class Controller extends EventEmitter {
 
       view.updateCoordsContainer(row, col);
     }
+  }
+
+  handleDrawingEnding() {
+    const { view, model } = this;
+
+    model.endDrawing();
+
+    const { currentFrameDataURL, currentFrameNumber } = model.framesComponent;
+
+    view.paintFramePreview(currentFrameDataURL, currentFrameNumber);
+  }
+
+  async handleImageUploading(query) {
+    const { view, model } = this;
+
+    await model.uploadImage(query);
+
+    const { currentFrameDataURL, currentFrameNumber } = model.framesComponent;
+
+    view.paintFramePreview(currentFrameDataURL, currentFrameNumber);
+  }
+
+  handleGrayscaleFiltering() {
+    const { view, model } = this;
+
+    model.grayscale();
+
+    const { currentFrameDataURL, currentFrameNumber } = model.framesComponent;
+
+    view.paintFramePreview(currentFrameDataURL, currentFrameNumber);
   }
 
   handleCanvasSizeChanging(size) {
@@ -141,11 +171,11 @@ export default class Controller extends EventEmitter {
     view.on('drawingStarted', model.startDrawing.bind(model));
     view.on('cursorPositionChanged', this.handleCoordsChanging.bind(this));
     view.on('continueDrawing', model.drawNextIndices.bind(model));
-    view.on('drawingEnded', model.endDrawing.bind(model));
+    view.on('drawingEnded', this.handleDrawingEnding.bind(this));
 
     view.on('changeCanvasSize', this.handleCanvasSizeChanging.bind(this));
-    view.on('uploadImage', model.uploadImage.bind(model));
-    view.on('grayscaleCanvas', model.grayscale.bind(model));
+    view.on('uploadImage', this.handleImageUploading.bind(this));
+    view.on('grayscaleCanvas', this.handleGrayscaleFiltering.bind(this));
   }
 
   init() {
