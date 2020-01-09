@@ -1,6 +1,8 @@
 import CanvasComponent from './CanvasComponent';
 import APILoader from './APILoader';
 import FramesComponent from './FramesComponent';
+import AnimationComponent from './AnimationComponent';
+
 import keyboardShortcuts from '../data/keyboardShortcuts';
 import 'babel-polyfill';
 
@@ -8,11 +10,12 @@ export default class Model {
   constructor(savedState) {
     this.canvasComponent = new CanvasComponent(savedState.canvasState || {});
     this.framesComponent = new FramesComponent(savedState.framesState || {});
+    this.animationComponent = new AnimationComponent(this.framesComponent);
     this.apiLoader = new APILoader();
     this.activeTool = savedState.activeTool || 'draw';
     this.primColor = savedState.primColor || 'rgb(0,0,0)';
     this.secColor = savedState.secColor || 'rgba(0,0,0,0)';
-    // this.fpsValue = savedState.fpsValue;
+    this.fpsValue = savedState.fpsValue || 5;
     this.keyboardShortcuts = keyboardShortcuts;
   }
 
@@ -26,6 +29,7 @@ export default class Model {
       activeTool: this.activeTool,
       primColor: this.primColor,
       secColor: this.secColor,
+      fpsValue: this.fpsValue,
       keyboardShortcuts: this.keyboardShortcuts,
     };
   }
@@ -117,7 +121,9 @@ export default class Model {
 
   init() {
     const {
+      fpsValue,
       framesComponent,
+      animationComponent,
       canvasComponent,
       canvasComponent: {
         state: { sideCellCount },
@@ -126,6 +132,7 @@ export default class Model {
 
     framesComponent.init(sideCellCount);
     canvasComponent.init(framesComponent.currentFrameData);
+    animationComponent.runAnimate(fpsValue);
   }
 
   async uploadImage(query) {

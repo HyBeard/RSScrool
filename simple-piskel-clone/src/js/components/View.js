@@ -7,7 +7,7 @@ export default class View extends EventEmitter {
     this.FRAME_PREVIEW_SIDE_LENGTH = 128;
     this.header = document.querySelector('.header');
     this.sizeSelector = document.querySelector('.canvas-size-selector');
-    this.ImageQueryInput = document.querySelector('.image-query');
+    this.imageQueryInput = document.querySelector('.image-query');
     this.canvas = document.querySelector('.main-canvas');
     this.toolsContainer = document.querySelector('.tools-container');
     this.palette = document.querySelector('.palette-container');
@@ -17,7 +17,9 @@ export default class View extends EventEmitter {
     this.framesList = document.querySelector('.frames-list');
     this.framesCollection = document.getElementsByClassName('frame-preview');
     this.currentFrame = null;
+    this.animationContainer = document.querySelector('.animate-preview');
     this.fpsSlider = document.querySelector('.fps-slider');
+    this.fpsValueContainer = document.querySelector('.fps-value');
     this.sizeSelector = document.querySelector('.canvas-size-selector');
     this.sizeInfoContainer = document.querySelector('.canvas-size-info');
     this.coordsContainer = document.querySelector('.target-coords');
@@ -53,19 +55,25 @@ export default class View extends EventEmitter {
     this.secColorElem.style.background = setBgIfNotTransparent(secColor);
   }
 
-  updateCanvasSizeInfo(side) {
+  renderCanvasSizeInfo(side) {
     this.sizeInfoContainer.innerText = `[${side}x${side}]`;
   }
 
-  static updateDisplayedValues(sideLength) {
-    // FIXME: [...opt.map...]
-    const [canvasSizeSelector] = document.getElementsByClassName('canvas-size-selector');
+  renderFpsValue(fpsValue) {
+    this.fpsValueContainer.innerText = `${fpsValue} FPS`;
+  }
 
-    Array.prototype.forEach.call(canvasSizeSelector.options, (option, index) => {
+  updateDisplayedValues(sideLength, fpsValue) {
+    [...this.sizeSelector.options].forEach((option, index) => {
       if (Number(option.value) === sideLength) {
-        canvasSizeSelector.selectedIndex = index;
+        this.sizeSelector.selectedIndex = index;
       }
     });
+
+    this.fpsSlider.value = fpsValue;
+
+    this.renderCanvasSizeInfo(sideLength);
+    this.renderFpsValue(fpsValue);
   }
 
   clearCoordsContainer() {
@@ -227,6 +235,10 @@ export default class View extends EventEmitter {
     img.src = dataURL || '';
   }
 
+  showNewAnimationFrame(url) {
+    this.animationContainer.style.backgroundImage = `url('${url || ''}')`;
+  }
+
   addCanvasListeners() {
     this.canvas.addEventListener('mousedown', (ev) => {
       const mouseBtnCode = ev.button;
@@ -311,31 +323,39 @@ export default class View extends EventEmitter {
     });
   }
 
+  addAnimationListeners() {
+    this.fpsSlider.addEventListener('input', () => {
+      const newFps = this.fpsSlider.value;
+      this.emit('fpsChanged', newFps);
+    });
+  }
+
   addListeners() {
     this.addHeaderListeners();
     this.addToolsListeners();
     this.addPaletteListeners();
     this.addFramesListeners();
     this.addCanvasListeners();
+    this.addAnimationListeners();
   }
 
   init({
     activeTool,
     primColor,
     secColor,
+    fpsValue,
     canvasState: { sideCellCount },
     framesState: { currentFrameNumber, listOfFrames },
   }) {
-    View.updateDisplayedValues(sideCellCount);
-    this.updateCanvasSizeInfo(sideCellCount);
+    this.updateDisplayedValues(sideCellCount, fpsValue);
     this.selectTool(activeTool);
     this.updateLastColors(primColor, secColor);
-    this.addListeners();
 
     listOfFrames.forEach(({ dataURL }, frameNum) => {
       this.addFrame();
       this.paintFramePreview(dataURL, frameNum);
     });
     this.selectFrame(currentFrameNumber);
+    this.addListeners();
   }
 }

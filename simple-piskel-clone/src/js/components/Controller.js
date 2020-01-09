@@ -65,7 +65,7 @@ export default class Controller extends EventEmitter {
 
     canvasComponent.changeCanvasSize(size);
     framesComponent.currentFrameData = canvasComponent.canvasData;
-    view.updateCanvasSizeInfo(size);
+    view.renderCanvasSizeInfo(size);
   }
 
   handleColorChange(color, mouseBtnCode) {
@@ -162,6 +162,16 @@ export default class Controller extends EventEmitter {
     view.selectFrame(newNum);
   }
 
+  handleFpsChanging(newFps) {
+    const {
+      model: { animationComponent },
+      view,
+    } = this;
+
+    animationComponent.runAnimate(newFps);
+    view.renderFpsValue(newFps);
+  }
+
   addShortcutsListeners() {
     // FIXME:
     document.addEventListener('keydown', ({ code }) => {
@@ -175,11 +185,17 @@ export default class Controller extends EventEmitter {
     });
   }
 
+  subscribeToAnimationUpdate() {
+    const {
+      view,
+      model: { animationComponent },
+    } = this;
+
+    animationComponent.on('animationFrameChanged', view.showNewAnimationFrame.bind(view));
+  }
+
   addEventsToEmitter() {
     const { view, model } = this;
-
-    view.on('saveState', model.saveState.bind(model));
-    view.on('clearState', Model.clearState.bind(model));
 
     view.on('addFrame', this.handleFrameAdding.bind(this));
     view.on('selectFrame', this.handleFrameSelecting.bind(this));
@@ -200,6 +216,10 @@ export default class Controller extends EventEmitter {
     view.on('changeCanvasSize', this.handleCanvasSizeChanging.bind(this));
     view.on('uploadImage', this.handleImageUploading.bind(this));
     view.on('grayscaleCanvas', this.handleGrayscaleFiltering.bind(this));
+
+    view.on('saveState', model.saveState.bind(model));
+    view.on('clearState', Model.clearState.bind(model));
+    view.on('fpsChanged', this.handleFpsChanging.bind(this));
   }
 
   init() {
@@ -208,6 +228,7 @@ export default class Controller extends EventEmitter {
     model.init();
     view.init(model.appState);
     this.addEventsToEmitter();
+    this.subscribeToAnimationUpdate();
     this.addShortcutsListeners();
   }
 }

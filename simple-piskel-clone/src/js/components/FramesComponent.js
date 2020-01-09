@@ -83,11 +83,9 @@ export default class FramesListData {
   }
 
   toggleFrame(frameNum) {
-    if (this.listOfFrames[frameNum].disabled) {
-      this.listOfFrames[frameNum].disabled = false;
-    } else {
-      this.listOfFrames[frameNum].disabled = true;
-    }
+    const toggledFrame = this.listOfFrames[frameNum];
+
+    toggledFrame.disabled = !toggledFrame.disabled;
   }
 
   init(canvasSideSize) {
