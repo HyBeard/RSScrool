@@ -130,10 +130,11 @@ export default class Controller extends EventEmitter {
   handleFrameToggling(frameNum) {
     const {
       model: { framesComponent },
+      view,
     } = this;
 
     framesComponent.toggleFrame(frameNum);
-    View.toggleFrame(frameNum);
+    view.toggleFrame(frameNum);
   }
 
   handleFrameSelecting(frameNum) {
@@ -146,6 +147,19 @@ export default class Controller extends EventEmitter {
     canvasComponent.canvasData = framesComponent.currentFrameData;
     canvasComponent.fullCanvasRedraw();
     view.selectFrame(frameNum);
+  }
+
+  handleFrameMoving(oldNum, newNum) {
+    const {
+      model: { framesComponent, canvasComponent },
+      view,
+    } = this;
+
+    framesComponent.changeFramePosition(oldNum, newNum);
+    canvasComponent.canvasData = framesComponent.currentFrameData;
+    canvasComponent.fullCanvasRedraw();
+    view.renumberFrames();
+    view.selectFrame(newNum);
   }
 
   addShortcutsListeners() {
@@ -171,6 +185,7 @@ export default class Controller extends EventEmitter {
     view.on('selectFrame', this.handleFrameSelecting.bind(this));
     view.on('deleteFrame', this.handleFrameDeleting.bind(this));
     view.on('cloneFrame', this.handleFrameCloning.bind(this));
+    view.on('moveFrame', this.handleFrameMoving.bind(this));
     view.on('toggleFrame', this.handleFrameToggling.bind(this));
 
     view.on('toolChanged', this.handleToolChanging.bind(this));

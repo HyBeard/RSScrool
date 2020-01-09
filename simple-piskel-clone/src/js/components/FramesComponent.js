@@ -67,11 +67,18 @@ export default class FramesListData {
   }
 
   changeFramePosition(movedFrameNum, targetFrameNum) {
-    [this.listOfFrames[movedFrameNum], this.listOfFrames[targetFrameNum]] = [
-      this.listOfFrames[targetFrameNum],
-      this.listOfFrames[movedFrameNum],
-    ];
+    if (movedFrameNum === targetFrameNum) {
+      this.changeCurrentFrameNumber(targetFrameNum);
+      return;
+    }
 
+    const { listOfFrames } = this;
+    const movedFrame = listOfFrames[movedFrameNum];
+    const correctTargetNum = targetFrameNum > movedFrameNum ? targetFrameNum + 1 : targetFrameNum;
+    const correctMovedNum = targetFrameNum > movedFrameNum ? movedFrameNum : movedFrameNum + 1;
+
+    listOfFrames.splice(correctTargetNum, 0, movedFrame);
+    listOfFrames.splice(correctMovedNum, 1);
     this.changeCurrentFrameNumber(targetFrameNum);
   }
 

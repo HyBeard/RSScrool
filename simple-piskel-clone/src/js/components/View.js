@@ -1,3 +1,4 @@
+import Sortable from 'sortablejs';
 import EventEmitter from '../helpers/EventEmitter';
 
 export default class View extends EventEmitter {
@@ -147,8 +148,11 @@ export default class View extends EventEmitter {
     this.selectFrame(duplicateFrameNum);
   }
 
-  static toggleFrame(frame) {
-    frame.classList.toggle('disabled');
+  toggleFrame(frameNum) {
+    const toggledFrame = this.framesCollection[frameNum];
+
+    const toggleButtonElem = toggledFrame.querySelector('.toggle-frame');
+    toggleButtonElem.classList.toggle('disabled');
   }
 
   addToolsListeners() {
@@ -192,6 +196,20 @@ export default class View extends EventEmitter {
       if (target.closest('.frame-preview')) {
         this.emit('selectFrame', clickedFrameNumber);
       }
+    });
+
+    Sortable.create(this.framesList, {
+      sort: true,
+      direction: 'vertical',
+      fallbackTolerance: 5,
+      ghostClass: 'frame-preview--ghost',
+      chosenClass: 'frame-preview--chosen',
+      dragClass: 'frame-preview--draggable',
+
+      onEnd: (ev) => {
+        const { oldIndex, newIndex } = ev;
+        this.emit('moveFrame', oldIndex, newIndex);
+      },
     });
   }
 
