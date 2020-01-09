@@ -280,8 +280,8 @@ button:focus {
 
   &--ghost {
     position: relative;
-    &::after{
-      content: '';
+    &::after {
+      content: "";
       position: absolute;
       left: 0;
       top: 0;
@@ -420,6 +420,8 @@ button:focus {
 }
 
 .animate-preview-background {
+  width: 256px;
+  height: 256px;
   position: relative;
   background: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAMAAABEpIrGAAAABlBMVEXV1dXb29tFGkCIAAAAHklEQVR4AWNghAIGCMDgjwgFCDDSw2M0PSCD0fQAACRcAgF4ciGUAAAAAElFTkSuQmCC")
     repeat;
@@ -440,11 +442,12 @@ button:focus {
 }
 
 .animate-preview {
-  width: 256px;
-  height: 256px;
+  width: 100%;
+  height: 100%;
   background-size: contain;
+  background-position: center;
+  background-repeat: no-repeat;
   image-rendering: pixelated;
-  image-rendering: crisp-edges;
 }
 
 .fps-changer {
