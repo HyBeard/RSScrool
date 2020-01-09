@@ -103,19 +103,28 @@ export default class Controller extends EventEmitter {
     } = this;
 
     framesComponent.deleteFrame(frameNum);
-    canvasComponent.canvasData = framesComponent.currentFrameData;
+
+    const { currentFrameData, currentFrameNumber } = framesComponent;
+
+    canvasComponent.canvasData = currentFrameData;
     canvasComponent.fullCanvasRedraw();
-    view.deleteFrame(frameNum);
+    view.deleteFrame(frameNum, currentFrameNumber);
   }
 
   handleFrameCloning(frameNum) {
     const {
-      model: { framesComponent },
+      model: { framesComponent, canvasComponent },
       view,
     } = this;
 
     framesComponent.duplicateFrame(frameNum);
+
+    const { currentFrameDataURL, currentFrameNumber, currentFrameData } = framesComponent;
+
+    canvasComponent.canvasData = currentFrameData;
+    canvasComponent.fullCanvasRedraw();
     view.duplicateFrame(frameNum);
+    view.paintFramePreview(currentFrameDataURL, currentFrameNumber);
   }
 
   handleFrameToggling(frameNum) {

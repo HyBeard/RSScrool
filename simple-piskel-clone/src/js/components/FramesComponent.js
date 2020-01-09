@@ -46,21 +46,21 @@ export default class FramesListData {
   }
 
   deleteFrame(frameNum) {
+    const lastFrameNum = this.listOfFrames.length - 1;
     this.listOfFrames.splice(frameNum, 1);
 
     if (frameNum === this.currentFrameNumber) {
-      const nextFrameNumber = frameNum + 1;
-      const prevFrameNumber = frameNum - 1;
-      const correctFrameNumber = this.listOfFrames[nextFrameNumber]
-        ? nextFrameNumber
-        : prevFrameNumber;
+      const newFrameNum = frameNum === lastFrameNum ? frameNum - 1 : frameNum;
+      this.currentFrameNumber = newFrameNum;
 
-      this.currentFrameNumber = correctFrameNumber;
+      return;
     }
+
+    this.currentFrameNumber -= 1;
   }
 
   duplicateFrame(frameNum) {
-    const newFrameData = JSON.parse(JSON.stringify(this.listOfFrames[frameNum]));
+    const newFrameData = { ...this.listOfFrames[frameNum] };
 
     this.listOfFrames.splice(frameNum + 1, 0, newFrameData);
     this.currentFrameNumber = frameNum + 1;

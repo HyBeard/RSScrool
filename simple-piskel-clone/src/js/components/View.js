@@ -102,6 +102,7 @@ export default class View extends EventEmitter {
   selectFrame(frameNum) {
     const selectedFrame = this.framesCollection[frameNum];
 
+    if (selectedFrame === this.currentFrame) return;
     if (this.currentFrame) this.currentFrame.classList.remove('active-frame');
 
     selectedFrame.classList.add('active-frame');
@@ -125,26 +126,25 @@ export default class View extends EventEmitter {
     });
   }
 
-  deleteFrame(frameNum) {
+  deleteFrame(frameNum, nextFrameNum) {
     const deletingFrame = this.framesCollection[frameNum];
-
-    if (deletingFrame === this.currentFrame) {
-      const nextFrame = this.currentFrame.nextElementSibling;
-      const prevFrame = this.currentFrame.previousElementSibling;
-
-      this.selectFrame(nextFrame || prevFrame);
-    }
 
     this.framesList.removeChild(deletingFrame);
     this.renumberFrames();
+
+    if (deletingFrame === this.currentFrame) {
+      this.selectFrame(nextFrameNum);
+    }
   }
 
   duplicateFrame(frameNum) {
     const targetFrame = this.framesCollection[frameNum];
     const duplicate = this.createFrameLayout(this.framesCollection.length);
+    const duplicateFrameNum = frameNum + 1;
 
     this.framesList.insertBefore(duplicate, targetFrame.nextElementSibling);
     this.renumberFrames();
+    this.selectFrame(duplicateFrameNum);
   }
 
   static toggleFrame(frame) {
