@@ -1,13 +1,14 @@
 {
-  "name": "palette",
+  "name": "piskel-clone",
   "version": "1.0.0",
-  "description": "codejam-palette task",
+  "description": "Piskel Clone task",
   "main": "./src/app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "webpack --mode production",
-    "dev": "webpack-dev-server --mode development --watch --open",
-    "lint": "eslint src/ || exit 0"
+    "build": "npm run clear -s && webpack --progress",
+    "dev": "webpack-dev-server --history-api-fallback --inline --progress --open",
+    "lint": "npx eslint src",
+    "clear": "del-cli dist"
   },
   "eslintIgnore": [
     "dist"
@@ -17,22 +18,26 @@
   "devDependencies": {
     "@babel/core": "^7.7.2",
     "@babel/preset-env": "^7.7.1",
+    "autoprefixer": "^9.7.3",
     "babel-core": "^6.26.3",
     "babel-loader": "^8.0.6",
     "css-loader": "^3.2.0",
+    "css-mqpacker": "^7.0.0",
+    "cssnano": "^4.1.10",
+    "del-cli": "^3.0.0",
     "eslint": "^6.1.0",
-    "eslint-config-airbnb": "^18.0.1",
+    "eslint-config-airbnb-base": "^14.0.0",
     "eslint-plugin-import": "^2.18.2",
-    "eslint-plugin-jsx-a11y": "^6.2.3",
-    "eslint-plugin-react": "^7.14.3",
-    "eslint-plugin-react-hooks": "^1.7.0",
     "file-loader": "^4.2.0",
     "html-loader": "^0.5.5",
     "html-webpack-plugin": "^3.2.0",
+    "image-webpack-loader": "^6.0.0",
+    "mini-css-extract-plugin": "^0.9.0",
     "node-sass": "^4.13.0",
-    "purgecss": "^1.4.1",
+    "postcss-loader": "^3.0.0",
     "sass-loader": "^8.0.0",
     "style-loader": "^1.0.0",
+    "uglifyjs-webpack-plugin": "^2.2.0",
     "webpack": "^4.41.2",
     "webpack-cli": "^3.3.10",
     "webpack-dev-server": "^3.9.0"
