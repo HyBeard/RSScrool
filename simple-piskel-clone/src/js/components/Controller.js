@@ -63,8 +63,17 @@ export default class Controller extends EventEmitter {
       model: { canvasComponent, framesComponent },
     } = this;
 
-    canvasComponent.changeCanvasSize(size);
-    framesComponent.currentFrameData = canvasComponent.canvasData;
+    framesComponent.listOfFrames.forEach((frame, num) => {
+      const changingCanvasData = frame.canvasData;
+
+      canvasComponent.canvasData = changingCanvasData;
+      canvasComponent.changeCanvasSize(size);
+      framesComponent.listOfFrames[num].canvasData = canvasComponent.canvasData;
+    });
+
+    canvasComponent.sideCellCount = Number(size);
+    canvasComponent.canvasData = framesComponent.currentFrameData;
+    canvasComponent.fullCanvasRedraw();
     view.renderCanvasSizeInfo(size);
   }
 

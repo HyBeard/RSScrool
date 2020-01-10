@@ -10,7 +10,6 @@ export default class CanvasComponent {
     this.indicesToDraw = [];
     this.indicesColors = [];
     this.canvasData = null;
-    this.reqAnimId = null;
     this.canvasElem = document.querySelector('.main-canvas');
     this.ctx = this.canvasElem.getContext('2d');
   }
@@ -84,17 +83,12 @@ export default class CanvasComponent {
   }
 
   paintCell(idx, color) {
+    const { cellLength, ctx } = this;
     const { row, col } = this.indexToRowCol(idx);
-    const argsToCanvasDrawing = [
-      col * this.cellLength,
-      row * this.cellLength,
-      this.cellLength,
-      this.cellLength,
-    ];
 
-    this.ctx.fillStyle = color;
-    this.ctx.clearRect(...argsToCanvasDrawing);
-    this.ctx.fillRect(...argsToCanvasDrawing);
+    ctx.fillStyle = color;
+    ctx.clearRect(col * cellLength, row * cellLength, cellLength, cellLength);
+    ctx.fillRect(col * cellLength, row * cellLength, cellLength, cellLength);
   }
 
   setUniqueColorIndicesInCanvasData(idx, newColor) {
@@ -136,9 +130,6 @@ export default class CanvasComponent {
     });
 
     this.canvasData = newCanvasData;
-
-    this.sideCellCount = Number(side);
-    this.fullCanvasRedraw();
   }
 
   drawLine(mouseFrom, mouseTo) {

@@ -298,7 +298,7 @@ export default class View extends EventEmitter {
       }
 
       if (classList.contains('upload-image')) {
-        const query = this.ImageQueryInput.value;
+        const query = this.imageQueryInput.value;
 
         this.emit('uploadImage', query);
 
