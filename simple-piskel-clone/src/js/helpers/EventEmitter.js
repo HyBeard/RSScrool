@@ -21,4 +21,10 @@ export default class EventEmitter {
 
     this.events[type].forEach((handler) => handler.apply(this, args));
   }
+
+  reEmit(type) {
+    return (...args) => {
+      this.emit(type, ...args);
+    };
+  }
 }

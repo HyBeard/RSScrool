@@ -1,6 +1,7 @@
 import EventEmitter from '../helpers/EventEmitter';
 import Model from './Model';
 import View from './View';
+import CanvasController from './Canvas/CanvasController';
 
 const savedState = JSON.parse(localStorage.getItem('piskelState')) || {};
 
@@ -9,6 +10,7 @@ export default class Controller extends EventEmitter {
     super();
     this.model = new Model(savedState);
     this.view = new View();
+    this.canvasController = new CanvasController();
   }
 
   handleToolChanging(toolName) {
@@ -229,6 +231,14 @@ export default class Controller extends EventEmitter {
     view.on('saveState', model.saveState.bind(model));
     view.on('clearState', Model.clearState.bind(model));
     view.on('fpsChanged', this.handleFpsChanging.bind(this));
+
+    this.canvasController.on('requestDataForDrawing', this.sendData.bind(this));
+  }
+
+  sendData(...args) {
+    const { activeTool, primColor, secColor } = this.model;
+
+    this.canvasController.emit('drawingDataReceived', activeTool, primColor, secColor, ...args);
   }
 
   init() {
@@ -239,5 +249,6 @@ export default class Controller extends EventEmitter {
     this.addEventsToEmitter();
     this.subscribeToAnimationUpdate();
     this.addShortcutsListeners();
+    this.canvasController.init(this.model.canvasComponent.canvasData);
   }
 }
