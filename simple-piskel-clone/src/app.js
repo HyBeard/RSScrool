@@ -1,7 +1,17 @@
 import './styles/styles.scss';
 
-import Controller from './js/components/Controller';
+import Dispatcher from './js/components/Dispatcher';
 
-const controller = new Controller();
+const dispatcher = new Dispatcher();
 
-controller.init();
+dispatcher.init();
+
+window.dispatcher = dispatcher;
+
+// import Controller from './js/components/Controller';
+
+// const controller = new Controller();
+
+// controller.init();
+
+// window.controller = controller;

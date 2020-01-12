@@ -2,33 +2,44 @@ import common from './tools/toolsFunctions/common';
 import toolsList from './tools/toolsList';
 
 export default class CanvasModel {
-  constructor(savedCanvasState = {}) {
+  constructor(savedState) {
+    const {
+      canvasData, activeTool, primColor, secColor, sideCellCount,
+    } = savedState;
+
     this.TRANSPARENT_COLOR = 'rgba(0,0,0,0)';
     this.SIDE_LENGTH = 512;
-    this.sideCellCount = savedCanvasState.sideCellCount || 16;
+    this.sideCellCount = sideCellCount || 64;
     this.activeColor = null;
     this.mouseFrom = { row: null, col: null };
     this.currentIndex = null;
     this.prevIndex = null;
-    this.canvasData = null;
     this.memorizedCanvasData = null;
-    this.canvasElem = document.querySelector('.main-canvas2');
+    this.activeTool = activeTool || 'draw';
+    this.primColor = primColor || 'rgb(0,0,0)';
+    this.secColor = secColor || 'rgb(0,0,0,0)';
+    this.canvasElem = document.querySelector('.main-canvas');
     this.ctx = this.canvasElem.getContext('2d');
-    this.cachedDataUrl = null;
-    this.activeTool = null;
-    this.primColor = savedCanvasState.primColor || 'rgb(0,0,0)';
-    this.secColor = savedCanvasState.secColor || 'rgb(0,0,0,0)';
+    this.canvasData = canvasData || this.createEmptyCanvasData();
   }
 
   get cellLength() {
     return this.SIDE_LENGTH / this.sideCellCount;
   }
 
+  get cachedDataUrl() {
+    return this.canvasElem.toDataURL();
+  }
+
   get state() {
     return {
+      canvasData: this.canvasData,
       SIDE_LENGTH: this.SIDE_LENGTH,
       sideCellCount: this.sideCellCount,
       cellLength: this.cellLength,
+      activeTool: this.activeTool,
+      primColor: this.primColor,
+      secColor: this.secColor,
     };
   }
 
@@ -67,8 +78,14 @@ export default class CanvasModel {
     }
   }
 
-  updateCanvasData(newData) {
-    Object.assign(this, { canvasData: newData });
+  createEmptyCanvasData() {
+    const { sideCellCount: side, TRANSPARENT_COLOR } = this;
+
+    return new Array(side * side).fill(TRANSPARENT_COLOR);
+  }
+
+  updateFields(...fields) {
+    Object.assign(this, ...fields);
   }
 
   updateCurrentIndexIfChanged(x, y) {
@@ -83,12 +100,12 @@ export default class CanvasModel {
     return false;
   }
 
-  cacheCanvasAsDataUrl() {
-    this.cachedDataUrl = this.canvasElem.toDataURL();
+  setNewCanvasData(newData) {
+    this.canvasData = newData;
   }
 
   loadCanvasFromCache() {
-    // FIXME:
+    // TODO: change on redraw
     const img = new Image();
     const { cachedDataUrl, ctx, SIDE_LENGTH: side } = this;
 
@@ -127,20 +144,20 @@ export default class CanvasModel {
     ctx.fillRect(col * cellLength, row * cellLength, cellLength, cellLength);
   }
 
-  writeUniqueColorIndicesInCanvasData(idx, newColor) {
+  paintIndexIfColorIsDifferent(idx, newColor) {
     const cellColor = this.canvasData[idx];
 
     if (cellColor === newColor || idx === null) return;
 
     this.canvasData[idx] = newColor;
+    this.paintCell(idx, newColor);
   }
 
   handleIndicesToDraw(indicesArr, colorsArr = []) {
     indicesArr.forEach((idx, num) => {
       const activeColor = colorsArr[num] || this.activeColor;
 
-      this.writeUniqueColorIndicesInCanvasData(idx, activeColor);
-      this.paintCell(idx, activeColor);
+      this.paintIndexIfColorIsDifferent(idx, activeColor);
     });
   }
 
@@ -166,8 +183,7 @@ export default class CanvasModel {
     this.canvasData = newCanvasData;
   }
 
-  init(currentFrameCanvasData) {
-    this.canvasData = currentFrameCanvasData;
+  init() {
     this.fullCanvasRedraw();
   }
 

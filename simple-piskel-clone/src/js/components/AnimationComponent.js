@@ -47,7 +47,7 @@ export default class AnimationComponent extends EventEmitter {
     }
 
     this.intervalId = setInterval(() => {
-      this.emit('animationFrameChanged', this.getNextAnimationFrame());
+      // this.emit('animationFrameChanged', this.getNextAnimationFrame());
     }, 1000 / fps);
   }
 }

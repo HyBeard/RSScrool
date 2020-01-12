@@ -3,10 +3,8 @@ import CanvasModel from './CanvasModel';
 import CanvasView from './CanvasView';
 import toolsTypes, { toolInCategory } from './tools/toolsTypes';
 
-const savedState = JSON.parse(localStorage.getItem('piskelState')) || {};
-
 export default class CanvasController extends EventEmitter {
-  constructor() {
+  constructor(savedState) {
     super();
     this.model = new CanvasModel(savedState);
     this.view = new CanvasView();
@@ -17,51 +15,67 @@ export default class CanvasController extends EventEmitter {
 
     if (coordsWasUpdated) {
       const { row, col } = this.model.getCurrentCoords();
+
       this.emit('updateCoordsInfo', row, col);
     }
   }
 
-  setActiveColor(mouseBtnCode, primColor, secColor) {
-    const { model } = this;
+  changeUsableColors(mouseBtnCode, newColor) {
+    const {
+      model,
+      model: { primColor, secColor },
+    } = this;
     const LEFT_MOUSE_BUTTON_CODE = 0;
 
     switch (mouseBtnCode) {
       case LEFT_MOUSE_BUTTON_CODE:
-        model.activeColor = primColor;
+        if (newColor) model.updateFields({ primColor: newColor });
+        model.updateFields({ activeColor: primColor });
         break;
+
       default:
-        model.activeColor = secColor;
+        if (newColor) model.updateFields({ secColor: newColor });
+        model.updateFields({ activeColor: secColor });
     }
   }
 
-  startDrawing(tool, primColor, secColor) {
+  changeActiveTool(tool) {
+    this.model.updateFields({ activeTool: tool });
+  }
+
+  swapColors() {
+    const {
+      model: { primColor, secColor },
+    } = this;
+
+    this.model.updateFields({ primColor: secColor, secColor: primColor });
+  }
+
+  startDrawing() {
     const {
       model,
+      model: { activeTool },
       view: { mouseBtnCode },
     } = this;
-    const {
-      continuousEffect: {
-        drawing: { requiringCanvasReload },
-      },
-    } = toolsTypes;
+    const requiringCanvasReload = toolsTypes.continuousEffect.drawing;
 
-    if (tool === 'eyedropper') {
+    if (activeTool === 'eyedropper') {
       const pickedColor = model.getColorOfCurrentIndex();
 
-      this.emit('changeMainColors', mouseBtnCode, pickedColor);
+      this.changeUsableColors(mouseBtnCode, pickedColor);
+      this.emit('renderNewColors', model.primColor, model.secColor);
 
       return;
     }
 
-    this.setActiveColor(mouseBtnCode, primColor, secColor);
+    this.changeUsableColors(mouseBtnCode);
 
-    if (toolInCategory(requiringCanvasReload, tool)) {
+    if (toolInCategory(requiringCanvasReload, activeTool)) {
       model.memorizeCanvasData();
     }
 
-    const indicesToDraw = model.getIndicesChangedByTool(tool);
+    const indicesToDraw = model.getIndicesChangedByTool(activeTool);
 
-    model.activeTool = tool;
     model.handleIndicesToDraw(indicesToDraw);
   }
 
@@ -92,7 +106,7 @@ export default class CanvasController extends EventEmitter {
   handleDrawingEnding() {
     const {
       model,
-      model: { cachedDataUrl, activeTool },
+      model: { activeTool },
     } = this;
     const { singleEffect } = toolsTypes;
 
@@ -100,9 +114,9 @@ export default class CanvasController extends EventEmitter {
 
     const indicesToDraw = model.getIndicesChangedByTool();
 
-    model.cacheCanvasAsDataUrl();
     model.handleIndicesToDraw(indicesToDraw);
-    this.emit('takeChangesAfterDrawing', cachedDataUrl);
+
+    this.emit('takeChangesAfterDrawing');
   }
 
   // async handleImageUploading(query) {
@@ -148,23 +162,19 @@ export default class CanvasController extends EventEmitter {
   addEventsToEmitter() {
     const { view } = this;
 
-    view.on('startDrawing', this.reEmit('requestDataForDrawing').bind(this));
-    view.on('cursorPositionChanged', this.handleCoordsChanging.bind(this));
+    view.on('startDrawing', this.startDrawing.bind(this));
+    view.on('cursorPositionChanging', this.handleCoordsChanging.bind(this));
     view.on('continueDrawing', this.drawNextIndices.bind(this));
-    view.on('drawingEnded', this.handleDrawingEnding.bind(this));
-
-    this.on('drawingDataReceived', this.startDrawing);
+    view.on('endDrawing', this.handleDrawingEnding.bind(this));
 
     // view.on('changeCanvasSize', this.handleCanvasSizeChanging.bind(this));
     // view.on('uploadImage', this.handleImageUploading.bind(this));
     // view.on('grayscaleCanvas', this.handleGrayscaleFiltering.bind(this));
   }
 
-  init(currentFrameCanvasData) {
-    const { model, view } = this;
-
-    model.init(currentFrameCanvasData);
-    view.init(model.state);
+  init() {
+    this.model.init();
+    this.view.init();
     this.addEventsToEmitter();
   }
 }

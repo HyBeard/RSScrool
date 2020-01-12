@@ -235,11 +235,6 @@ export default class Controller extends EventEmitter {
     this.canvasController.on('requestDataForDrawing', this.sendData.bind(this));
   }
 
-  sendData(...args) {
-    const { activeTool, primColor, secColor } = this.model;
-
-    this.canvasController.emit('drawingDataReceived', activeTool, primColor, secColor, ...args);
-  }
 
   init() {
     const { model, view } = this;

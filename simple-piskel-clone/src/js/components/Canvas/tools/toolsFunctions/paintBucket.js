@@ -3,7 +3,7 @@ import common from './common';
 const { indexToRowCol } = common;
 
 export default function paintBucket(currentIndex, sideCellCount, canvasData) {
-  // FIXME:
+  // TODO:
   const cellsStack = [currentIndex];
   const colouredCells = [];
   const startColor = canvasData[currentIndex];

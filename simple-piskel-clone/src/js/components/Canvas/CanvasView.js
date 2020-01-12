@@ -3,7 +3,7 @@ import EventEmitter from '../../helpers/EventEmitter';
 export default class CanvasView extends EventEmitter {
   constructor() {
     super();
-    this.canvas = document.querySelector('.main-canvas2');
+    this.canvas = document.querySelector('.main-canvas');
     this.mouseBtnCode = null;
     this.mousePressed = false;
   }
@@ -30,20 +30,18 @@ export default class CanvasView extends EventEmitter {
     canvas.addEventListener('mousemove', (ev) => {
       const { offsetX: x, offsetY: y } = ev;
 
-      this.emit('cursorPositionChanged', x, y);
+      this.emit('cursorPositionChanging', x, y);
 
       if (!this.mousePressed) return;
 
       this.emit('continueDrawing');
     });
 
-    canvas.addEventListener('mouseleave', this.emit('mouseLeaveCanvas'));
-
     window.addEventListener('mouseup', () => {
       if (!this.mousePressed) return;
 
       this.mousePressed = false;
-      this.emit('drawingEnded');
+      this.emit('endDrawing');
     });
 
     canvas.addEventListener('contextmenu', (ev) => ev.preventDefault());
