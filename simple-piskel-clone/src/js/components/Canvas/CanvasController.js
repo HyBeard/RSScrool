@@ -29,12 +29,12 @@ export default class CanvasController extends EventEmitter {
 
     switch (mouseBtnCode) {
       case LEFT_MOUSE_BUTTON_CODE:
-        if (newColor) model.updateFields({ primColor: newColor });
+        if (newColor !== undefined) model.updateFields({ primColor: newColor });
         model.updateFields({ activeColor: primColor });
         break;
 
       default:
-        if (newColor) model.updateFields({ secColor: newColor });
+        if (newColor !== undefined) model.updateFields({ secColor: newColor });
         model.updateFields({ activeColor: secColor });
     }
   }
@@ -49,6 +49,13 @@ export default class CanvasController extends EventEmitter {
     } = this;
 
     this.model.updateFields({ primColor: secColor, secColor: primColor });
+  }
+
+  static standardizeToolAnswer(answer) {
+    const indicesToDraw = answer.indicesToDraw || answer;
+    const indicesColors = answer.indicesColors || [];
+
+    return { indicesToDraw, indicesColors };
   }
 
   startDrawing() {
@@ -74,13 +81,16 @@ export default class CanvasController extends EventEmitter {
     }
 
     this.changeUsableColors(mouseBtnCode);
+    model.memorizeCanvasBeforeDrawing();
+
+    const toolAnswer = model.getToolAnswer(activeTool);
+    const { indicesToDraw, indicesColors } = CanvasController.standardizeToolAnswer(toolAnswer);
+
     if (toolIsInCategory(requiringCanvasReload, activeTool)) {
-      model.memorizeCanvasBeforeDrawing();
+      model.revertBackToPreviousData(indicesToDraw, indicesColors);
     }
 
-    const indicesToDraw = model.getIndicesChangedByToolData(activeTool);
-
-    model.handleIndicesToDraw(indicesToDraw);
+    model.handleIndicesToDraw(indicesToDraw, indicesColors);
 
     if (toolIsInCategory(singleEffect, activeTool)) {
       this.emit('takeChangesAfterDrawing');
@@ -101,14 +111,14 @@ export default class CanvasController extends EventEmitter {
 
     if (toolIsInCategory(singleEffect, activeTool)) return;
 
+    const toolAnswer = model.getToolAnswer();
+    const { indicesToDraw, indicesColors } = CanvasController.standardizeToolAnswer(toolAnswer);
+
     if (toolIsInCategory(requiringCanvasReload, activeTool)) {
-      model.loadCanvasFromCache(); // TODO: not pass again
-      model.canvasData = [...model.memorizedCanvasData];
+      model.revertBackToPreviousData(indicesToDraw, indicesColors);
     }
 
-    const indicesToDraw = model.getIndicesChangedByToolData();
-
-    model.handleIndicesToDraw(indicesToDraw);
+    model.handleIndicesToDraw(indicesToDraw, indicesColors);
   }
 
   handleDrawingEnding() {
@@ -120,9 +130,11 @@ export default class CanvasController extends EventEmitter {
 
     if (toolIsInCategory(singleEffect, activeTool)) return;
 
-    const indicesToDraw = model.getIndicesChangedByToolData();
+    const toolAnswer = model.getToolAnswer();
+    const { indicesToDraw, indicesColors } = CanvasController.standardizeToolAnswer(toolAnswer);
 
-    model.handleIndicesToDraw(indicesToDraw);
+    model.changedBeforeIndices.length = 0;
+    model.handleIndicesToDraw(indicesToDraw, indicesColors);
 
     this.emit('takeChangesAfterDrawing');
   }

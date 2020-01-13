@@ -22,6 +22,7 @@ export default class CanvasModel {
     this.ctx = this.canvasElem.getContext('2d');
     this.canvasData = canvasData || this.createEmptyCanvasData();
 
+    this.changedBeforeIndices = [];
     this.ghostCanvas = document.createElement('canvas');
     this.ghostContext = this.ghostCanvas.getContext('2d');
   }
@@ -61,7 +62,7 @@ export default class CanvasModel {
     return toolsSupport.indexToRowCol(this.currentIndex, this.sideCellCount);
   }
 
-  getIndicesChangedByToolData(toolName = this.activeTool) {
+  getToolAnswer(toolName = this.activeTool) {
     const {
       currentIndex,
       prevIndex,
@@ -177,12 +178,19 @@ export default class CanvasModel {
     this.paintCell(idx, newColor);
   }
 
-  handleIndicesToDraw(indicesArr, colorsArr = []) {
+  handleIndicesToDraw(indicesArr, colorsArr) {
     indicesArr.forEach((idx, num) => {
       const activeColor = colorsArr.length === 0 ? this.activeColor : colorsArr[num];
 
       this.paintIndexIfColorIsDifferent(idx, activeColor);
     });
+  }
+
+  revertBackToPreviousData(indicesArr) {
+    const memorizedColors = this.changedBeforeIndices.map((idx) => this.memorizedCanvasData[idx]);
+
+    this.handleIndicesToDraw(this.changedBeforeIndices, memorizedColors);
+    this.changedBeforeIndices = indicesArr;
   }
 
   getResizedDataAndImageUrl(side, currentData, currentImg) {

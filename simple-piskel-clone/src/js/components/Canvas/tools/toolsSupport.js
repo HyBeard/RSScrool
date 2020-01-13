@@ -63,11 +63,6 @@ const toolsSupport = {
   },
 
   cellsWasMissed(mouseFrom, mouseTo) {
-    // TODO: check
-    // if (currentIndex === null || prevIndex === null) {
-    //   return false;
-    // }
-
     const { row: prevRow, col: prevCol } = mouseFrom;
     const { row, col } = mouseTo;
 

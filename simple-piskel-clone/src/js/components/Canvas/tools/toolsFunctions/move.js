@@ -19,4 +19,6 @@ export default function move(currentIndex, mouseFrom, sideCellCount, canvasData,
     },
     { indicesToDraw: [], indicesColors: [] },
   );
+
+  return dataToDraw;
 }
