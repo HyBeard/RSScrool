@@ -22,6 +22,7 @@ export default class Dispatcher extends EventEmitter {
       ...this.canvas.model.state,
       framesState: this.frames.model.state,
       ...this.preview.model.state,
+      keyboardShortcuts: this.userInterface.keyboardShortcuts,
     };
   }
 

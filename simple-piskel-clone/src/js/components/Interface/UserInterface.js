@@ -1,4 +1,5 @@
 import EventEmitter from '../../helpers/EventEmitter';
+import keyboardShortcuts from '../Canvas/tools/shortcuts/shortcuts';
 
 export default class UserInterface extends EventEmitter {
   constructor() {
@@ -13,6 +14,8 @@ export default class UserInterface extends EventEmitter {
     this.sizeSelector = document.querySelector('.canvas-size-selector');
     this.sizeInfoContainer = document.querySelector('.canvas-size-info');
     this.coordsContainer = document.querySelector('.target-coords');
+
+    this.keyboardShortcuts = keyboardShortcuts;
   }
 
   static selectTool(tool) {
@@ -23,6 +26,15 @@ export default class UserInterface extends EventEmitter {
   static selectPenSize(size) {
     document.querySelector('.pen-size.active').classList.remove('active');
     document.querySelector(`[data-pen-size='${size}']`).classList.add('active');
+  }
+
+  selectToolByPressedKey({ code }) {
+    if (code in this.keyboardShortcuts) {
+      const toolName = keyboardShortcuts[code];
+
+      UserInterface.selectTool(toolName);
+      this.emit('changeTool', toolName);
+    }
   }
 
   renderLastColors(primColor, secColor) {
@@ -145,10 +157,15 @@ export default class UserInterface extends EventEmitter {
     });
   }
 
+  addShortcutsListeners() {
+    document.addEventListener('keydown', this.selectToolByPressedKey.bind(this));
+  }
+
   addListeners() {
     this.addSettingsListeners();
     this.addToolbarListeners();
     this.addPaletteListeners();
+    this.addShortcutsListeners();
 
     const canvas = document.querySelector('.main-canvas');
     canvas.addEventListener('mouseleave', this.clearCoordsContainer.bind(this));
@@ -157,10 +174,10 @@ export default class UserInterface extends EventEmitter {
   init({
     activeTool, primColor, secColor, fpsValue, sideCellCount, penSize,
   }) {
+    this.addListeners();
     this.updateDisplayedValues(sideCellCount, fpsValue);
     UserInterface.selectTool(activeTool);
     UserInterface.selectPenSize(penSize);
     this.renderLastColors(primColor, secColor);
-    this.addListeners();
   }
 }

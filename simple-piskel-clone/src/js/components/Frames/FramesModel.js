@@ -61,7 +61,7 @@ export default class FramesModel {
       return;
     }
 
-    this.currentFrameNumber -= Math.max(this.currentFrameNumber - 1, 0);
+    this.currentFrameNumber = Math.max(frameNum - 1, 0);
   }
 
   duplicateFrame(frameNum) {
