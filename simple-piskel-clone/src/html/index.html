@@ -13,7 +13,7 @@
         <div class="burger-menu">
           <select name="canvas-size" class="canvas-size-selector">
             <option value="4">4x4</option>
-            <option value="16">16x16</option>
+            <option value="16" selected>16x16</option>
             <option value="32">32x32</option>
             <option value="64">64x64</option>
             <option value="128">128x128</option>
@@ -41,16 +41,18 @@
       <div class="workplace">
         <aside class="ui-panel">
           <div class="toolbar container">
-            <h2 class="toolbar-name container-name">Drawing</h2>
+            <ul class="pen-sizes-list">
+              <li class="pen-size active" data-pen-size="1"></li>
+              <li class="pen-size" data-pen-size="2"></li>
+              <li class="pen-size" data-pen-size="3"></li>
+              <li class="pen-size" data-pen-size="4"></li>
+            </ul>
             <ul class="tools-container canvas-tools">
-              <li class="canvas-tool pencil" data-name="draw"></li>
+              <li class="canvas-tool pencil active" data-name="draw"></li>
               <li class="canvas-tool stroke" data-name="stroke"></li>
               <li class="canvas-tool paint-bucket" data-name="paintBucket"></li>
               <li class="canvas-tool eyedropper" data-name="eyedropper"></li>
-              <li
-                class="canvas-tool rectangle"
-                data-name="rectangle"
-              ></li>
+              <li class="canvas-tool rectangle" data-name="rectangle"></li>
               <li class="canvas-tool circle" data-name="circle"></li>
               <li class="canvas-tool move" data-name="move"></li>
               <li class="canvas-tool lighten disabled" data-name="lighten"></li>

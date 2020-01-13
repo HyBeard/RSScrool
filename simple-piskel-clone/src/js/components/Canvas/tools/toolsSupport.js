@@ -62,6 +62,27 @@ const toolsSupport = {
     return coords;
   },
 
+  getBoxOfIndicesAroundTarget(targetIdx, boxSize, sideCellCount) {
+    const botRightSize = Math.floor(boxSize / 2);
+    const topLeftSize = boxSize - botRightSize - 1;
+    const { row: targetRow, col: targetCol } = toolsSupport.indexToRowCol(targetIdx, sideCellCount);
+    const startRow = targetRow - topLeftSize;
+    const startCol = targetCol - topLeftSize;
+    const endRow = targetRow + botRightSize;
+    const endCol = targetCol + botRightSize;
+    const boxOfIndices = [];
+
+    for (let r = startRow; r <= endRow; r += 1) {
+      for (let c = startCol; c <= endCol; c += 1) {
+        const nearIndex = toolsSupport.rowColToIndex(r, c, sideCellCount);
+
+        if (nearIndex !== null) boxOfIndices.push(nearIndex);
+      }
+    }
+
+    return boxOfIndices;
+  },
+
   cellsWasMissed(mouseFrom, mouseTo) {
     const { row: prevRow, col: prevCol } = mouseFrom;
     const { row, col } = mouseTo;

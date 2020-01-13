@@ -115,6 +115,10 @@ export default class Dispatcher extends EventEmitter {
     this.updateCanvasAfterResize(newSide);
   }
 
+  sendToCanvasNewPenSize(penSize) {
+    this.canvas.model.penSize = penSize;
+  }
+
   addEventsToEmitter() {
     const { canvas, frames, userInterface: ui } = this;
 
@@ -124,6 +128,7 @@ export default class Dispatcher extends EventEmitter {
     ui.on('saveAppState', this.saveStateToLocalStorage.bind(this));
     ui.on('deleteAppState', Dispatcher.deleteStateFromStorage);
     ui.on('changeCanvasSize', this.resizeFramesAndCanvas.bind(this));
+    ui.on('changePenSize', this.sendToCanvasNewPenSize.bind(this));
 
     frames.on('selectFrame', this.selectFrame.bind(this));
     frames.on('addFrame', this.addFrame.bind(this));

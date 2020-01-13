@@ -6,7 +6,7 @@ export default class UserInterface extends EventEmitter {
     this.header = document.querySelector('.header');
     this.sizeSelector = document.querySelector('.canvas-size-selector');
     this.imageQueryInput = document.querySelector('.image-query');
-    this.toolsContainer = document.querySelector('.tools-container');
+    this.toolbar = document.querySelector('.toolbar');
     this.palette = document.querySelector('.palette-container');
     this.primColorElem = document.querySelector('.primary-color');
     this.secColorElem = document.querySelector('.secondary-color');
@@ -15,13 +15,14 @@ export default class UserInterface extends EventEmitter {
     this.coordsContainer = document.querySelector('.target-coords');
   }
 
-  selectTool(tool) {
-    const selectedToolBtn = document.querySelector(`li[data-name=${tool}]`);
+  static selectTool(tool) {
+    document.querySelector('.canvas-tool.active').classList.remove('active');
+    document.querySelector(`li[data-name=${tool}]`).classList.add('active');
+  }
 
-    if (this.currentToolElem) this.currentToolElem.classList.remove('active');
-
-    selectedToolBtn.classList.add('active');
-    this.currentToolElem = selectedToolBtn;
+  static selectPenSize(size) {
+    document.querySelector('.pen-size.active').classList.remove('active');
+    document.querySelector(`[data-pen-size='${size}']`).classList.add('active');
   }
 
   renderLastColors(primColor, secColor) {
@@ -61,13 +62,24 @@ export default class UserInterface extends EventEmitter {
   }
 
   addToolbarListeners() {
-    this.toolsContainer.addEventListener('click', ({ target: { classList, dataset } }) => {
-      if (!classList.contains('canvas-tool') || classList.contains('disabled')) return;
+    this.toolbar.addEventListener('click', ({ target }) => {
+      if (target.classList.contains('disabled')) return;
 
-      const toolName = dataset.name;
+      if (target.classList.contains('canvas-tool')) {
+        const toolName = target.dataset.name;
 
-      this.selectTool(toolName);
-      this.emit('changeTool', toolName);
+        UserInterface.selectTool(toolName);
+        this.emit('changeTool', toolName);
+
+        return;
+      }
+
+      if (target.classList.contains('pen-size')) {
+        const { penSize } = target.dataset;
+
+        UserInterface.selectPenSize(penSize);
+        this.emit('changePenSize', Number(penSize));
+      }
     });
   }
 
@@ -143,10 +155,11 @@ export default class UserInterface extends EventEmitter {
   }
 
   init({
-    activeTool, primColor, secColor, fpsValue, sideCellCount,
+    activeTool, primColor, secColor, fpsValue, sideCellCount, penSize,
   }) {
     this.updateDisplayedValues(sideCellCount, fpsValue);
-    this.selectTool(activeTool);
+    UserInterface.selectTool(activeTool);
+    UserInterface.selectPenSize(penSize);
     this.renderLastColors(primColor, secColor);
     this.addListeners();
   }

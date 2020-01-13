@@ -4,12 +4,13 @@ import toolsList from './tools/toolsList';
 export default class CanvasModel {
   constructor(savedState) {
     const {
-      canvasData, activeTool, primColor, secColor, sideCellCount,
+      canvasData, activeTool, primColor, secColor, sideCellCount, penSize,
     } = savedState;
 
     this.TRANSPARENT_COLOR = 'rgba(0,0,0,0)';
     this.SIDE_LENGTH = 512;
     this.sideCellCount = sideCellCount || 16;
+    this.penSize = penSize || 1;
     this.activeColor = null;
     this.initialCoords = { row: null, col: null };
     this.currentIndex = null;
@@ -48,6 +49,7 @@ export default class CanvasModel {
       SIDE_LENGTH: this.SIDE_LENGTH,
       sideCellCount: this.sideCellCount,
       cellLength: this.cellLength,
+      penSize: this.penSize,
       activeTool: this.activeTool,
       primColor: this.primColor,
       secColor: this.secColor,
@@ -73,12 +75,16 @@ export default class CanvasModel {
     } = this;
 
     switch (toolName) {
-      case 'draw':
-        return toolsList.draw(prevIndex, currentIndex, sideCellCount);
+      case 'draw': {
+        const indices = toolsList.draw(prevIndex, currentIndex, sideCellCount);
+        return this.upgradeIndicesBasedOnPenSize(indices);
+      }
 
-      case 'eraser':
+      case 'eraser': {
         this.activeColor = null;
-        return toolsList.draw(prevIndex, currentIndex, sideCellCount);
+        const indices = toolsList.draw(prevIndex, currentIndex, sideCellCount);
+        return this.upgradeIndicesBasedOnPenSize(indices);
+      }
 
       case 'paintBucket':
         return toolsList.paintBucket(currentIndex, sideCellCount, [...canvasData]);
@@ -86,17 +92,25 @@ export default class CanvasModel {
       case 'paintAll':
         return toolsList.paintAll(currentIndex, canvasData);
 
-      case 'mirrorDraw':
-        return toolsList.mirrorDraw(prevIndex, currentIndex, sideCellCount);
+      case 'mirrorDraw': {
+        const indices = toolsList.mirrorDraw(prevIndex, currentIndex, sideCellCount);
+        return this.upgradeIndicesBasedOnPenSize(indices);
+      }
 
-      case 'stroke':
-        return toolsList.stroke(currentIndex, initialCoords, sideCellCount);
+      case 'stroke': {
+        const indices = toolsList.stroke(currentIndex, initialCoords, sideCellCount);
+        return this.upgradeIndicesBasedOnPenSize(indices);
+      }
 
-      case 'rectangle':
-        return toolsList.rectangle(currentIndex, initialCoords, sideCellCount);
+      case 'rectangle': {
+        const indices = toolsList.rectangle(currentIndex, initialCoords, sideCellCount);
+        return this.upgradeIndicesBasedOnPenSize(indices);
+      }
 
-      case 'circle':
-        return toolsList.circle(currentIndex, initialCoords, sideCellCount);
+      case 'circle': {
+        const indices = toolsList.circle(currentIndex, initialCoords, sideCellCount);
+        return this.upgradeIndicesBasedOnPenSize(indices);
+      }
 
       case 'move':
         return toolsList.move(
@@ -176,6 +190,22 @@ export default class CanvasModel {
 
     this.canvasData[idx] = newColor;
     this.paintCell(idx, newColor);
+  }
+
+  upgradeIndicesBasedOnPenSize(indicesArr) {
+    if (this.penSize === 1) return indicesArr;
+
+    const nearestIndices = indicesArr.reduce((arr, idx) => {
+      const indicesBunch = toolsSupport.getBoxOfIndicesAroundTarget(
+        idx,
+        this.penSize,
+        this.sideCellCount,
+      );
+
+      return [...arr, ...indicesBunch];
+    }, []);
+
+    return Array.from(new Set(nearestIndices));
   }
 
   handleIndicesToDraw(indicesArr, colorsArr) {
