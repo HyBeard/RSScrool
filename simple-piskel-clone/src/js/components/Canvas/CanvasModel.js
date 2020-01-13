@@ -81,7 +81,7 @@ export default class CanvasModel {
         return toolsList.draw(prevIndex, currentIndex, sideCellCount);
 
       case 'paintBucket':
-        return toolsList.paintBucket(currentIndex, sideCellCount, canvasData);
+        return toolsList.paintBucket(currentIndex, sideCellCount, [...canvasData]);
 
       case 'paintAll':
         return toolsList.paintAll(currentIndex, canvasData);

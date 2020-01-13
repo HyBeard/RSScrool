@@ -21,7 +21,7 @@ export default class FramesView extends EventEmitter {
     return newElement;
   }
 
-  createFrameLayout(frameNumber = 0) {
+  createFrameLayout(frameNumber, disabled) {
     // TODO: switch canvas on div
     const { createDomElement } = FramesView;
     const frameLayout = createDomElement('li', 'frame-preview');
@@ -31,7 +31,10 @@ export default class FramesView extends EventEmitter {
     });
     const deleteFrameBtn = createDomElement('button', 'frame-preview-button delete-frame');
     const duplicateFrameBtn = createDomElement('button', 'frame-preview-button duplicate-frame');
-    const toggleFrameBtn = createDomElement('button', 'frame-preview-button toggle-frame');
+    const toggleFrameBtn = createDomElement(
+      'button',
+      `frame-preview-button toggle-frame ${disabled ? 'disabled' : ''}`,
+    );
     const moveFrameBtn = createDomElement('div', 'frame-preview-button move-frame');
     const canvasContext = frameCanvas.getContext('2d');
 
@@ -57,9 +60,9 @@ export default class FramesView extends EventEmitter {
     [this.currentFramePreview] = this.currentFrame.getElementsByTagName('canvas');
   }
 
-  renderNewFrame() {
-    const newFrame = this.createFrameLayout(this.framesCollection.length);
+  renderNewFrame(disabled) {
     const newFrameNum = this.framesCollection.length;
+    const newFrame = this.createFrameLayout(newFrameNum, disabled);
 
     this.framesList.appendChild(newFrame);
     this.selectFrame(newFrameNum);
@@ -165,8 +168,8 @@ export default class FramesView extends EventEmitter {
   }
 
   init({ currentFrameNumber, listOfFrames }) {
-    listOfFrames.forEach(({ dataURL }, frameNum) => {
-      this.renderNewFrame();
+    listOfFrames.forEach(({ dataURL, disabled }, frameNum) => {
+      this.renderNewFrame(disabled);
       this.paintFramePreview(dataURL, frameNum);
     });
 

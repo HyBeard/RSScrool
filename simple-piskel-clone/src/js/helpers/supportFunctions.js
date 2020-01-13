@@ -1,4 +1,5 @@
 const supportFunctions = {
+  // TODO: send everywhere
   getUploadedImage(src) {
     const img = new Image();
     return new Promise((resolve, reject) => {

@@ -5,55 +5,53 @@ const { indexToRowCol } = toolsSupport;
 export default function paintBucket(currentIndex, sideCellCount, canvasData) {
   // TODO:
   const cellsStack = [currentIndex];
-  const colouredCells = [];
   const startColor = canvasData[currentIndex];
   const indicesToDraw = [];
 
-  const matchStartColor = (cellIdx) => canvasData[cellIdx] === startColor;
+  const equalToStartColor = (cellIdx) => canvasData[cellIdx] === startColor;
 
   while (cellsStack.length) {
     let checkedIdx = cellsStack.pop();
     let reachLeft = false;
     let reachRight = false;
 
-    while (checkedIdx >= 0 && matchStartColor(checkedIdx)) {
+    while (checkedIdx >= 0 && equalToStartColor(checkedIdx)) {
       checkedIdx -= sideCellCount;
     }
+
     checkedIdx += sideCellCount;
 
-    while (matchStartColor(checkedIdx)) {
-      const { row } = indexToRowCol(checkedIdx);
+    while (equalToStartColor(checkedIdx)) {
+      const { row } = indexToRowCol(checkedIdx, sideCellCount);
+      const lIndex = checkedIdx - 1;
+      const rIndex = checkedIdx + 1;
+      const { row: lIndexRow } = indexToRowCol(lIndex, sideCellCount);
+      const { row: rIndexRow } = indexToRowCol(rIndex, sideCellCount);
 
       indicesToDraw.push(checkedIdx);
 
-      if (!reachLeft) {
-        const { row: nextRow } = indexToRowCol(checkedIdx - 1);
-        if (
-          nextRow === row
-          && matchStartColor(checkedIdx - 1)
-          && !colouredCells.includes(checkedIdx - 1)
-        ) {
-          cellsStack.push(checkedIdx - 1);
-          colouredCells.push(checkedIdx - 1);
-          reachLeft = true;
+      if (lIndexRow === row) {
+        if (!reachLeft) {
+          if (equalToStartColor(lIndex) && !indicesToDraw.includes(lIndex)) {
+            cellsStack.push(lIndex);
+            indicesToDraw.push(lIndex);
+            reachLeft = true;
+          }
+        } else if (!equalToStartColor(lIndex)) {
+          reachLeft = false;
         }
-      } else if (reachLeft) {
-        reachLeft = false;
       }
 
-      if (!reachRight) {
-        const { row: nextRow } = indexToRowCol(checkedIdx + 1);
-        if (
-          nextRow === row
-          && matchStartColor(checkedIdx + 1)
-          && !colouredCells.includes(checkedIdx + 1)
-        ) {
-          cellsStack.push(checkedIdx + 1);
-          colouredCells.push(checkedIdx + 1);
-          reachRight = true;
+      if (rIndexRow === row) {
+        if (!reachRight) {
+          if (equalToStartColor(rIndex) && !indicesToDraw.includes(rIndex)) {
+            cellsStack.push(rIndex);
+            indicesToDraw.push(rIndex);
+            reachRight = true;
+          }
+        } else if (!equalToStartColor(rIndex)) {
+          reachRight = false;
         }
-      } else if (reachLeft) {
-        reachLeft = false;
       }
 
       checkedIdx += sideCellCount;
