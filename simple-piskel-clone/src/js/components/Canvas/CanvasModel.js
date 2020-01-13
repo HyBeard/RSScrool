@@ -11,13 +11,13 @@ export default class CanvasModel {
     this.SIDE_LENGTH = 512;
     this.sideCellCount = sideCellCount || 16;
     this.activeColor = null;
-    this.mouseFrom = { row: null, col: null };
+    this.initialCoords = { row: null, col: null };
     this.currentIndex = null;
     this.prevIndex = null;
     this.memorizedCanvasData = null;
     this.activeTool = activeTool || 'draw';
     this.primColor = primColor || 'rgb(0,0,0)';
-    this.secColor = secColor || 'rgb(0,0,0,0)';
+    this.secColor = secColor || null;
     this.canvasElem = document.querySelector('.main-canvas');
     this.ctx = this.canvasElem.getContext('2d');
     this.canvasData = canvasData || this.createEmptyCanvasData();
@@ -61,9 +61,14 @@ export default class CanvasModel {
     return toolsSupport.indexToRowCol(this.currentIndex, this.sideCellCount);
   }
 
-  getIndicesChangedByTool(toolName = this.activeTool) {
+  getIndicesChangedByToolData(toolName = this.activeTool) {
     const {
-      currentIndex, prevIndex, sideCellCount, canvasData, TRANSPARENT_COLOR,
+      currentIndex,
+      prevIndex,
+      sideCellCount,
+      canvasData,
+      initialCoords,
+      memorizedCanvasData,
     } = this;
 
     switch (toolName) {
@@ -71,7 +76,7 @@ export default class CanvasModel {
         return toolsList.draw(prevIndex, currentIndex, sideCellCount);
 
       case 'eraser':
-        this.activeColor = TRANSPARENT_COLOR;
+        this.activeColor = null;
         return toolsList.draw(prevIndex, currentIndex, sideCellCount);
 
       case 'paintBucket':
@@ -83,15 +88,31 @@ export default class CanvasModel {
       case 'mirrorDraw':
         return toolsList.mirrorDraw(prevIndex, currentIndex, sideCellCount);
 
+      case 'stroke':
+        return toolsList.stroke(currentIndex, initialCoords, sideCellCount);
+
+      case 'rectangle':
+        return toolsList.rectangle(currentIndex, initialCoords, sideCellCount);
+
+      case 'circle':
+        return toolsList.circle(currentIndex, initialCoords, sideCellCount);
+
+      case 'move':
+        return toolsList.move(
+          currentIndex,
+          initialCoords,
+          sideCellCount,
+          canvasData,
+          memorizedCanvasData,
+        );
+
       default:
         return [];
     }
   }
 
   createEmptyCanvasData() {
-    const { sideCellCount: side, TRANSPARENT_COLOR } = this;
-
-    return new Array(side * side).fill(TRANSPARENT_COLOR);
+    return new Array(this.sideCellCount ** 2).fill(null);
   }
 
   updateFields(...fields) {
@@ -114,8 +135,13 @@ export default class CanvasModel {
     this.canvasData = newData;
   }
 
-  memorizeCanvasData() {
+  memorizeCanvasBeforeDrawing() {
+    const { sideCellCount: side, canvasElem, currentIndex } = this;
+
     this.memorizedCanvasData = [...this.canvasData];
+    this.initialCoords = toolsSupport.indexToRowCol(currentIndex, side);
+    this.ghostContext.clearRect(0, 0, side, side);
+    this.ghostContext.drawImage(canvasElem, 0, 0, side, side);
   }
 
   currentIndexIsChanged(idx) {
@@ -137,13 +163,12 @@ export default class CanvasModel {
     const { cellLength, ctx, sideCellCount } = this;
     const { row, col } = toolsSupport.indexToRowCol(idx, sideCellCount);
 
-    ctx.fillStyle = color;
+    ctx.fillStyle = color || this.TRANSPARENT_COLOR;
     ctx.clearRect(col * cellLength, row * cellLength, cellLength, cellLength);
     ctx.fillRect(col * cellLength, row * cellLength, cellLength, cellLength);
   }
 
   paintIndexIfColorIsDifferent(idx, newColor) {
-    if (newColor === null) debugger;
     const cellColor = this.canvasData[idx];
 
     if (cellColor === newColor || idx === null) return;
@@ -154,7 +179,7 @@ export default class CanvasModel {
 
   handleIndicesToDraw(indicesArr, colorsArr = []) {
     indicesArr.forEach((idx, num) => {
-      const activeColor = colorsArr[num] || this.activeColor;
+      const activeColor = colorsArr.length === 0 ? this.activeColor : colorsArr[num];
 
       this.paintIndexIfColorIsDifferent(idx, activeColor);
     });
@@ -173,19 +198,16 @@ export default class CanvasModel {
 
   loadCanvasFromCache() {
     // TODO: change on redraw
-    const img = new Image();
-    const { cachedDataUrl, ctx, SIDE_LENGTH: side } = this;
+    const { ctx, SIDE_LENGTH: side } = this;
 
-    img.onload = () => {
-      ctx.clearRect(0, 0, side, side);
-      ctx.drawImage(img, 0, 0, side, side);
-    };
-    img.src = cachedDataUrl;
+    ctx.clearRect(0, 0, side, side);
+    ctx.drawImage(this.ghostCanvas, 0, 0, side, side);
   }
 
   init() {
-    const { ghostCanvas, sideCellCount } = this;
+    const { ghostCanvas, sideCellCount, ctx } = this;
 
+    ctx.imageSmoothingEnabled = false;
     ghostCanvas.width = sideCellCount;
     ghostCanvas.height = sideCellCount;
 

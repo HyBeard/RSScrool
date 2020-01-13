@@ -51,6 +51,17 @@ const toolsSupport = {
     return points;
   },
 
+  getRectangleCoords(from, to) {
+    const coords = {
+      colStart: Math.min(from.col, to.col),
+      rowStart: Math.min(from.row, to.row),
+      colEnd: Math.max(from.col, to.col),
+      rowEnd: Math.max(from.row, to.row),
+    };
+
+    return coords;
+  },
+
   cellsWasMissed(mouseFrom, mouseTo) {
     // TODO: check
     // if (currentIndex === null || prevIndex === null) {

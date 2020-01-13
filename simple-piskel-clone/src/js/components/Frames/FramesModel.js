@@ -28,9 +28,7 @@ export default class FramesModel {
   }
 
   createEmptyCanvasData() {
-    const TRANSPARENT_COLOR = 'rgba(0,0,0,0)';
-
-    return [...this.currentFrameData].fill(TRANSPARENT_COLOR);
+    return [...this.currentFrameData].fill(null);
   }
 
   createFrameProps(canvasData) {

@@ -1,6 +1,6 @@
 import EventEmitter from '../../helpers/EventEmitter';
 
-export default class Controls extends EventEmitter {
+export default class UserInterface extends EventEmitter {
   constructor() {
     super();
     this.header = document.querySelector('.header');
@@ -26,7 +26,7 @@ export default class Controls extends EventEmitter {
 
   renderLastColors(primColor, secColor) {
     function setBgIfNotTransparent(color) {
-      return !color.match(/rgba?\(0,0,0,0\)/g) ? color : '';
+      return color === null ? '' : color;
     }
 
     this.primColorElem.style.background = setBgIfNotTransparent(primColor);

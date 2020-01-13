@@ -2,8 +2,7 @@ import toolsSupport from '../toolsSupport';
 
 const resize = {
   getResizedCanvasData(currentSide, newSide, currentCanvasData) {
-    const TRANSPARENT_COLOR = 'rgba(0,0,0,0)';
-    const emptyCanvasData = new Array(newSide ** 2).fill(TRANSPARENT_COLOR);
+    const emptyCanvasData = new Array(newSide ** 2).fill(null);
     const rowCountDiff = currentSide - newSide;
     const canvasDataCopy = [...currentCanvasData];
 
@@ -14,7 +13,7 @@ const resize = {
         col + rowCountDiff,
         currentSide,
       );
-      const colorOfRelevantIndex = canvasDataCopy[relevantIndex] || TRANSPARENT_COLOR;
+      const colorOfRelevantIndex = canvasDataCopy[relevantIndex] || null;
 
       return colorOfRelevantIndex;
     });

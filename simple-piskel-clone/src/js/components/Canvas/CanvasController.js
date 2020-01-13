@@ -74,12 +74,11 @@ export default class CanvasController extends EventEmitter {
     }
 
     this.changeUsableColors(mouseBtnCode);
-
     if (toolIsInCategory(requiringCanvasReload, activeTool)) {
-      model.memorizeCanvasData();
+      model.memorizeCanvasBeforeDrawing();
     }
 
-    const indicesToDraw = model.getIndicesChangedByTool(activeTool);
+    const indicesToDraw = model.getIndicesChangedByToolData(activeTool);
 
     model.handleIndicesToDraw(indicesToDraw);
 
@@ -103,11 +102,11 @@ export default class CanvasController extends EventEmitter {
     if (toolIsInCategory(singleEffect, activeTool)) return;
 
     if (toolIsInCategory(requiringCanvasReload, activeTool)) {
-      model.loadCanvasFromCache();
+      model.loadCanvasFromCache(); // TODO: not pass again
       model.canvasData = [...model.memorizedCanvasData];
     }
 
-    const indicesToDraw = model.getIndicesChangedByTool();
+    const indicesToDraw = model.getIndicesChangedByToolData();
 
     model.handleIndicesToDraw(indicesToDraw);
   }
@@ -121,7 +120,7 @@ export default class CanvasController extends EventEmitter {
 
     if (toolIsInCategory(singleEffect, activeTool)) return;
 
-    const indicesToDraw = model.getIndicesChangedByTool();
+    const indicesToDraw = model.getIndicesChangedByToolData();
 
     model.handleIndicesToDraw(indicesToDraw);
 
