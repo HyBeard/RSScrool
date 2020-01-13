@@ -22,6 +22,7 @@ export default class FramesView extends EventEmitter {
   }
 
   createFrameLayout(frameNumber = 0) {
+    // TODO: switch canvas on div
     const { createDomElement } = FramesView;
     const frameLayout = createDomElement('li', 'frame-preview');
     const frameCanvas = createDomElement('canvas', 'frame-canvas', {
@@ -32,7 +33,9 @@ export default class FramesView extends EventEmitter {
     const duplicateFrameBtn = createDomElement('button', 'frame-preview-button duplicate-frame');
     const toggleFrameBtn = createDomElement('button', 'frame-preview-button toggle-frame');
     const moveFrameBtn = createDomElement('div', 'frame-preview-button move-frame');
+    const canvasContext = frameCanvas.getContext('2d');
 
+    canvasContext.imageSmoothingEnabled = false;
     toggleFrameBtn.innerText = frameNumber + 1;
     frameLayout.appendChild(frameCanvas);
     frameLayout.appendChild(deleteFrameBtn);

@@ -1,6 +1,6 @@
 import EventEmitter from '../../helpers/EventEmitter';
 
-export default class Controls extends EventEmitter {
+export default class UserInterface extends EventEmitter {
   constructor() {
     super();
     this.header = document.querySelector('.header');
@@ -97,7 +97,8 @@ export default class Controls extends EventEmitter {
     });
 
     this.sizeSelector.addEventListener('change', ({ target: { value } }) => {
-      this.emit('changeCanvasSize', value); // TODO:
+      this.renderCanvasSizeInfo(value);
+      this.emit('changeCanvasSize', Number(value)); // TODO:
     });
   }
 

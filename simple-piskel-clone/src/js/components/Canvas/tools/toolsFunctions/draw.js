@@ -1,6 +1,6 @@
-import common from './common';
+import toolsSupport from '../toolsSupport';
 
-const { indexToRowCol, cellsWasMissed, getIndicesBetweenTwoPoints } = common;
+const { indexToRowCol, cellsWasMissed, getIndicesBetweenTwoPoints } = toolsSupport;
 
 export default function draw(prevIndex, currentIndex, sideCellCount) {
   const mouseFrom = indexToRowCol(prevIndex, sideCellCount);

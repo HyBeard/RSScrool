@@ -16,7 +16,7 @@ const toolsTypes = {
 
 export default toolsTypes;
 
-export function toolInCategory(category, tool) {
+export function toolIsInCategory(category, tool) {
   let toolIn = false;
 
   const traverse = (cat) => {

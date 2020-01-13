@@ -1,4 +1,4 @@
-const common = {
+const toolsSupport = {
   indexToRowCol: (idx, sideCellCount) => {
     const row = Math.floor(idx / sideCellCount);
     const col = idx % sideCellCount;
@@ -7,7 +7,7 @@ const common = {
   },
 
   coordsToIndex: (x, y, sideCellCount, cellLength) => {
-    const { row, col } = common.coordsToRowCol(x, y, cellLength);
+    const { row, col } = toolsSupport.coordsToRowCol(x, y, cellLength);
 
     return row * sideCellCount + col;
   },
@@ -36,14 +36,14 @@ const common = {
       if (from.col > to.col) [from, to] = [to, from];
       const slope = (to.row - from.row) / (to.col - from.col);
       for (let { col, row } = from; col <= to.col; col += 1) {
-        points.push(common.rowColToIndex(Math.round(row), col, sideCellCount));
+        points.push(toolsSupport.rowColToIndex(Math.round(row), col, sideCellCount));
         row += slope;
       }
     } else {
       if (from.row > to.row) [from, to] = [to, from];
       const slope = (to.col - from.col) / (to.row - from.row);
       for (let { col, row } = from; row <= to.row; row += 1) {
-        points.push(common.rowColToIndex(row, Math.round(col), sideCellCount));
+        points.push(toolsSupport.rowColToIndex(row, Math.round(col), sideCellCount));
         col += slope;
       }
     }
@@ -52,6 +52,7 @@ const common = {
   },
 
   cellsWasMissed(mouseFrom, mouseTo) {
+    // TODO: check
     // if (currentIndex === null || prevIndex === null) {
     //   return false;
     // }
@@ -67,4 +68,4 @@ const common = {
   },
 };
 
-export default common;
+export default toolsSupport;

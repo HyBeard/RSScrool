@@ -1,4 +1,4 @@
-import common from './tools/toolsFunctions/common';
+import toolsSupport from './tools/toolsSupport';
 import toolsList from './tools/toolsList';
 
 export default class CanvasModel {
@@ -9,7 +9,7 @@ export default class CanvasModel {
 
     this.TRANSPARENT_COLOR = 'rgba(0,0,0,0)';
     this.SIDE_LENGTH = 512;
-    this.sideCellCount = sideCellCount || 64;
+    this.sideCellCount = sideCellCount || 16;
     this.activeColor = null;
     this.mouseFrom = { row: null, col: null };
     this.currentIndex = null;
@@ -21,6 +21,9 @@ export default class CanvasModel {
     this.canvasElem = document.querySelector('.main-canvas');
     this.ctx = this.canvasElem.getContext('2d');
     this.canvasData = canvasData || this.createEmptyCanvasData();
+
+    this.ghostCanvas = document.createElement('canvas');
+    this.ghostContext = this.ghostCanvas.getContext('2d');
   }
 
   get cellLength() {
@@ -28,7 +31,14 @@ export default class CanvasModel {
   }
 
   get cachedDataUrl() {
-    return this.canvasElem.toDataURL();
+    const {
+      ghostCanvas, ghostContext, canvasElem, sideCellCount,
+    } = this;
+
+    ghostContext.clearRect(0, 0, sideCellCount, sideCellCount);
+    ghostContext.drawImage(canvasElem, 0, 0, sideCellCount, sideCellCount);
+
+    return ghostCanvas.toDataURL();
   }
 
   get state() {
@@ -48,7 +58,7 @@ export default class CanvasModel {
   }
 
   getCurrentCoords() {
-    return common.indexToRowCol(this.currentIndex, this.sideCellCount);
+    return toolsSupport.indexToRowCol(this.currentIndex, this.sideCellCount);
   }
 
   getIndicesChangedByTool(toolName = this.activeTool) {
@@ -89,7 +99,7 @@ export default class CanvasModel {
   }
 
   updateCurrentIndexIfChanged(x, y) {
-    const idx = common.coordsToIndex(x, y, this.sideCellCount, this.cellLength);
+    const idx = toolsSupport.coordsToIndex(x, y, this.sideCellCount, this.cellLength);
 
     if (this.currentIndexIsChanged(idx)) {
       this.setNewCurrentIndex(idx);
@@ -102,18 +112,6 @@ export default class CanvasModel {
 
   setNewCanvasData(newData) {
     this.canvasData = newData;
-  }
-
-  loadCanvasFromCache() {
-    // TODO: change on redraw
-    const img = new Image();
-    const { cachedDataUrl, ctx, SIDE_LENGTH: side } = this;
-
-    img.onload = () => {
-      ctx.clearRect(0, 0, side, side);
-      ctx.drawImage(img, 0, 0, side, side);
-    };
-    img.src = cachedDataUrl || '';
   }
 
   memorizeCanvasData() {
@@ -137,7 +135,7 @@ export default class CanvasModel {
 
   paintCell(idx, color) {
     const { cellLength, ctx, sideCellCount } = this;
-    const { row, col } = common.indexToRowCol(idx, sideCellCount);
+    const { row, col } = toolsSupport.indexToRowCol(idx, sideCellCount);
 
     ctx.fillStyle = color;
     ctx.clearRect(col * cellLength, row * cellLength, cellLength, cellLength);
@@ -145,6 +143,7 @@ export default class CanvasModel {
   }
 
   paintIndexIfColorIsDifferent(idx, newColor) {
+    if (newColor === null) debugger;
     const cellColor = this.canvasData[idx];
 
     if (cellColor === newColor || idx === null) return;
@@ -161,29 +160,35 @@ export default class CanvasModel {
     });
   }
 
-  changeCanvasSize(side) {
-    const { TRANSPARENT_COLOR, sideCellCount, canvasData } = this;
-    const emptyCanvasData = new Array(side ** 2).fill(TRANSPARENT_COLOR);
-    const rowCountDiff = sideCellCount - side;
-    const canvasDataCopy = [...canvasData];
+  getResizedDataAndImageUrl(side, currentData, currentImg) {
+    // TODO: unite with other transform functions
 
-    const newCanvasData = emptyCanvasData.map((_, idx) => {
-      const row = Math.floor(idx / side);
-      const col = idx % side;
-      const relevantIndex = common.rowColToIndex(
-        row + rowCountDiff,
-        col + rowCountDiff,
-        sideCellCount,
-      );
-      const colorOfRelevantIndex = canvasDataCopy[relevantIndex] || TRANSPARENT_COLOR;
+    const { getResizedImageUrl, getResizedCanvasData } = toolsList.resize;
+    const { sideCellCount } = this;
+    const resizedData = getResizedCanvasData(sideCellCount, side, currentData);
+    const resizedImgUrl = currentImg ? getResizedImageUrl(sideCellCount, side, currentImg) : '';
 
-      return colorOfRelevantIndex;
-    });
+    return { resizedData, resizedImgUrl };
+  }
 
-    this.canvasData = newCanvasData;
+  loadCanvasFromCache() {
+    // TODO: change on redraw
+    const img = new Image();
+    const { cachedDataUrl, ctx, SIDE_LENGTH: side } = this;
+
+    img.onload = () => {
+      ctx.clearRect(0, 0, side, side);
+      ctx.drawImage(img, 0, 0, side, side);
+    };
+    img.src = cachedDataUrl;
   }
 
   init() {
+    const { ghostCanvas, sideCellCount } = this;
+
+    ghostCanvas.width = sideCellCount;
+    ghostCanvas.height = sideCellCount;
+
     this.fullCanvasRedraw();
   }
 

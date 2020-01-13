@@ -1,6 +1,6 @@
-import common from './common';
+import toolsSupport from '../toolsSupport';
 
-const { indexToRowCol } = common;
+const { indexToRowCol } = toolsSupport;
 
 export default function paintBucket(currentIndex, sideCellCount, canvasData) {
   // TODO:

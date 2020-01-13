@@ -11,6 +11,7 @@ export default class AnimationController extends EventEmitter {
 
   handleFpsChanging(newFps) {
     this.runAnimate(newFps);
+    this.model.fpsValue = newFps;
     this.view.renderFpsValue(newFps);
   }
 
@@ -33,9 +34,9 @@ export default class AnimationController extends EventEmitter {
   }
 
   init({ fpsValue, framesState }) {
+    this.addEventsToEmitter();
     this.model.init(framesState);
     this.view.init(fpsValue);
     this.runAnimate(fpsValue);
-    this.addEventsToEmitter();
   }
 }

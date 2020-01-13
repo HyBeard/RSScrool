@@ -49,7 +49,7 @@ export default class FramesController extends EventEmitter {
   //     model.listOfFrames[num].canvasData = canvasComponent.canvasData;
   //   });
 
-  //   canvasComponent.sideCellCount = Number(size);
+  //   canvasComponent.sideCellCount = size;
   //   canvasComponent.canvasData = model.currentFrameData;
   //   canvasComponent.fullCanvasRedraw();
   //   view.renderCanvasSizeInfo(size);
@@ -127,10 +127,8 @@ export default class FramesController extends EventEmitter {
   }
 
   init(canvasData) {
-    const { model, view } = this;
-
-    model.init(canvasData);
-    view.init(model.state);
     this.addEventsToEmitter();
+    this.model.init(canvasData);
+    this.view.init(this.model.state);
   }
 }

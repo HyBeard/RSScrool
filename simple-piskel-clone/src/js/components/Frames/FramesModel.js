@@ -67,9 +67,9 @@ export default class FramesModel {
   }
 
   duplicateFrame(frameNum) {
-    const newFrameData = { ...this.listOfFrames[frameNum] };
+    const frameClone = JSON.parse(JSON.stringify(this.listOfFrames[frameNum]));
 
-    this.listOfFrames.splice(frameNum + 1, 0, newFrameData);
+    this.listOfFrames.splice(frameNum + 1, 0, frameClone);
     this.currentFrameNumber = frameNum + 1;
   }
 
