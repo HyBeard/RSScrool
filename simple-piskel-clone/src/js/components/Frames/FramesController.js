@@ -55,13 +55,14 @@ export default class FramesController extends EventEmitter {
   //   view.renderCanvasSizeInfo(size);
   // }
 
-  addFrame() { // TODO:  the same emit handlers
+  addFrame() {
+    // TODO:  the same emit handlers
     const { model, view } = this;
 
     model.addFrameData();
     view.renderNewFrame();
 
-    this.emit('addFrame', model.currentFrameData);
+    this.emit('addFrame', model.currentFrameData, model.currentFrameDataURL);
   }
 
   handleFrameDeleting(frameNum) {
@@ -70,7 +71,7 @@ export default class FramesController extends EventEmitter {
     model.deleteFrame(frameNum);
     view.deleteFrame(frameNum, model.currentFrameNumber);
 
-    this.emit('deleteFrame', model.currentFrameData);
+    this.emit('deleteFrame', model.currentFrameData, model.currentFrameDataURL);
   }
 
   handleFrameCloning(frameNum) {
@@ -80,7 +81,7 @@ export default class FramesController extends EventEmitter {
     view.duplicateFrame(frameNum);
     view.paintFramePreview(model.currentFrameDataURL, model.currentFrameNumber);
 
-    this.emit('cloneFrame', model.currentFrameData);
+    this.emit('cloneFrame', model.currentFrameData, model.currentFrameDataURL);
   }
 
   handleFrameToggling(frameNum) {
@@ -96,7 +97,7 @@ export default class FramesController extends EventEmitter {
     model.changeCurrentFrameNumber(frameNum);
     view.selectFrame(frameNum);
 
-    this.emit('selectFrame', model.currentFrameData);
+    this.emit('selectFrame', model.currentFrameData, model.currentFrameDataURL);
   }
 
   handleFrameMoving(oldNum, newNum) {
@@ -106,7 +107,7 @@ export default class FramesController extends EventEmitter {
     view.renumberFrames();
     view.selectFrame(newNum);
 
-    this.emit('moveFrame', model.currentFrameData);
+    this.emit('moveFrame', model.currentFrameData, model.currentFrameDataURL);
   }
 
   addEventsToEmitter() {

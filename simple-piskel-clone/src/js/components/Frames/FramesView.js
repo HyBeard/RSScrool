@@ -22,7 +22,6 @@ export default class FramesView extends EventEmitter {
   }
 
   createFrameLayout(frameNumber, disabled) {
-    // TODO: switch canvas on div
     const { createDomElement } = FramesView;
     const frameLayout = createDomElement('li', 'frame-preview');
     const frameCanvas = createDomElement('canvas', 'frame-canvas', {

@@ -26,30 +26,30 @@ export default class Dispatcher extends EventEmitter {
     };
   }
 
-  selectFrame(newData) {
+  selectFrame(newData, newImgUrl) {
     this.canvas.model.setNewCanvasData(newData);
-    this.canvas.model.fullCanvasRedraw();
+    this.canvas.model.drawCanvasFromSavedImageUrl(newImgUrl);
   }
 
-  addFrame(newData) {
+  addFrame(newData, newImgUrl) {
     this.canvas.model.setNewCanvasData(newData);
-    this.canvas.model.fullCanvasRedraw();
+    this.canvas.model.drawCanvasFromSavedImageUrl(newImgUrl);
   }
 
-  deleteFrame(newData) {
+  deleteFrame(newData, newImgUrl) {
     this.canvas.model.setNewCanvasData(newData);
-    this.canvas.model.fullCanvasRedraw();
+    this.canvas.model.drawCanvasFromSavedImageUrl(newImgUrl);
   }
 
-  cloneFrame(newData) {
+  cloneFrame(newData, newImgUrl) {
     this.canvas.model.setNewCanvasData(newData);
-    this.canvas.model.fullCanvasRedraw();
+    this.canvas.model.drawCanvasFromSavedImageUrl(newImgUrl);
     this.cacheCanvasAndRedrawPreview();
   }
 
-  moveFrame(newData) {
+  moveFrame(newData, newImgUrl) {
     this.canvas.model.setNewCanvasData(newData);
-    this.canvas.model.fullCanvasRedraw();
+    this.canvas.model.drawCanvasFromSavedImageUrl(newImgUrl);
   }
 
   cacheCanvasAndRedrawPreview() {

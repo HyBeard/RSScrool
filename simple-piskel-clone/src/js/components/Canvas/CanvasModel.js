@@ -1,5 +1,6 @@
 import toolsSupport from './tools/toolsSupport';
 import toolsList from './tools/toolsList';
+import supportFunctions from '../../helpers/supportFunctions';
 
 export default class CanvasModel {
   constructor(savedState) {
@@ -234,12 +235,16 @@ export default class CanvasModel {
     return { resizedData, resizedImgUrl };
   }
 
-  loadCanvasFromCache() {
-    // TODO: change on redraw
+  async drawCanvasFromSavedImageUrl(url) {
+    // TODO: change on select frame
     const { ctx, SIDE_LENGTH: side } = this;
 
     ctx.clearRect(0, 0, side, side);
-    ctx.drawImage(this.ghostCanvas, 0, 0, side, side);
+
+    if (url) {
+      const savedImage = await supportFunctions.getUploadedImage(url);
+      ctx.drawImage(savedImage, 0, 0, side, side);
+    }
   }
 
   init() {
