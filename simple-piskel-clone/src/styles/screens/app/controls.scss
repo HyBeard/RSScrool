@@ -1,0 +1,16 @@
+.controls {
+  display: flex;
+  flex-direction: column;
+  height: 300px;
+  justify-content: space-around;
+
+  &--img_keyword_input {
+    width: 100%;
+    margin-bottom: 5px;
+    text-align: center;
+  }
+
+  &--upload_img_btn {
+    width: 100%;
+  }
+}

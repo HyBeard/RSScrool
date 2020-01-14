@@ -37,9 +37,7 @@ export default class AnimationComponent extends EventEmitter {
     return dataURL;
   }
 
-  init(framesState) {
-    const { listOfFrames } = framesState;
-
+  init(listOfFrames) {
     this.listOfFrames = listOfFrames;
   }
 }

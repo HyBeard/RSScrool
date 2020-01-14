@@ -14,13 +14,13 @@ export default class Dispatcher extends EventEmitter {
     this.canvas = new Canvas(savedState);
     this.frames = new Frames(savedState);
     this.preview = new Preview(savedState);
-    this.userInterface = new UserInterface();
+    this.userInterface = new UserInterface(savedState);
   }
 
   get state() {
     return {
       ...this.canvas.model.state,
-      framesState: this.frames.model.state,
+      ...this.frames.model.state,
       ...this.preview.model.state,
       keyboardShortcuts: this.userInterface.keyboardShortcuts,
     };
@@ -71,13 +71,7 @@ export default class Dispatcher extends EventEmitter {
   }
 
   saveStateToLocalStorage() {
-    const appState = Object.assign(
-      this.canvas.model.state,
-      this.frames.model.state,
-      this.preview.model.state,
-    );
-
-    localStorage.setItem('piskelState', JSON.stringify(appState));
+    localStorage.setItem('piskelState', JSON.stringify(this.state));
   }
 
   static deleteStateFromStorage() {

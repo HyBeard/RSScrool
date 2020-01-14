@@ -77,11 +77,11 @@
   }
 }
 
-.pencil::before {
+.draw::before {
   content: "\f304";
 }
 
-.paint_bucket::before {
+.paintBucket::before {
   content: "\f576";
 }
 
@@ -115,15 +115,15 @@
   font-weight: 400;
 }
 
-.paint_all::before {
+.paintAll::before {
   content: "\f5aa";
 }
 
-.shape_selection::before {
+.shapeSelection::before {
   content: "\f0d0";
 }
 
-.rectangle_selection::before {
+.rectangleSelection::before {
   content: "\f065";
 }
 
@@ -131,6 +131,6 @@
   content: "\f12d";
 }
 
-.mirror_draw::before {
+.mirrorDraw::before {
   content: "\f7a5";
 }

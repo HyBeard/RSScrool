@@ -3,11 +3,10 @@ import templates from '../../templates/templates';
 import keyboardShortcuts from '../Canvas/tools/shortcuts/shortcuts';
 
 export default class UserInterface extends EventEmitter {
-  constructor() {
+  constructor(savedState) {
     super();
     this.controls = document.querySelector('.controls');
-    this.dialogBoxWrap = document.querySelector('.dialog_box_wrap');
-    this.dialogBox = document.querySelector('.dialog_box');
+    this.dialogBox = document.querySelector('.dialog_box_wrap');
     this.dialogContent = null;
     this.sizeSelector = document.querySelector('.controls--size_selector');
     this.imageQueryInput = document.querySelector('.controls--img_keyword_input');
@@ -19,7 +18,7 @@ export default class UserInterface extends EventEmitter {
     this.sizeInfoContainer = document.querySelector('.canvas_info--size');
     this.coordsContainer = document.querySelector('.canvas_info--target_coords');
 
-    this.keyboardShortcuts = keyboardShortcuts;
+    this.keyboardShortcuts = savedState.keyboardShortcuts || keyboardShortcuts;
   }
 
   static selectTool(tool) {
@@ -42,7 +41,7 @@ export default class UserInterface extends EventEmitter {
     }
 
     if (code in this.keyboardShortcuts) {
-      const toolName = keyboardShortcuts[code];
+      const toolName = this.keyboardShortcuts[code];
 
       UserInterface.selectTool(toolName);
       this.emit('changeTool', toolName);
@@ -86,7 +85,7 @@ export default class UserInterface extends EventEmitter {
   }
 
   toggleShowingKeyboardShortcuts(ev) {
-    this.dialogBoxWrap.classList.toggle('dialog_box_wrap--showed');
+    this.dialogBox.classList.toggle('dialog_box_wrap--showed');
 
     if (!this.dialogContent) {
       const cheatsheet = templates.buildCheatsheetList(this.keyboardShortcuts);
@@ -102,10 +101,39 @@ export default class UserInterface extends EventEmitter {
     this.dialogContent = null;
   }
 
-  closeDialogContainerIfClickNotIt(ev) {
-    if (this.dialogContent && !ev.target.closest('.dialog_box')) {
+  closeDialogBoxIfClickNotInIt(ev) {
+    if (
+      (this.dialogContent && !ev.target.closest('.dialog_box'))
+      || ev.target.closest('.dialog_box--close')
+    ) {
       this.toggleShowingKeyboardShortcuts(ev);
     }
+  }
+
+  waitForNewHotkey(pressedToolButton) {
+    const keyElement = pressedToolButton.nextElementSibling.firstElementChild;
+    const prevKey = keyElement.innerText;
+
+    keyElement.classList.add('shortcuts_list--item_key-blinking');
+
+    document.addEventListener(
+      'keydown',
+      ({ code }) => {
+        this.changeKeyboardShortcuts({ code, prevKey });
+        keyElement.innerText = code;
+        keyElement.classList.remove('shortcuts_list--item_key-blinking');
+      },
+      {
+        once: true,
+      },
+    );
+  }
+
+  changeKeyboardShortcuts({ code, prevKey }) {
+    const toolName = this.keyboardShortcuts[prevKey];
+
+    delete this.keyboardShortcuts[prevKey];
+    this.keyboardShortcuts[code] = toolName;
   }
 
   addToolbarListeners() {
@@ -206,7 +234,11 @@ export default class UserInterface extends EventEmitter {
   }
 
   addDialogBoxListeners() {
-    document.addEventListener('mousedown', this.closeDialogContainerIfClickNotIt.bind(this));
+    document.addEventListener('mousedown', this.closeDialogBoxIfClickNotInIt.bind(this));
+
+    this.dialogBox.addEventListener('click', ({ target }) => {
+      if (target.closest('.shortcuts_list--item_icon')) this.waitForNewHotkey(target);
+    });
   }
 
   addListeners() {
