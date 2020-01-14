@@ -3,10 +3,10 @@ import EventEmitter from '../../helpers/EventEmitter';
 export default class View extends EventEmitter {
   constructor() {
     super();
-    this.animationPreview = document.querySelector('.animate-preview-background');
-    this.animationContainer = document.querySelector('.animate-preview');
-    this.fpsSlider = document.querySelector('.fps-slider');
-    this.fpsValueContainer = document.querySelector('.fps-value');
+    this.animationPreview = document.querySelector('.animation_box--inner_wrap');
+    this.animationContainer = document.querySelector('.animation_box--changeable_bg');
+    this.fpsSlider = document.querySelector('.animation_box--fps_slider');
+    this.fpsValueContainer = document.querySelector('.animation_box--fps_value');
   }
 
   renderFpsValue(fpsValue) {
@@ -34,7 +34,7 @@ export default class View extends EventEmitter {
 
   addListeners() {
     this.animationPreview.addEventListener('click', ({ target }) => {
-      if (target.closest('.frame-preview-button')) {
+      if (target.closest('.sticked_btn')) {
         this.toggleFullScreen();
       }
     });

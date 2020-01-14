@@ -1,0 +1,25 @@
+$primary: #04a2b3;
+$weakPrimary: #04a2b348;
+$dark: #2a323c;
+$surface: #323c48;
+$on-surface: #3d4956;
+$weak-on-surface: #4c5b6b;
+$accent: #98a4b9;
+$light: #dcdcdc;
+$white: #ffffff;
+
+$transparent-bg: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAMAAABEpIrGAAAABlBMVEXV1dXb29tFGkCIAAAAHklEQVR4AWNghAIGCMDgjwgFCDDSw2M0PSCD0fQAACRcAgF4ciGUAAAAAElFTkSuQmCC")
+  repeat;
+
+%list-to-flex {
+  display: flex;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+@mixin weak-outline($width) {
+  outline: $width solid $weakPrimary;
+  outline-style: inset;
+  outline-offset: -$width;
+}

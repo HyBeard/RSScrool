@@ -41,9 +41,9 @@ export default class Dispatcher extends EventEmitter {
     this.canvas.model.drawCanvasFromSavedImageUrl(newImgUrl);
   }
 
-  cloneFrame(newData, newImgUrl) {
+  async cloneFrame(newData, newImgUrl) {
     this.canvas.model.setNewCanvasData(newData);
-    this.canvas.model.drawCanvasFromSavedImageUrl(newImgUrl);
+    await this.canvas.model.drawCanvasFromSavedImageUrl(newImgUrl);
     this.cacheCanvasAndRedrawPreview();
   }
 

@@ -6,9 +6,9 @@ export default class FramesView extends EventEmitter {
   constructor() {
     super();
     this.FRAME_PREVIEW_SIDE_LENGTH = 128;
-    this.framesListColumn = document.querySelector('.frames-list-column');
-    this.framesList = document.querySelector('.frames-list');
-    this.framesCollection = document.getElementsByClassName('frame-preview');
+    this.framesListColumn = document.querySelector('.frames_bar');
+    this.framesList = document.querySelector('.frames_bar--frames');
+    this.framesCollection = document.getElementsByClassName('preview');
     this.currentFrame = null;
   }
 
@@ -23,18 +23,18 @@ export default class FramesView extends EventEmitter {
 
   createFrameLayout(frameNumber, disabled) {
     const { createDomElement } = FramesView;
-    const frameLayout = createDomElement('li', 'frame-preview');
-    const frameCanvas = createDomElement('canvas', 'frame-canvas', {
+    const frameLayout = createDomElement('li', 'frames_bar--preview preview');
+    const frameCanvas = createDomElement('canvas', 'preview--canvas', {
       width: this.FRAME_PREVIEW_SIDE_LENGTH,
       height: this.FRAME_PREVIEW_SIDE_LENGTH,
     });
-    const deleteFrameBtn = createDomElement('button', 'frame-preview-button delete-frame');
-    const duplicateFrameBtn = createDomElement('button', 'frame-preview-button duplicate-frame');
+    const deleteFrameBtn = createDomElement('button', 'sticked_btn delete_frame');
+    const duplicateFrameBtn = createDomElement('button', 'sticked_btn duplicate_frame');
     const toggleFrameBtn = createDomElement(
       'button',
-      `frame-preview-button toggle-frame ${disabled ? 'disabled' : ''}`,
+      `sticked_btn toggle_frame ${disabled ? 'toggle_frame-disabled' : ''}`,
     );
-    const moveFrameBtn = createDomElement('div', 'frame-preview-button move-frame');
+    const moveFrameBtn = createDomElement('div', 'sticked_btn move_frame');
     const canvasContext = frameCanvas.getContext('2d');
 
     canvasContext.imageSmoothingEnabled = false;
@@ -52,9 +52,9 @@ export default class FramesView extends EventEmitter {
     const selectedFrame = this.framesCollection[frameNum];
 
     if (selectedFrame === this.currentFrame) return;
-    if (this.currentFrame) this.currentFrame.classList.remove('active-frame');
+    if (this.currentFrame) this.currentFrame.classList.remove('preview-active');
 
-    selectedFrame.classList.add('active-frame');
+    selectedFrame.classList.add('preview-active');
     this.currentFrame = selectedFrame;
     [this.currentFramePreview] = this.currentFrame.getElementsByTagName('canvas');
   }
@@ -69,7 +69,7 @@ export default class FramesView extends EventEmitter {
 
   renumberFrames() {
     Array.prototype.forEach.call(this.framesCollection, (item, pos) => {
-      const numberContainer = item.getElementsByClassName('toggle-frame')[0];
+      const numberContainer = item.getElementsByClassName('toggle_frame')[0];
 
       numberContainer.innerText = pos + 1;
     });
@@ -99,14 +99,14 @@ export default class FramesView extends EventEmitter {
   toggleFrame(frameNum) {
     const toggledFrame = this.framesCollection[frameNum];
 
-    const toggleButtonElem = toggledFrame.querySelector('.toggle-frame');
-    toggleButtonElem.classList.toggle('disabled');
+    const toggleButtonElem = toggledFrame.querySelector('.toggle_frame');
+    toggleButtonElem.classList.toggle('toggle_frame-disabled');
   }
 
   paintFramePreview(dataURL, frameNum) {
     const img = new Image();
     const givenFrame = this.framesCollection[frameNum];
-    const currentFrame = document.querySelector('.active-frame');
+    const currentFrame = document.querySelector('.preview-active');
     const preview = (givenFrame || currentFrame).querySelector('canvas');
     const previewCtx = preview.getContext('2d');
     const side = this.FRAME_PREVIEW_SIDE_LENGTH;
@@ -120,33 +120,33 @@ export default class FramesView extends EventEmitter {
 
   addListeners() {
     this.framesListColumn.addEventListener('click', ({ target }) => {
-      if (!target.closest('.frame-preview') && !target.closest('.add-frame')) return;
+      if (!target.closest('.preview') && !target.closest('.frames_bar--add_frame_btn')) return;
 
-      const clickedFrame = target.closest('.frame-preview');
+      const clickedFrame = target.closest('.preview');
       const clickedFrameNumber = [...this.framesCollection].indexOf(clickedFrame);
       const { classList } = target;
 
-      if (classList.contains('add-frame')) {
+      if (classList.contains('frames_bar--add_frame_btn')) {
         this.emit('addFrame');
         return;
       }
 
-      if (classList.contains('delete-frame')) {
+      if (classList.contains('delete_frame')) {
         this.emit('deleteFrame', clickedFrameNumber);
         return;
       }
 
-      if (classList.contains('duplicate-frame')) {
+      if (classList.contains('duplicate_frame')) {
         this.emit('cloneFrame', clickedFrameNumber);
         return;
       }
 
-      if (classList.contains('toggle-frame')) {
+      if (classList.contains('toggle_frame')) {
         this.emit('toggleFrame', clickedFrameNumber);
         return;
       }
 
-      if (target.closest('.frame-preview')) {
+      if (target.closest('.preview')) {
         this.emit('selectFrame', clickedFrameNumber);
       }
     });
@@ -155,9 +155,9 @@ export default class FramesView extends EventEmitter {
       sort: true,
       direction: 'vertical',
       fallbackTolerance: 5,
-      ghostClass: 'frame-preview--ghost',
-      chosenClass: 'frame-preview--chosen',
-      dragClass: 'frame-preview--draggable',
+      ghostClass: 'preview-ghost',
+      chosenClass: 'preview-chosen',
+      dragClass: 'preview-draggable',
 
       onEnd: (ev) => {
         const { oldIndex, newIndex } = ev;

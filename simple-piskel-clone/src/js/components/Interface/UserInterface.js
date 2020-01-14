@@ -1,34 +1,46 @@
 import EventEmitter from '../../helpers/EventEmitter';
+import templates from '../../templates/templates';
 import keyboardShortcuts from '../Canvas/tools/shortcuts/shortcuts';
 
 export default class UserInterface extends EventEmitter {
   constructor() {
     super();
-    this.header = document.querySelector('.header');
-    this.sizeSelector = document.querySelector('.canvas-size-selector');
-    this.imageQueryInput = document.querySelector('.image-query');
-    this.toolbar = document.querySelector('.toolbar');
-    this.palette = document.querySelector('.palette-container');
-    this.primColorElem = document.querySelector('.primary-color');
-    this.secColorElem = document.querySelector('.secondary-color');
-    this.sizeSelector = document.querySelector('.canvas-size-selector');
-    this.sizeInfoContainer = document.querySelector('.canvas-size-info');
-    this.coordsContainer = document.querySelector('.target-coords');
+    this.controls = document.querySelector('.controls');
+    this.dialogBoxWrap = document.querySelector('.dialog_box_wrap');
+    this.dialogBox = document.querySelector('.dialog_box');
+    this.dialogContent = null;
+    this.sizeSelector = document.querySelector('.controls--size_selector');
+    this.imageQueryInput = document.querySelector('.controls--img_keyword_input');
+    this.canvasToolbar = document.querySelector('.canvas_toolbar');
+    this.paletteBar = document.querySelector('.palette_bar');
+    this.primColorElem = document.querySelector('.primary_color');
+    this.secColorElem = document.querySelector('.secondary_color');
+    this.sizeSelector = document.querySelector('.controls--size_selector');
+    this.sizeInfoContainer = document.querySelector('.canvas_info--size');
+    this.coordsContainer = document.querySelector('.canvas_info--target_coords');
 
     this.keyboardShortcuts = keyboardShortcuts;
   }
 
   static selectTool(tool) {
-    document.querySelector('.canvas-tool.active').classList.remove('active');
-    document.querySelector(`li[data-name=${tool}]`).classList.add('active');
+    const activeClass = 'tools_list--tool_button-active';
+
+    document.querySelector(`.${activeClass}`).classList.remove(activeClass);
+    document.querySelector(`li[data-name=${tool}]`).classList.add(activeClass);
   }
 
   static selectPenSize(size) {
-    document.querySelector('.pen-size.active').classList.remove('active');
-    document.querySelector(`[data-pen-size='${size}']`).classList.add('active');
+    const activeClass = 'pen_sizes_list--size-active';
+
+    document.querySelector(`.${activeClass}`).classList.remove(activeClass);
+    document.querySelector(`[data-pen-size='${size}']`).classList.add(activeClass);
   }
 
   selectToolByPressedKey({ code }) {
+    if (document.querySelector('input:focus-within') || this.dialogContent) {
+      return;
+    }
+
     if (code in this.keyboardShortcuts) {
       const toolName = keyboardShortcuts[code];
 
@@ -73,11 +85,35 @@ export default class UserInterface extends EventEmitter {
     this.coordsContainer.innerText = `${row}:${col}`;
   }
 
-  addToolbarListeners() {
-    this.toolbar.addEventListener('click', ({ target }) => {
-      if (target.classList.contains('disabled')) return;
+  toggleShowingKeyboardShortcuts(ev) {
+    this.dialogBoxWrap.classList.toggle('dialog_box_wrap--showed');
 
-      if (target.classList.contains('canvas-tool')) {
+    if (!this.dialogContent) {
+      const cheatsheet = templates.buildCheatsheetList(this.keyboardShortcuts);
+
+      this.dialogBox.insertAdjacentHTML('afterbegin', cheatsheet);
+      this.dialogContent = this.dialogBox.firstElementChild;
+      ev.stopImmediatePropagation();
+
+      return;
+    }
+
+    this.dialogContent.remove();
+    this.dialogContent = null;
+  }
+
+  closeDialogContainerIfClickNotIt(ev) {
+    if (this.dialogContent && !ev.target.closest('.dialog_box')) {
+      this.toggleShowingKeyboardShortcuts(ev);
+    }
+  }
+
+  addToolbarListeners() {
+    this.canvasToolbar.addEventListener('click', ({ target }) => {
+      if (
+        target.classList.contains('tools_list--tool_button')
+        && !target.classList.contains('tools_list--tool_button-disabled')
+      ) {
         const toolName = target.dataset.name;
 
         UserInterface.selectTool(toolName);
@@ -86,7 +122,7 @@ export default class UserInterface extends EventEmitter {
         return;
       }
 
-      if (target.classList.contains('pen-size')) {
+      if (target.classList.contains('pen_sizes_list--size')) {
         const { penSize } = target.dataset;
 
         UserInterface.selectPenSize(penSize);
@@ -96,18 +132,22 @@ export default class UserInterface extends EventEmitter {
   }
 
   addSettingsListeners() {
-    this.header.addEventListener('click', ({ target: { classList } }) => {
-      if (classList.contains('save-state')) {
-        this.emit('saveAppState'); // TODO:
+    this.controls.addEventListener('click', (ev) => {
+      const {
+        target: { classList },
+      } = ev;
+
+      if (classList.contains('controls--save_state')) {
+        this.emit('saveAppState');
         return;
       }
 
-      if (classList.contains('delete-state')) {
-        this.emit('deleteAppState'); // TODO:
+      if (classList.contains('controls--delete_state')) {
+        this.emit('deleteAppState');
         return;
       }
 
-      if (classList.contains('upload-image')) {
+      if (classList.contains('controls--upload_img_btn')) {
         const query = this.imageQueryInput.value;
 
         this.emit('uploadImage', query); // TODO:
@@ -115,25 +155,29 @@ export default class UserInterface extends EventEmitter {
         return;
       }
 
-      if (classList.contains('grayscaling')) {
+      if (classList.contains('controls--grayscaling')) {
         this.emit('grayscaleCanvas'); // TODO:
+      }
+
+      if (classList.contains('controls--keyboard_shortcuts')) {
+        this.toggleShowingKeyboardShortcuts(ev);
       }
     });
 
     this.sizeSelector.addEventListener('change', ({ target: { value } }) => {
       this.renderCanvasSizeInfo(value);
-      this.emit('changeCanvasSize', Number(value)); // TODO:
+      this.emit('changeCanvasSize', Number(value));
     });
   }
 
   addPaletteListeners() {
-    this.palette.addEventListener(
+    this.paletteBar.addEventListener(
       'mousedown',
       ({ target: { classList, style }, button: mouseBtnCode }) => {
         const primBg = this.primColorElem.style.background;
         const secBg = this.secColorElem.style.background;
 
-        if (classList.contains('palette-item')) {
+        if (classList.contains('palette--color')) {
           const color = style.backgroundColor;
 
           if (mouseBtnCode) {
@@ -145,14 +189,14 @@ export default class UserInterface extends EventEmitter {
           return;
         }
 
-        if (classList.contains('swap-colors')) {
+        if (classList.contains('last_colors--swap_colors')) {
           this.swapColors(primBg, secBg);
           this.emit('swapColors');
         }
       },
     );
 
-    this.palette.addEventListener('contextmenu', (ev) => {
+    this.paletteBar.addEventListener('contextmenu', (ev) => {
       ev.preventDefault();
     });
   }
@@ -161,13 +205,18 @@ export default class UserInterface extends EventEmitter {
     document.addEventListener('keydown', this.selectToolByPressedKey.bind(this));
   }
 
+  addDialogBoxListeners() {
+    document.addEventListener('mousedown', this.closeDialogContainerIfClickNotIt.bind(this));
+  }
+
   addListeners() {
     this.addSettingsListeners();
     this.addToolbarListeners();
     this.addPaletteListeners();
     this.addShortcutsListeners();
+    this.addDialogBoxListeners();
 
-    const canvas = document.querySelector('.main-canvas');
+    const canvas = document.querySelector('.canvas_box--canvas');
     canvas.addEventListener('mouseleave', this.clearCoordsContainer.bind(this));
   }
 

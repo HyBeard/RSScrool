@@ -3,7 +3,7 @@ import EventEmitter from '../../helpers/EventEmitter';
 export default class CanvasView extends EventEmitter {
   constructor() {
     super();
-    this.canvas = document.querySelector('.main-canvas');
+    this.canvas = document.querySelector('.canvas_box--canvas');
     this.mouseBtnCode = null;
     this.mousePressed = false;
   }

@@ -1,0 +1,179 @@
+.frames_bar {
+  flex-shrink: 0;
+  overflow-y: scroll;
+  text-align: center;
+  background-color: $light;
+
+  &::-webkit-scrollbar {
+    width: 10px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: $primary;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    border-radius: 10px;
+    background: $light;
+    border: 2px solid $accent;
+  }
+
+  &::-webkit-scrollbar-thumb:hover {
+    background: $white;
+  }
+
+  &--frames {
+    margin: 1em 0;
+    padding: 0 1em;
+    list-style: none;
+  }
+
+  &--preview {
+    margin: 16px 0;
+
+    &:only-child .delete_frame,
+    &:only-child .move_frame {
+      display: none;
+    }
+  }
+
+  &--add_frame_btn {
+    width: 150px;
+    height: 50px;
+    margin-bottom: 1em;
+    border: 5px solid $weak-on-surface;
+    border-radius: 5px;
+    color: $weak-on-surface;
+    cursor: pointer;
+
+    &:hover {
+      border: 5px solid $on-surface;
+      color: $on-surface;
+    }
+
+    &:active {
+      @include weak-outline(7px);
+    }
+  }
+}
+
+.sticked_btn {
+  position: absolute;
+  visibility: hidden;
+  height: 35px;
+  width: 35px;
+  border: none;
+  background-color: $weakPrimary;
+  cursor: pointer;
+
+  &::before {
+    font-family: "Font Awesome 5 Free";
+    font-weight: 900;
+    color: $surface;
+  }
+
+  &:active {
+    @include weak-outline(5px);
+  }
+}
+
+.preview {
+  position: relative;
+  border: 5px solid $weakPrimary;
+  background: $transparent-bg;
+  border-radius: 5px;
+  font-size: 0;
+  cursor: pointer;
+
+  &:hover .sticked_btn {
+    visibility: visible;
+  }
+
+  &-active {
+    border-color: $primary;
+  }
+
+  &-ghost {
+    position: relative;
+    &::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      box-sizing: border-box;
+      border: 5px dashed $weakPrimary;
+      background-color: $light;
+    }
+  }
+
+  &--canvas {
+    width: 128px;
+    height: 128px;
+    image-rendering: pixelated;
+  }
+}
+
+.toggle_frame {
+  visibility: visible;
+  top: 0;
+  left: 0;
+  border-bottom-right-radius: 4px;
+  background-color: $primary;
+  color: $surface;
+
+  &-disabled {
+    background-color: $weakPrimary;
+  }
+}
+
+.delete_frame {
+  top: 0;
+  right: 0;
+  border-bottom-left-radius: 4px;
+
+  &::before {
+    content: "\f2ed";
+  }
+}
+
+.move_frame {
+  bottom: 0;
+  left: 0;
+  border-top-right-radius: 4px;
+
+  &::before {
+    content: "\f0b2";
+    line-height: 35px;
+    font-size: 16px;
+  }
+}
+
+.duplicate_frame {
+  bottom: 0;
+  right: 0;
+  border-top-left-radius: 4px;
+
+  &::before {
+    content: "\f24d";
+  }
+}
+
+button:focus {
+  outline: none;
+}
+
+.canvas_box {
+  position: relative;
+  width: 512px;
+  height: 512px;
+  margin: 0 auto;
+  background: $transparent-bg;
+
+  &--canvas {
+    width: 100%;
+    height: 100%;
+    image-rendering: pixelated;
+  }
+}

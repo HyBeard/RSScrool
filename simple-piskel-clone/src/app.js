@@ -1,6 +1,6 @@
 import 'babel-polyfill';
 
-import './styles/styles.scss';
+import './styles/app.scss';
 
 import Dispatcher from './js/components/Dispatcher';
 

@@ -10,7 +10,7 @@ export default class CanvasModel {
 
     this.TRANSPARENT_COLOR = 'rgba(0,0,0,0)';
     this.SIDE_LENGTH = 512;
-    this.sideCellCount = sideCellCount || 16;
+    this.sideCellCount = sideCellCount || 32;
     this.penSize = penSize || 1;
     this.activeColor = null;
     this.initialCoords = { row: null, col: null };
@@ -20,7 +20,7 @@ export default class CanvasModel {
     this.activeTool = activeTool || 'draw';
     this.primColor = primColor || 'rgb(0,0,0)';
     this.secColor = secColor || null;
-    this.canvasElem = document.querySelector('.main-canvas');
+    this.canvasElem = document.querySelector('.canvas_box--canvas');
     this.ctx = this.canvasElem.getContext('2d');
     this.canvasData = canvasData || this.createEmptyCanvasData();
 
