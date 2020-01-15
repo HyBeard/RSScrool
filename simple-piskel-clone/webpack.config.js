@@ -27,7 +27,7 @@ const config = {
   target: 'web',
   entry: {
     app: path.resolve(__dirname, 'src/app.js'),
-    // landingpage: path.resolve(__dirname, 'src/index.js'),
+    landingpage: path.resolve(__dirname, 'src/index.js'),
   },
   output: {
     path: path.resolve(__dirname, 'dist'),
@@ -145,20 +145,20 @@ const config = {
 
   plugins: [
     new HtmlWebPackPlugin({
-      template: path.resolve(__dirname, 'src/html/index.html'),
+      template: path.resolve(__dirname, 'src/html/app.html'),
       inject: 'body',
       favicon: './src/assets/favicon/fav16.png',
       chunksSortMode: 'manual',
-      // filename: 'app.html',
+      filename: 'app.html',
       chunks: ['app'],
     }),
-    // new HtmlWebPackPlugin({
-    //   template: path.resolve(__dirname, 'src/html/landingpage.html'),
-    //   inject: 'body',
-    //   favicon: './src/assets/favicon/fav16.png',
-    //   chunksSortMode: 'manual',
-    //   chunks: ['landingpage'],
-    // }),
+    new HtmlWebPackPlugin({
+      template: path.resolve(__dirname, 'src/html/landingpage.html'),
+      inject: 'body',
+      favicon: './src/assets/favicon/fav16.png',
+      chunksSortMode: 'manual',
+      chunks: ['landingpage'],
+    }),
     new MiniCssExtractPlugin({
       moduleFilename: ({ name }) => `${name.replace('/js/', '/css/')}.css`,
     }),

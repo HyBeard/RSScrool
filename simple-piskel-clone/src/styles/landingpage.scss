@@ -1,0 +1,227 @@
+@import "./screens/variables";
+@import "./screens/fonts";
+
+body {
+  font-family: "Roboto", "Arial", sans-serif;
+  font-weight: 400;
+  margin: 0;
+  line-height: 1.15;
+  color: $light;
+
+  position: relative;
+  margin: 0;
+  min-height: 100%;
+  background: $transparentBg;
+}
+
+.header {
+  height: 60px;
+  box-shadow: $boxShadow;
+
+  &--content {
+    height: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 1rem;
+    text-align: center;
+    font-size: 1.5rem;
+    background-color: $primary;
+    color: $weakDark;
+  }
+
+  &--home_link {
+    text-decoration: none;
+    color: inherit;
+  }
+
+  &--button {
+    @extend %button;
+    height: 30px;
+    line-height: 30px;
+    padding: 0 1rem;
+    font-size: 14px;
+  }
+}
+
+.logo {
+  font-size: inherit;
+  margin: 0;
+}
+
+.section {
+  padding: 2.5rem 2rem;
+
+  &--wrapper {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+
+  &--title {
+    text-align: center;
+    margin-top: 0;
+    margin-bottom: 2.5rem;
+    font-size: 30px;
+    font-weight: 700;
+    color: $light;
+  }
+}
+
+.introduction {
+  background-color: $dimmingHard;
+
+  &--left {
+    flex-basis: 40%;
+    margin-right: 2rem;
+  }
+
+  &--title {
+    margin-top: 0;
+    color: $accent;
+    font-size: 3rem;
+    font-weight: 700;
+
+    &-accent {
+      color: $primary;
+    }
+  }
+
+  &--subtitle {
+    margin-bottom: 2rem;
+    color: $light;
+    font-size: 1.8rem;
+    font-weight: 400;
+  }
+
+  &--button {
+    @extend %button;
+    height: 4rem;
+    line-height: 4rem;
+    padding: 0 2rem;
+    font-size: 2rem;
+  }
+
+  &--right {
+    flex-basis: 50%;
+    flex-shrink: 0;
+    font-size: 0;
+    box-shadow: $boxShadow;
+  }
+
+  &--img {
+    width: 100%;
+  }
+}
+
+.showroom {
+  background-color: $dark;
+  box-shadow: $boxShadow;
+
+  &--examples {
+    display: flex;
+    justify-content: center;
+    -ms-align-items: center;
+    align-items: center;
+    max-width: 100%;
+  }
+
+  &--example {
+    width: 23%;
+    height: 23%;
+    font-size: 0;
+    box-shadow: $boxShadow;
+
+    img {
+      width: 100%;
+    }
+  }
+}
+
+.screenshots {
+  color: $onSurface;
+  padding: 50px 50px;
+  background-color: $dimmingHard;
+
+  &--item {
+    width: 32%;
+    font-size: 0;
+    box-shadow: $boxShadow;
+
+    img {
+      width: 100%;
+    }
+  }
+}
+
+.features {
+  padding: 50px 20px;
+  text-align: center;
+  background-color: $dark;
+  box-shadow: $boxShadow;
+
+  &--items_list {
+    justify-content: center;
+    flex-wrap: wrap;
+
+    .item:nth-child(2n) {
+      margin-right: 0;
+    }
+  }
+
+  &--item {
+    display: flex;
+    align-items: center;
+    flex-basis: 40%;
+    margin-right: 2rem;
+    margin-bottom: 2rem;
+    width: 500px;
+  }
+
+  &--item_title {
+    margin-bottom: 1rem;
+    font-size: 1.5rem;
+    font-weight: 700;
+  }
+
+  &--item img {
+    width: 80px;
+  }
+
+  &--item_wrapper-left {
+    text-align: right;
+    margin-right: 1.5rem;
+  }
+
+  &--item_wrapper-right {
+    text-align: left;
+    margin-left: 1.5rem;
+  }
+}
+
+.footer {
+  padding: 1rem 2rem;
+}
+
+.credits {
+  font-size: 1rem;
+  text-align: center;
+  background-color: $dimmingHard;
+
+  &--title {
+    font-weight: 400;
+    margin-top: 0;
+    margin-bottom: 0.5rem;
+  }
+
+  &--link {
+    color: $primary;
+    text-decoration: none;
+
+    &:focus {
+      outline: none;
+    }
+  }
+}

@@ -9,7 +9,7 @@
   height: 100%;
   box-sizing: border-box;
   padding: 4rem;
-  background: #00000080;
+  background: $dimmingMedium;
   opacity: 0;
   overflow: hidden;
   pointer-events: none;
@@ -29,7 +29,7 @@
   box-sizing: border-box;
   outline: 2px solid $weakPrimary;
   background-color: $dark;
-  box-shadow: 0px 0px 50px 10px #000000bf;
+  box-shadow: 0px 0px 50px 10px $dimmingHard;
   color: $accent;
   position: relative;
   padding: 1rem;

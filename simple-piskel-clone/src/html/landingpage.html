@@ -8,152 +8,124 @@
   </head>
   <body>
     <header id="header" class="header">
-      <div class="header-wrapper">
-        <div class="header-title">Piskel Clone</div>
-        <div class="header-buttons">
-          <a
-            id="create"
-            class="button create-button"
-            href="./app.html"
-            >Create Sprite</a
-          >
-        </div>
+      <div class="header--content">
+        <a href="./index.html" class="header--home_link">
+          <h1 class="logo">Piskel Clone</h1>
+        </a>
+        <a id="create" class="header--button create_app_button" href="./app.html">Create Sprite</a>
       </div>
     </header>
     <main>
-      <section class="introduction">
-        <div class="introduction-left">
-          <div class="introduction-title">
-            <span>Piskel Clone</span> is a clone of free online editor for
-            animated sprites & pixel art
+      <section class="section introduction">
+        <div class="section--wrapper introduction--content">
+          <div class="introduction--left">
+            <h2 class="introduction--title">
+              <span class="introduction--title introduction--title-accent">Piskel Clone</span> is a
+              clone of free online editor for animated sprites & pixel art
+            </h2>
+            <p class="introduction--subtitle">
+              Create animations in your browser. Try an example, use Google sign in to access your
+              gallery or simply create a new sprite.
+            </p>
+            <a class="introduction--button" href="./app.html">Create Sprite</a>
           </div>
-          <div class="introduction-subtitle">
-            Create animations in your browser. Try an example, use Google sign
-            in to access your gallery or simply create a new sprite.
+          <div class="introduction--right">
+            <img class="introduction--img" src="../assets/images/screenshot.png" alt="screenshot" />
           </div>
-          <div class="introduction-buttons">
-            <a
-              id="intr-create"
-              class="button intr-button"
-              href="../../../html/index.html"
-              >Create Sprite</a
-            >
-          </div>
-        </div>
-        <div class="introduction-right">
-          <img src="" width="600" height="300" alt="screenshot" />
         </div>
       </section>
-      <section class="showroom">
-        <div class="section-title showroom-title">Animation examples</div>
-        <div class="showroom-items">
-          <div class="showroom__item">
+      <section class="section showroom">
+        <h3 class="section--title showroom--title">Animation examples</h3>
+        <div class="section--wrapper">
+          <div class="showroom--example">
             <img src="../assets/gifs/knight.gif" loop="infinite" />
           </div>
-          <div class="showroom__item">
+          <div class="showroom--example">
             <img src="../assets/gifs/man.gif" loop="infinite" />
           </div>
-          <div class="showroom__item">
+          <div class="showroom--example">
             <img src="../assets/gifs/fox.gif" loop="infinite" />
           </div>
-          <div class="showroom__item">
+          <div class="showroom--example">
             <img src="../assets/gifs/pizza.gif" loop="infinite" />
           </div>
         </div>
       </section>
-      <section class="screenshots">
-        <div class="section-title screenshots-title">Screenshots</div>
-        <div class="screenshots-items">
-          <div class="screenshots__item">
-            <img src="" width="300" height="150" alt="screenshot" />
+      <section class="section screenshots">
+        <h3 class="section--title">Screenshots</h3>
+        <div class="section--wrapper">
+          <div class="screenshots--item">
+            <img src="../assets/images/screenshot.png" alt="screenshot" />
           </div>
-          <div class="screenshots__item">
-            <img src="" width="300" height="150" alt="screenshot" />
+          <div class="screenshots--item">
+            <img src="../assets/images/screenshot.png" alt="screenshot" />
           </div>
-          <div class="screenshots__item">
-            <img src="" width="300" height="150" alt="screenshot" />
+          <div class="screenshots--item">
+            <img src="../assets/images/screenshot.png" alt="screenshot" />
           </div>
         </div>
       </section>
-      <section class="features">
-        <div class="section-title features-title">Features</div>
-        <div class="features-items">
-          <div class="features__item">
-            <div class="features__item-wrapper_left">
-              <div class="features__item-title">Live preview</div>
-              <div class="features__item-desc">
-                Check a preview of your animation in real time as you draw.
-                Adjust the frame delay on the fly.
+      <section class="section features">
+        <div class="section--title">Features</div>
+        <div class="section--wrapper features--items_list">
+          <div class="features--item">
+            <div class="features--item_wrapper features--item_wrapper-left">
+              <div class="features--item_title">Live preview</div>
+              <div class="features--item_desc">
+                Check a preview of your animation in real time as you draw. Adjust the frame delay
+                on the fly.
               </div>
             </div>
             <img src="../assets/gifs/finn.gif" loop="infinite" alt="" />
           </div>
-          <div class="features__item">
+          <div class="features--item">
             <img src="../assets/icons/google.png" alt="" />
-            <div class="features__item-wrapper_right">
-              <div class="features__item-title">Google Sign in</div>
-              <div class="features__item-desc">
-                No need to remember yet another password, just use your Google
-                account to sign in.
+            <div class="features--item_wrapper features--item_wrapper-right">
+              <div class="features--item_title">Google Sign in</div>
+              <div class="features--item_desc">
+                No need to remember yet another password, just use your Google account to sign in.
               </div>
             </div>
           </div>
-          <div class="features__item">
-            <div class="features__item-wrapper_left">
-              <div class="features__item-title">Export to GIF.</div>
-              <div class="features__item-desc">
-                Save and store created animation as GIF file to your local
-                storage. Make a sweet collection of your own art.
+          <div class="features--item">
+            <div class="features--item_wrapper features--item_wrapper-left">
+              <div class="features--item_title">Export to GIF</div>
+              <div class="features--item_desc">
+                Save and store created animation as GIF file to your local storage. Make a sweet
+                collection of your own art.
               </div>
             </div>
             <img src="../assets/icons/gif.png" loop="infinite" alt="" />
           </div>
-          <div class="features__item">
-            <img src="../assets/icons/google-drive.png" alt="" />
-            <div class="features__item-wrapper_right">
-              <div class="features__item-title">Google Drive</div>
-              <div class="features__item-desc">
-                As signed-in user upload created GIF animation to your Google
-                Drive.
-              </div>
-            </div>
-          </div>
-          <div class="features__item">
-            <div class="features__item-wrapper_left">
-              <div class="features__item-title">Export to APNG.</div>
-              <div class="features__item-desc">
-                &gt;Save and store created animation as GIF file to your local
-                storage. Make a sweet collection of your own art.
-              </div>
-            </div>
+          <div class="features--item">
             <img src="../assets/icons/apng.png" alt="" />
-          </div>
-          <div class="features__item">
-            <img src="../assets/icons/giphy.png" alt="" />
-            <div class="features__item-wrapper_right">
-              <div class="features__item-title">Giphy.com</div>
-              <div class="features__item-desc">
-                Upload created GIF animation to big online database and search
-                engine Giphy.com.
+            <div class="features--item_wrapper features--item_wrapper-right">
+              <div class="features--item_title">Export to APNG</div>
+              <div class="features--item_desc">
+                Save and store created animation as GIF file to your local storage. Make a sweet
+                collection of your own art.
               </div>
             </div>
           </div>
-        </div>
-      </section>
-      <section class="credits">
-        <div class="section-title credits-title">
-          Created by<a
-            href="https://hybeard.github.io/portfolio/"
-            target="_blank"
-            >Ilya Kaptsevich</a
-          >
-        </div>
-        <div class="credits-subtitle">
-          <a href="https://rollingscopes.com/" target="_blank"
-            >Rolling Scopes School</a
-          >student
         </div>
       </section>
     </main>
+    <footer class="footer credits">
+      <h3 class="credits--title">
+        Created by<a
+          class="credits--link"
+          href="https://hybeard.github.io/portfolio/"
+          target="_blank"
+        >
+          Ilya Kaptsevich</a
+        >
+      </h3>
+      <span class="credits--subtitle">
+        <a class="credits--link" href="https://rollingscopes.com/" target="_blank"
+          >Rolling Scopes School</a
+        >
+        student
+      </span>
+    </footer>
   </body>
 </html>
