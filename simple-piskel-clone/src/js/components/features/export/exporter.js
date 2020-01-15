@@ -1,27 +1,55 @@
 import gifshot from 'gifshot';
 
-const exporter = {
-  downloadAsGif(arrayOfImagesUrls, interval, size) {
-    gifshot.createGIF(
-      {
-        images: arrayOfImagesUrls,
-        interval,
-        gifWidth: size,
-        gifHeight: size,
-      },
-      ({ image: dataUrl, error }) => {
-        if (!error) {
-          const blob = exporter.dataUrlToBlob(dataUrl);
-          const a = document.createElement('a');
-          const link = window.URL.createObjectURL(blob);
+// const toApng = require('gif-to-apng');
 
-          a.href = link;
-          a.download = 'piskel.gif';
-          a.click();
-          window.URL.revokeObjectURL(link);
-        }
-      },
-    );
+const exporter = {
+  async downloadAsGif(arrayOfImagesUrls, interval, size) {
+    if (!arrayOfImagesUrls || !arrayOfImagesUrls.length) return;
+
+    const blob = await exporter.transformImagesToGifBlob(arrayOfImagesUrls, interval, size);
+
+    exporter.saveBlobToFilesystem(blob);
+  },
+
+  // async downloadAsApng(arrayOfImagesUrls, interval, size) {
+  //   if (!arrayOfImagesUrls || !arrayOfImagesUrls.length) return;
+
+  //   const blob = await exporter.transformImagesToGifBlob(arrayOfImagesUrls, interval, size);
+  //   const apngBlob = toApng('path/to/image.gif')
+  //     .then(() => console.log('Done 🎉'))
+  //     .catch((error) => console.log('Something went wrong 💀', error));
+  // },
+
+  saveBlobToFilesystem(blob) {
+    const a = document.createElement('a');
+    const link = window.URL.createObjectURL(blob);
+
+    a.href = link;
+    a.download = 'piskel.gif';
+    a.click();
+    window.URL.revokeObjectURL(link);
+  },
+
+  transformImagesToGifBlob(arrayOfImagesUrls, interval, size) {
+    return new Promise((resolve, reject) => {
+      gifshot.createGIF(
+        {
+          images: arrayOfImagesUrls,
+          interval,
+          gifWidth: size,
+          gifHeight: size,
+        },
+        ({ error, image: dataUrl }) => {
+          if (error) {
+            reject(error);
+          } else {
+            const blob = exporter.dataUrlToBlob(dataUrl);
+
+            resolve(blob);
+          }
+        },
+      );
+    });
   },
 
   dataUrlToBlob(dataUrl) {

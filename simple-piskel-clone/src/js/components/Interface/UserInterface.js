@@ -176,12 +176,12 @@ export default class UserInterface extends EventEmitter {
       }
 
       if (classList.contains('controls--download_as_gif')) {
-        this.emit('downloadAsGif');
+        this.emit('saveFileToFilesystem', '.gif');
         return;
       }
 
       if (classList.contains('controls--download_as_apng')) {
-        this.emit('downloadAsApng');
+        this.emit('saveFileToFilesystem', '.apng');
         return;
       }
 

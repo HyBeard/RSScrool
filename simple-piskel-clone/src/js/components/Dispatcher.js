@@ -129,7 +129,7 @@ export default class Dispatcher extends EventEmitter {
       return;
     }
 
-    if (extension === '.gif') {
+    if (extension === '.apng') {
       featuresList.downloadAsApng(urlsArray, interval, sideCellCount);
     }
   }
@@ -143,8 +143,8 @@ export default class Dispatcher extends EventEmitter {
     ui.on('pickNewColor', canvas.changeUsableColors.bind(canvas));
     ui.on('saveAppState', this.saveStateToLocalStorage.bind(this));
     ui.on('deleteAppState', Dispatcher.deleteStateFromStorage);
-    ui.on('downloadAsGif', this.downloadAsGif.bind(this));
-    ui.on('downloadAsApng', this.downloadAsApng.bind(this));
+    ui.on('saveFileToFilesystem', this.downloadFile.bind(this));
+    ui.on('downloadAsApng', this.downloadFile.bind(this));
     ui.on('changeCanvasSize', this.resizeFramesAndCanvas.bind(this));
     ui.on('changePenSize', this.sendToCanvasNewPenSize.bind(this));
 
