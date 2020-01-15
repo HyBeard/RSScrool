@@ -4,6 +4,7 @@ import Canvas from './Canvas/CanvasController';
 import Preview from './PreviewComponent/PreviewController';
 import Frames from './Frames/FramesController';
 import UserInterface from './Interface/UserInterface';
+import featuresList from './features/featuresList';
 
 const { asyncForEach, getUploadedImage } = supportFunctions;
 const savedState = JSON.parse(localStorage.getItem('piskelState')) || {};
@@ -117,6 +118,7 @@ export default class Dispatcher extends EventEmitter {
   addEventsToEmitter() {
     const { canvas, frames, userInterface: ui } = this;
 
+    // TODO: the same handlers for send data
     ui.on('changeTool', canvas.changeActiveTool.bind(canvas));
     ui.on('swapColors', canvas.swapColors.bind(canvas));
     ui.on('pickNewColor', canvas.changeUsableColors.bind(canvas));
@@ -144,6 +146,7 @@ export default class Dispatcher extends EventEmitter {
     this.frames.init(canvasData);
     this.preview.init(this.state);
     this.userInterface.init(this.state);
+    featuresList.auth.init();
 
     this.sendFramesListToAnimationPreview();
   }

@@ -1,5 +1,6 @@
 @import "./screens/variables";
 @import "./screens/fonts";
+@import "./screens/app/login.scss";
 @import "./screens/app/toolbar.scss";
 @import "./screens/app/palette";
 @import "./screens/app/frames";
@@ -20,30 +21,49 @@ body {
 }
 
 .header {
+  height: 60px;
+
   &--content {
+    height: 100%;
     display: flex;
     justify-content: space-between;
-    padding: 0 1em;
+    align-items: center;
+    padding: 0 1rem;
     text-align: center;
-    font-size: 20px;
+    font-size: 1.5rem;
     background-color: $primary;
-    color: $surface;
+    color: $weakDark;
   }
 
   &--home_link {
     text-decoration: none;
     color: inherit;
   }
+
+  &--user_box {
+    margin-right: -1rem;
+
+    &-hidden {
+      display: none;
+    }
+  }
+
+  &--sign_in {
+    &-hidden {
+      display: none;
+    }
+  }
 }
 
 .logo {
   font-size: inherit;
+  margin: 0;
 }
 
 .workplace {
   display: flex;
-  padding: 0 15px;
-  height: calc(100vh - 50px);
+  padding: 0 1rem;
+  height: calc(100vh - 60px);
   background-color: $dark;
 
   &--left_column {
@@ -51,34 +71,34 @@ body {
   }
 
   &--frames_bar {
-    margin: 0 15px;
+    margin: 0 1rem;
   }
 
   &--palette_bar {
-    margin: 15px 0;
+    margin: 1rem 0;
   }
 
   &--canvas_toolbar {
-    margin: 15px 0;
+    margin: 1rem 0;
   }
 
   &--drawing_area {
     display: flex;
     flex-grow: 1;
-    margin: 15px 0;
-    padding: 15px;
+    margin: 1rem 0;
+    padding: 1rem;
     align-items: center;
   }
 
   &--right_column {
     max-width: 266px;
-    margin-left: 15px;
+    margin-left: 1rem;
     position: relative;
     flex-grow: 0;
   }
 
   &--animation_box {
-    margin: 15px 0 15px;
+    margin: 1rem 0 1rem;
   }
 
   &--canvas_info {
@@ -101,9 +121,10 @@ body {
 }
 
 .container {
-  padding: 15px 5px;
+  padding: 1rem 5px;
   border-radius: 5px;
-  background-color: $surface;
+  background-color: $weakDark;
+  box-shadow: $boxShadow;
 }
 
 button:focus {

@@ -3,6 +3,10 @@
   "version": "1.0.0",
   "description": "Piskel Clone task",
   "main": "./src/app.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/rolling-scopes-school/hybeard-RS2019Q3.git"
+  },
   "scripts": {
     "test": "jest",
     "coverage:full": "jest --coverage --coverage-reporters=lcov",
@@ -14,7 +18,7 @@
   "eslintIgnore": [
     "dist"
   ],
-  "author": "",
+  "author": "Ilya Kaptsevich <kaptsevich.i@gmail.com>",
   "license": "ISC",
   "devDependencies": {
     "@babel/core": "^7.7.2",
@@ -48,6 +52,7 @@
   },
   "dependencies": {
     "babel-polyfill": "^6.26.0",
+    "firebase": "^7.6.2",
     "sortablejs": "^1.10.2"
   },
   "jest": {

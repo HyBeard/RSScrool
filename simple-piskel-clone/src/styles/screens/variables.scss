@@ -1,25 +1,51 @@
 $primary: #04a2b3;
 $weakPrimary: #04a2b348;
 $dark: #2a323c;
-$surface: #323c48;
-$on-surface: #3d4956;
-$weak-on-surface: #4c5b6b;
+$weakDark: #323c48;
+$surface: #3d4956;
+$onSurface: #4c5b6b;
 $accent: #98a4b9;
 $light: #dcdcdc;
 $white: #ffffff;
 
-$transparent-bg: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAMAAABEpIrGAAAABlBMVEXV1dXb29tFGkCIAAAAHklEQVR4AWNghAIGCMDgjwgFCDDSw2M0PSCD0fQAACRcAgF4ciGUAAAAAElFTkSuQmCC")
+$transparentBg: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAMAAABEpIrGAAAABlBMVEXV1dXb29tFGkCIAAAAHklEQVR4AWNghAIGCMDgjwgFCDDSw2M0PSCD0fQAACRcAgF4ciGUAAAAAElFTkSuQmCC")
   repeat;
 
-%list-to-flex {
+$boxShadow: 0px 2px 1px -1px rgba(0, 0, 0, 0.2), 0px 1px 1px 0px rgba(0, 0, 0, 0.14),
+  0px 1px 3px 0px rgba(0, 0, 0, 0.12);
+
+@mixin pressed($width) {
+  outline: $width solid $weakPrimary;
+  outline-style: inset;
+  outline-offset: -$width;
+}
+
+%listToFlex {
   display: flex;
   margin: 0;
   padding: 0;
   list-style: none;
 }
 
-@mixin weak-outline($width) {
-  outline: $width solid $weakPrimary;
-  outline-style: inset;
-  outline-offset: -$width;
+%button {
+  border: 5px solid $surface;
+  border-radius: 5px;
+  color: $surface;
+  box-shadow: $boxShadow;
+  transition: {
+    duration: 0.2s;
+    timing-function: ease;
+    property: color, background-color, border-color;
+  }
+  cursor: pointer;
+
+  &:hover {
+    border-color: $onSurface;
+    color: $onSurface;
+    background-color: $white;
+  }
+
+  &:active {
+    @include pressed(7px);
+  }
 }

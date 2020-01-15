@@ -10,7 +10,7 @@
     height: 20px;
     box-sizing: border-box;
     background-color: $accent;
-    border: $on-surface solid;
+    border: $surface solid;
     cursor: pointer;
 
     @each $num in 1, 2, 3, 4 {
@@ -20,11 +20,11 @@
     }
 
     &:hover {
-      background-color: $weak-on-surface;
+      background-color: $onSurface;
     }
 
     &:active {
-      @include weak-outline(2px);
+      @include pressed(2px);
     }
 
     &-active {
@@ -35,7 +35,7 @@
 }
 
 .tools_list {
-  @extend %list-to-flex;
+  @extend %listToFlex;
   flex-wrap: wrap;
   justify-content: center;
   margin: 0;
@@ -46,7 +46,7 @@
     width: 55px;
     height: 55px;
     margin: 1px 1px;
-    background: $on-surface;
+    background: $surface;
     text-align: center;
     line-height: 55px;
     cursor: pointer;
@@ -59,11 +59,11 @@
     }
 
     &:hover {
-      background-color: $weak-on-surface;
+      background-color: $onSurface;
     }
 
     &:active {
-      @include weak-outline(5px);
+      @include pressed(5px);
     }
 
     &-active {

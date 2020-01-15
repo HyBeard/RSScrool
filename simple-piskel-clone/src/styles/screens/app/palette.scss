@@ -10,7 +10,7 @@
 }
 
 .palette {
-  @extend %list-to-flex;
+  @extend %listToFlex;
   box-sizing: border-box;
   width: 110px;
   flex-wrap: wrap;
@@ -25,7 +25,7 @@
     cursor: pointer;
 
     &:active {
-      @include weak-outline(3px);
+      @include pressed(3px);
     }
   }
 }
@@ -43,10 +43,10 @@
     height: 50px;
     border: 2px solid $dark;
     cursor: pointer;
-    background: $transparent-bg;
+    background: $transparentBg;
 
     &:active {
-      @include weak-outline(5px);
+      @include pressed(5px);
     }
   }
 

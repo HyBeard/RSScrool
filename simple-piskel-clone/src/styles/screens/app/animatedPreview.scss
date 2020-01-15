@@ -1,7 +1,7 @@
 .animation_box {
   padding: 5px;
   border-radius: 5px;
-  background-color: $surface;
+  background-color: $weakDark;
 
   &:hover .fullscreen {
     visibility: visible;
@@ -12,7 +12,7 @@
     height: 256px;
     position: relative;
     margin: 0 auto;
-    background: $transparent-bg;
+    background: $transparentBg;
   }
 
   &--changeable_bg {
