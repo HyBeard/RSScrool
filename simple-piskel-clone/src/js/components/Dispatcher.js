@@ -115,6 +115,18 @@ export default class Dispatcher extends EventEmitter {
     this.canvas.model.penSize = penSize;
   }
 
+  downloadAsGif() {
+    const urlsArray = this.frames.model.listOfFrames.reduce(
+      (onlyActive, frame) => (frame.disabled ? onlyActive : onlyActive.concat(frame.dataURL)),
+      [],
+    );
+    const { sideCellCount } = this.canvas.model;
+    const { fpsValue } = this.preview.model;
+    const interval = 1 / fpsValue;
+
+    featuresList.downloadAsGif(urlsArray, interval, sideCellCount);
+  }
+
   addEventsToEmitter() {
     const { canvas, frames, userInterface: ui } = this;
 
@@ -124,6 +136,8 @@ export default class Dispatcher extends EventEmitter {
     ui.on('pickNewColor', canvas.changeUsableColors.bind(canvas));
     ui.on('saveAppState', this.saveStateToLocalStorage.bind(this));
     ui.on('deleteAppState', Dispatcher.deleteStateFromStorage);
+    ui.on('downloadAsGif', this.downloadAsGif.bind(this));
+    ui.on('downloadAsApng', () => {});
     ui.on('changeCanvasSize', this.resizeFramesAndCanvas.bind(this));
     ui.on('changePenSize', this.sendToCanvasNewPenSize.bind(this));
 
