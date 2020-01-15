@@ -242,7 +242,7 @@ export default class CanvasModel {
     ctx.clearRect(0, 0, side, side);
 
     if (url) {
-      const savedImage = await supportFunctions.getUploadedImage(url);
+      const savedImage = await supportFunctions.convertDataUrlToImg(url);
       ctx.drawImage(savedImage, 0, 0, side, side);
     }
   }

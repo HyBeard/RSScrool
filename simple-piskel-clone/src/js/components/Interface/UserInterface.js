@@ -175,10 +175,20 @@ export default class UserInterface extends EventEmitter {
         return;
       }
 
-      if (classList.contains('controls--upload_img_btn')) {
+      if (classList.contains('controls--download_as_gif')) {
+        this.emit('downloadAsGif');
+        return;
+      }
+
+      if (classList.contains('controls--download_as_apng')) {
+        this.emit('downloadAsApng');
+        return;
+      }
+
+      if (classList.contains('controls--paste_img_btn')) {
         const query = this.imageQueryInput.value;
 
-        this.emit('uploadImage', query); // TODO:
+        this.emit('pasteImg', query); // TODO:
 
         return;
       }

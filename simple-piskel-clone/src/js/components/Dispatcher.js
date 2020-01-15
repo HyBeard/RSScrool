@@ -6,7 +6,7 @@ import Frames from './Frames/FramesController';
 import UserInterface from './Interface/UserInterface';
 import featuresList from './features/featuresList';
 
-const { asyncForEach, getUploadedImage } = supportFunctions;
+const { asyncForEach, convertDataUrlToImage } = supportFunctions;
 const savedState = JSON.parse(localStorage.getItem('piskelState')) || {};
 
 export default class Dispatcher extends EventEmitter {
@@ -94,7 +94,7 @@ export default class Dispatcher extends EventEmitter {
 
     await asyncForEach(frames.model.listOfFrames, async (frame, num) => {
       const currentCanvasData = frame.canvasData;
-      const currentFrameImage = frame.dataURL ? await getUploadedImage(frame.dataURL) : null;
+      const currentFrameImage = frame.dataURL ? await convertDataUrlToImage(frame.dataURL) : null;
       const { resizedData, resizedImgUrl } = canvas.model.getResizedDataAndImageUrl(
         newSide,
         currentCanvasData,
@@ -115,6 +115,25 @@ export default class Dispatcher extends EventEmitter {
     this.canvas.model.penSize = penSize;
   }
 
+  downloadFile(extension) {
+    const urlsArray = this.frames.model.listOfFrames.reduce(
+      (onlyActive, frame) => (frame.disabled ? onlyActive : onlyActive.concat(frame.dataURL)),
+      [],
+    );
+    const { sideCellCount } = this.canvas.model;
+    const { fpsValue } = this.preview.model;
+    const interval = 1 / fpsValue;
+
+    if (extension === '.gif') {
+      featuresList.downloadAsGif(urlsArray, interval, sideCellCount);
+      return;
+    }
+
+    if (extension === '.gif') {
+      featuresList.downloadAsApng(urlsArray, interval, sideCellCount);
+    }
+  }
+
   addEventsToEmitter() {
     const { canvas, frames, userInterface: ui } = this;
 
@@ -124,6 +143,8 @@ export default class Dispatcher extends EventEmitter {
     ui.on('pickNewColor', canvas.changeUsableColors.bind(canvas));
     ui.on('saveAppState', this.saveStateToLocalStorage.bind(this));
     ui.on('deleteAppState', Dispatcher.deleteStateFromStorage);
+    ui.on('downloadAsGif', this.downloadAsGif.bind(this));
+    ui.on('downloadAsApng', this.downloadAsApng.bind(this));
     ui.on('changeCanvasSize', this.resizeFramesAndCanvas.bind(this));
     ui.on('changePenSize', this.sendToCanvasNewPenSize.bind(this));
 
