@@ -6,7 +6,7 @@ import Frames from './Frames/FramesController';
 import UserInterface from './Interface/UserInterface';
 import featuresList from './features/featuresList';
 
-const { asyncForEach, convertDataUrlToImage } = supportFunctions;
+const { asyncForEach, convertDataUrlToImg } = supportFunctions;
 const savedState = JSON.parse(localStorage.getItem('piskelState')) || {};
 
 export default class Dispatcher extends EventEmitter {
@@ -94,7 +94,7 @@ export default class Dispatcher extends EventEmitter {
 
     await asyncForEach(frames.model.listOfFrames, async (frame, num) => {
       const currentCanvasData = frame.canvasData;
-      const currentFrameImage = frame.dataURL ? await convertDataUrlToImage(frame.dataURL) : null;
+      const currentFrameImage = frame.dataURL ? await convertDataUrlToImg(frame.dataURL) : null;
       const { resizedData, resizedImgUrl } = canvas.model.getResizedDataAndImageUrl(
         newSide,
         currentCanvasData,
@@ -114,6 +114,8 @@ export default class Dispatcher extends EventEmitter {
   sendToCanvasNewPenSize(penSize) {
     this.canvas.model.penSize = penSize;
   }
+
+  _collect() {}
 
   downloadFile(extension) {
     const urlsArray = this.frames.model.listOfFrames.reduce(
@@ -144,7 +146,6 @@ export default class Dispatcher extends EventEmitter {
     ui.on('saveAppState', this.saveStateToLocalStorage.bind(this));
     ui.on('deleteAppState', Dispatcher.deleteStateFromStorage);
     ui.on('saveFileToFilesystem', this.downloadFile.bind(this));
-    ui.on('downloadAsApng', this.downloadFile.bind(this));
     ui.on('changeCanvasSize', this.resizeFramesAndCanvas.bind(this));
     ui.on('changePenSize', this.sendToCanvasNewPenSize.bind(this));
 
