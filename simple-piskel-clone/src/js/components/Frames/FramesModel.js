@@ -46,11 +46,7 @@ export default class FramesModel {
     this.currentFrameNumber = this.listOfFrames.length - 1;
   }
 
-  changeCurrentFrameNumber(frameNum) {
-    this.currentFrameNumber = frameNum;
-  }
-
-  deleteFrame(frameNum) {
+  deleteFrameData(frameNum) {
     const lastFrameNum = this.listOfFrames.length - 1;
     this.listOfFrames.splice(frameNum, 1);
 
@@ -61,10 +57,10 @@ export default class FramesModel {
       return;
     }
 
-    this.currentFrameNumber = Math.max(frameNum - 1, 0);
+    this.currentFrameNumber = Math.max(this.currentFrameNumber - 1, 0);
   }
 
-  duplicateFrame(frameNum) {
+  duplicateFrameData(frameNum) {
     const frameClone = JSON.parse(JSON.stringify(this.listOfFrames[frameNum]));
 
     this.listOfFrames.splice(frameNum + 1, 0, frameClone);
@@ -73,7 +69,8 @@ export default class FramesModel {
 
   changeFramePosition(movedFrameNum, targetFrameNum) {
     if (movedFrameNum === targetFrameNum) {
-      this.changeCurrentFrameNumber(targetFrameNum);
+      this.currentFrameNumber = targetFrameNum;
+
       return;
     }
 
@@ -84,10 +81,10 @@ export default class FramesModel {
 
     listOfFrames.splice(correctTargetNum, 0, movedFrame);
     listOfFrames.splice(correctMovedNum, 1);
-    this.changeCurrentFrameNumber(targetFrameNum);
+    this.currentFrameNumber = targetFrameNum;
   }
 
-  toggleFrame(frameNum) {
+  toggleFrameDisabledState(frameNum) {
     const toggledFrame = this.listOfFrames[frameNum];
 
     toggledFrame.disabled = !toggledFrame.disabled;

@@ -9,15 +9,6 @@ export default class FramesController extends EventEmitter {
     this.view = new FramesView();
   }
 
-  handleDrawingEnding() {
-    const {
-      view,
-      model: { currentFrameDataURL },
-    } = this;
-
-    view.paintFramePreview(currentFrameDataURL);
-  }
-
   // async handleImageUploading(query) {
   //   const { view, model } = this;
 
@@ -56,58 +47,56 @@ export default class FramesController extends EventEmitter {
   // }
 
   addFrame() {
-    // TODO:  the same emit handlers
     const { model, view } = this;
 
     model.addFrameData();
-    view.renderNewFrame();
+    view.renderNewFramePreview();
 
-    this.emit('addFrame', model.currentFrameData, model.currentFrameDataURL);
+    this.emit('framesWasChanged', model.currentFrameData, model.currentFrameDataURL);
   }
 
   handleFrameDeleting(frameNum) {
     const { model, view } = this;
-
-    model.deleteFrame(frameNum);
+    model.deleteFrameData(frameNum);
     view.deleteFrame(frameNum, model.currentFrameNumber);
 
-    this.emit('deleteFrame', model.currentFrameData, model.currentFrameDataURL);
+    this.emit('framesWasChanged', model.currentFrameData, model.currentFrameDataURL);
   }
 
   handleFrameCloning(frameNum) {
     const { model, view } = this;
 
-    model.duplicateFrame(frameNum);
-    view.duplicateFrame(frameNum);
-    view.paintFramePreview(model.currentFrameDataURL, model.currentFrameNumber);
+    model.duplicateFrameData(frameNum);
+    view.duplicateFramePreview(frameNum);
+    view.fillPreviewCanvas(model.currentFrameDataURL, model.currentFrameNumber);
 
-    this.emit('cloneFrame', model.currentFrameData, model.currentFrameDataURL);
+    this.emit('framesWasChanged', model.currentFrameData, model.currentFrameDataURL);
   }
 
   handleFrameToggling(frameNum) {
     const { model, view } = this;
 
-    model.toggleFrame(frameNum);
+    model.toggleFrameDisabledState(frameNum);
     view.toggleFrame(frameNum);
   }
 
   handleFrameSelecting(frameNum) {
     const { model, view } = this;
 
-    model.changeCurrentFrameNumber(frameNum);
-    view.selectFrame(frameNum);
+    model.currentFrameNumber = frameNum;
+    view.selectFramePreview(frameNum);
 
-    this.emit('selectFrame', model.currentFrameData, model.currentFrameDataURL);
+    this.emit('framesWasChanged', model.currentFrameData, model.currentFrameDataURL);
   }
 
   handleFrameMoving(oldNum, newNum) {
     const { model, view } = this;
 
     model.changeFramePosition(oldNum, newNum);
-    view.renumberFrames();
-    view.selectFrame(newNum);
+    view.renderChangedPreviewsPositions();
+    view.selectFramePreview(newNum);
 
-    this.emit('moveFrame', model.currentFrameData, model.currentFrameDataURL);
+    this.emit('framesWasChanged', model.currentFrameData, model.currentFrameDataURL);
   }
 
   addEventsToEmitter() {
@@ -119,12 +108,6 @@ export default class FramesController extends EventEmitter {
     view.on('cloneFrame', this.handleFrameCloning.bind(this));
     view.on('moveFrame', this.handleFrameMoving.bind(this));
     view.on('toggleFrame', this.handleFrameToggling.bind(this));
-
-    view.on('drawingEnded', this.handleDrawingEnding.bind(this));
-
-    // view.on('changeCanvasSize', this.handleCanvasSizeChanging.bind(this));
-    // view.on('uploadImage', this.handleImageUploading.bind(this));
-    // view.on('grayscaleCanvas', this.handleGrayscaleFiltering.bind(this));
   }
 
   init(canvasData) {

@@ -3,7 +3,6 @@ import toolsSupport from '../toolsSupport';
 const { indexToRowCol } = toolsSupport;
 
 export default function paintBucket(currentIndex, sideCellCount, canvasData) {
-  // TODO:
   const cellsStack = [currentIndex];
   const startColor = canvasData[currentIndex];
   const indicesToDraw = [];

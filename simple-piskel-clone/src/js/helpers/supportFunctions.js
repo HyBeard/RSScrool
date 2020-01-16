@@ -11,6 +11,15 @@ const supportFunctions = {
   asyncForEach(array, asyncCallback) {
     return Promise.all(array.map((value, index) => asyncCallback(value, index)));
   },
+
+  createDomElement(tag, classes, props) {
+    const newElement = document.createElement(tag);
+
+    newElement.className = classes;
+    Object.assign(newElement, props);
+
+    return newElement;
+  },
 };
 
 export default supportFunctions;

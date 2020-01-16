@@ -14,7 +14,6 @@ export default class UserInterface extends EventEmitter {
     this.paletteBar = document.querySelector('.palette_bar');
     this.primColorElem = document.querySelector('.primary_color');
     this.secColorElem = document.querySelector('.secondary_color');
-    this.sizeSelector = document.querySelector('.controls--size_selector');
     this.sizeInfoContainer = document.querySelector('.canvas_info--size');
     this.coordsContainer = document.querySelector('.canvas_info--target_coords');
 
@@ -66,7 +65,7 @@ export default class UserInterface extends EventEmitter {
     this.sizeInfoContainer.innerText = `[${side}x${side}]`;
   }
 
-  updateDisplayedValues(sideLength) {
+  initDisplayedValues(sideLength) {
     [...this.sizeSelector.options].forEach((option, index) => {
       if (Number(option.value) === sideLength) {
         this.sizeSelector.selectedIndex = index;
@@ -251,22 +250,27 @@ export default class UserInterface extends EventEmitter {
     });
   }
 
+  addCanvasListeners() {
+    const canvas = document.querySelector('.canvas_box--canvas');
+
+    canvas.addEventListener('contextmenu', (ev) => ev.preventDefault());
+    canvas.addEventListener('mouseleave', this.clearCoordsContainer.bind(this));
+  }
+
   addListeners() {
     this.addSettingsListeners();
     this.addToolbarListeners();
     this.addPaletteListeners();
     this.addShortcutsListeners();
     this.addDialogBoxListeners();
-
-    const canvas = document.querySelector('.canvas_box--canvas');
-    canvas.addEventListener('mouseleave', this.clearCoordsContainer.bind(this));
+    this.addCanvasListeners();
   }
 
   init({
     activeTool, primColor, secColor, fpsValue, sideCellCount, penSize,
   }) {
     this.addListeners();
-    this.updateDisplayedValues(sideCellCount, fpsValue);
+    this.initDisplayedValues(sideCellCount, fpsValue);
     UserInterface.selectTool(activeTool);
     UserInterface.selectPenSize(penSize);
     this.renderLastColors(primColor, secColor);

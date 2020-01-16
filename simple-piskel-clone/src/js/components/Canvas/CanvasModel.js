@@ -23,9 +23,12 @@ export default class CanvasModel {
     this.canvasElem = document.querySelector('.canvas_box--canvas');
     this.ctx = this.canvasElem.getContext('2d');
     this.canvasData = canvasData || this.createEmptyCanvasData();
-
     this.changedBeforeIndices = [];
-    this.ghostCanvas = document.createElement('canvas');
+    this.ghostCanvas = supportFunctions.createDomElement('canvas', '', {
+      width: this.sideCellCount,
+      height: this.sideCellCount,
+      imageSmoothingEnabled: false,
+    });
     this.ghostContext = this.ghostCanvas.getContext('2d');
   }
 
@@ -33,15 +36,8 @@ export default class CanvasModel {
     return this.SIDE_LENGTH / this.sideCellCount;
   }
 
-  get cachedDataUrl() {
-    const {
-      ghostCanvas, ghostContext, canvasElem, sideCellCount,
-    } = this;
-
-    ghostContext.clearRect(0, 0, sideCellCount, sideCellCount);
-    ghostContext.drawImage(canvasElem, 0, 0, sideCellCount, sideCellCount);
-
-    return ghostCanvas.toDataURL();
+  get currentCoords() {
+    return toolsSupport.indexToRowCol(this.currentIndex, this.sideCellCount);
   }
 
   get state() {
@@ -57,12 +53,15 @@ export default class CanvasModel {
     };
   }
 
-  getColorOfCurrentIndex() {
-    return this.canvasData[this.currentIndex];
-  }
+  minCanvasToDataUrl() {
+    const {
+      ghostCanvas, ghostContext, canvasElem, sideCellCount,
+    } = this;
 
-  getCurrentCoords() {
-    return toolsSupport.indexToRowCol(this.currentIndex, this.sideCellCount);
+    ghostContext.clearRect(0, 0, sideCellCount, sideCellCount);
+    ghostContext.drawImage(canvasElem, 0, 0, sideCellCount, sideCellCount);
+
+    return ghostCanvas.toDataURL();
   }
 
   getToolAnswer(toolName = this.activeTool) {
@@ -131,24 +130,16 @@ export default class CanvasModel {
     return new Array(this.sideCellCount ** 2).fill(null);
   }
 
-  updateFields(...fields) {
-    Object.assign(this, ...fields);
-  }
-
   updateCurrentIndexIfChanged(x, y) {
     const idx = toolsSupport.coordsToIndex(x, y, this.sideCellCount, this.cellLength);
 
-    if (this.currentIndexIsChanged(idx)) {
+    if (this.currentIndex !== idx) {
       this.setNewCurrentIndex(idx);
 
       return true;
     }
 
     return false;
-  }
-
-  setNewCanvasData(newData) {
-    this.canvasData = newData;
   }
 
   memorizeCanvasBeforeDrawing() {
@@ -158,10 +149,6 @@ export default class CanvasModel {
     this.initialCoords = toolsSupport.indexToRowCol(currentIndex, side);
     this.ghostContext.clearRect(0, 0, side, side);
     this.ghostContext.drawImage(canvasElem, 0, 0, side, side);
-  }
-
-  currentIndexIsChanged(idx) {
-    return this.currentIndex !== idx;
   }
 
   setNewCurrentIndex(idx) {
@@ -236,7 +223,6 @@ export default class CanvasModel {
   }
 
   async drawCanvasFromSavedImageUrl(url) {
-    // TODO: change on select frame
     const { ctx, SIDE_LENGTH: side } = this;
 
     ctx.clearRect(0, 0, side, side);
@@ -264,7 +250,7 @@ export default class CanvasModel {
   //   } = this;
   //   const aspectRatio = width > height ? width / height : height / width;
   //   const scaledWidth = Math.round(width > height ? sideCellCount : sideCellCount / aspectRatio);
-  //   const scaledHeight = Math.round(height > width ? sideCellCount : sideCellCount / aspectRatio);
+  //   const scaledHeight = Math.round(height > width ? sideCellCount : sideCellCount / aspectRatio)
   //   const finalWidth = width > height ? SIDE_LENGTH : scaledWidth * cellLength;
   //   const finalHeight = height > width ? SIDE_LENGTH : scaledHeight * cellLength;
 

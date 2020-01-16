@@ -14,33 +14,36 @@ export default class CanvasController extends EventEmitter {
     const coordsWasUpdated = this.model.updateCurrentIndexIfChanged(x, y);
 
     if (coordsWasUpdated) {
-      const { row, col } = this.model.getCurrentCoords();
+      const { row, col } = this.model.currentCoords;
 
       this.emit('updateCoordsInfo', row, col);
     }
   }
 
+  updateModelFields(...fields) {
+    Object.assign(this.model, ...fields);
+  }
+
   changeUsableColors(mouseBtnCode, newColor) {
     const {
-      model,
       model: { primColor, secColor },
     } = this;
     const LEFT_MOUSE_BUTTON_CODE = 0;
 
     switch (mouseBtnCode) {
       case LEFT_MOUSE_BUTTON_CODE:
-        if (newColor !== undefined) model.updateFields({ primColor: newColor });
-        model.updateFields({ activeColor: primColor });
+        if (newColor !== undefined) this.updateModelFields({ primColor: newColor });
+        this.updateModelFields({ activeColor: primColor });
         break;
 
       default:
-        if (newColor !== undefined) model.updateFields({ secColor: newColor });
-        model.updateFields({ activeColor: secColor });
+        if (newColor !== undefined) this.updateModelFields({ secColor: newColor });
+        this.updateModelFields({ activeColor: secColor });
     }
   }
 
   changeActiveTool(tool) {
-    this.model.updateFields({ activeTool: tool });
+    this.updateModelFields({ activeTool: tool });
   }
 
   swapColors() {
@@ -48,7 +51,7 @@ export default class CanvasController extends EventEmitter {
       model: { primColor, secColor },
     } = this;
 
-    this.model.updateFields({ primColor: secColor, secColor: primColor });
+    this.updateModelFields({ primColor: secColor, secColor: primColor });
   }
 
   static standardizeToolAnswer(answer) {
@@ -64,6 +67,7 @@ export default class CanvasController extends EventEmitter {
       model: { activeTool },
       view: { mouseBtnCode },
     } = this;
+
     const {
       singleEffect,
       continuousEffect: {
@@ -72,7 +76,7 @@ export default class CanvasController extends EventEmitter {
     } = toolsTypes;
 
     if (activeTool === 'eyedropper') {
-      const pickedColor = model.getColorOfCurrentIndex();
+      const pickedColor = model.canvasData[model.currentIndex];
 
       this.changeUsableColors(mouseBtnCode, pickedColor);
       this.emit('renderNewColors', model.primColor, model.secColor);
@@ -93,7 +97,7 @@ export default class CanvasController extends EventEmitter {
     model.handleIndicesToDraw(indicesToDraw, indicesColors);
 
     if (toolIsInCategory(singleEffect, activeTool)) {
-      this.emit('takeChangesAfterDrawing');
+      this.emit('handleDrawingEnding');
     }
   }
 
@@ -136,7 +140,17 @@ export default class CanvasController extends EventEmitter {
     model.changedBeforeIndices.length = 0;
     model.handleIndicesToDraw(indicesToDraw, indicesColors);
 
-    this.emit('takeChangesAfterDrawing');
+    this.emit('handleDrawingEnding');
+  }
+
+  updateCanvasAfterResize(newSide, newCanvasData) {
+    this.updateModelFields({
+      sideCellCount: newSide,
+      canvasData: newCanvasData,
+    });
+    this.model.ghostCanvas.width = newSide;
+    this.model.ghostCanvas.height = newSide;
+    this.model.fullCanvasRedraw();
   }
 
   // async handleImageUploading(query) {

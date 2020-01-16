@@ -27,42 +27,16 @@ export default class Dispatcher extends EventEmitter {
     };
   }
 
-  selectFrame(newData, newImgUrl) {
-    this.canvas.model.setNewCanvasData(newData);
-    this.canvas.model.drawCanvasFromSavedImageUrl(newImgUrl);
-  }
-
-  addFrame(newData, newImgUrl) {
-    this.canvas.model.setNewCanvasData(newData);
-    this.canvas.model.drawCanvasFromSavedImageUrl(newImgUrl);
-  }
-
-  deleteFrame(newData, newImgUrl) {
-    this.canvas.model.setNewCanvasData(newData);
-    this.canvas.model.drawCanvasFromSavedImageUrl(newImgUrl);
-  }
-
-  async cloneFrame(newData, newImgUrl) {
-    this.canvas.model.setNewCanvasData(newData);
-    await this.canvas.model.drawCanvasFromSavedImageUrl(newImgUrl);
-    this.cacheCanvasAndRedrawPreview();
-  }
-
-  moveFrame(newData, newImgUrl) {
-    this.canvas.model.setNewCanvasData(newData);
+  async refreshCanvasComponent(newData, newImgUrl) {
+    this.canvas.model.canvasData = newData;
     this.canvas.model.drawCanvasFromSavedImageUrl(newImgUrl);
   }
 
   cacheCanvasAndRedrawPreview() {
-    const {
-      frames,
-      canvas: {
-        model: { cachedDataUrl },
-      },
-    } = this;
+    const cachedDataUrl = this.canvas.model.minCanvasToDataUrl();
 
-    frames.model.currentFrameDataURL = cachedDataUrl;
-    frames.view.paintFramePreview(cachedDataUrl);
+    this.frames.model.currentFrameDataURL = cachedDataUrl;
+    this.frames.view.fillPreviewCanvas(cachedDataUrl);
   }
 
   sendFramesListToAnimationPreview() {
@@ -76,17 +50,7 @@ export default class Dispatcher extends EventEmitter {
   }
 
   static deleteStateFromStorage() {
-    localStorage.clear();
-  }
-
-  updateCanvasAfterResize(newSide) {
-    const { canvas, frames } = this;
-
-    canvas.model.ghostCanvas.width = newSide;
-    canvas.model.ghostCanvas.height = newSide;
-    canvas.model.sideCellCount = newSide;
-    canvas.model.canvasData = frames.model.currentFrameData;
-    canvas.model.fullCanvasRedraw();
+    localStorage.removeItem('piskelState');
   }
 
   async updateAllFramesAfterResize(newSide) {
@@ -102,20 +66,21 @@ export default class Dispatcher extends EventEmitter {
       );
 
       Object.assign(frame, { canvasData: resizedData }, { dataURL: resizedImgUrl });
-      frames.view.paintFramePreview(resizedImgUrl, num);
+      frames.view.fillPreviewCanvas(resizedImgUrl, num);
     });
   }
 
   async resizeFramesAndCanvas(newSide) {
     await this.updateAllFramesAfterResize(newSide);
-    this.updateCanvasAfterResize(newSide);
+
+    const resizedCanvasData = this.frames.model.currentFrameData;
+
+    this.canvas.updateCanvasAfterResize(newSide, resizedCanvasData);
   }
 
   sendToCanvasNewPenSize(penSize) {
     this.canvas.model.penSize = penSize;
   }
-
-  _collect() {}
 
   downloadFile(extension) {
     const urlsArray = this.frames.model.listOfFrames.reduce(
@@ -139,7 +104,6 @@ export default class Dispatcher extends EventEmitter {
   addEventsToEmitter() {
     const { canvas, frames, userInterface: ui } = this;
 
-    // TODO: the same handlers for send data
     ui.on('changeTool', canvas.changeActiveTool.bind(canvas));
     ui.on('swapColors', canvas.swapColors.bind(canvas));
     ui.on('pickNewColor', canvas.changeUsableColors.bind(canvas));
@@ -149,15 +113,11 @@ export default class Dispatcher extends EventEmitter {
     ui.on('changeCanvasSize', this.resizeFramesAndCanvas.bind(this));
     ui.on('changePenSize', this.sendToCanvasNewPenSize.bind(this));
 
-    frames.on('selectFrame', this.selectFrame.bind(this));
-    frames.on('addFrame', this.addFrame.bind(this));
-    frames.on('deleteFrame', this.deleteFrame.bind(this));
-    frames.on('cloneFrame', this.cloneFrame.bind(this));
-    frames.on('moveFrame', this.moveFrame.bind(this));
+    frames.on('framesWasChanged', this.refreshCanvasComponent.bind(this));
 
     canvas.on('renderNewColors', ui.renderLastColors.bind(ui));
     canvas.on('updateCoordsInfo', ui.updateCoordsContainer.bind(ui));
-    canvas.on('takeChangesAfterDrawing', this.cacheCanvasAndRedrawPreview.bind(this));
+    canvas.on('handleDrawingEnding', this.cacheCanvasAndRedrawPreview.bind(this));
   }
 
   init() {

@@ -1,6 +1,7 @@
 import Sortable from 'sortablejs';
 
 import EventEmitter from '../../helpers/EventEmitter';
+import supportFunctions from '../../helpers/supportFunctions';
 
 export default class FramesView extends EventEmitter {
   constructor() {
@@ -12,17 +13,8 @@ export default class FramesView extends EventEmitter {
     this.currentFrame = null;
   }
 
-  static createDomElement(tag, classes, props) {
-    const newElement = document.createElement(tag);
-
-    newElement.className = classes;
-    Object.assign(newElement, props);
-
-    return newElement;
-  }
-
   createFrameLayout(frameNumber, disabled) {
-    const { createDomElement } = FramesView;
+    const { createDomElement } = supportFunctions;
     const frameLayout = createDomElement('li', 'frames_bar--preview preview');
     const frameCanvas = createDomElement('canvas', 'preview--canvas', {
       width: this.FRAME_PREVIEW_SIDE_LENGTH,
@@ -48,7 +40,7 @@ export default class FramesView extends EventEmitter {
     return frameLayout;
   }
 
-  selectFrame(frameNum) {
+  selectFramePreview(frameNum) {
     const selectedFrame = this.framesCollection[frameNum];
 
     if (selectedFrame === this.currentFrame) return;
@@ -59,15 +51,15 @@ export default class FramesView extends EventEmitter {
     [this.currentFramePreview] = this.currentFrame.getElementsByTagName('canvas');
   }
 
-  renderNewFrame(disabled) {
+  renderNewFramePreview(disabled) {
     const newFrameNum = this.framesCollection.length;
     const newFrame = this.createFrameLayout(newFrameNum, disabled);
 
     this.framesList.appendChild(newFrame);
-    this.selectFrame(newFrameNum);
+    this.selectFramePreview(newFrameNum);
   }
 
-  renumberFrames() {
+  renderChangedPreviewsPositions() {
     Array.prototype.forEach.call(this.framesCollection, (item, pos) => {
       const numberContainer = item.getElementsByClassName('toggle_frame')[0];
 
@@ -79,21 +71,21 @@ export default class FramesView extends EventEmitter {
     const deletingFrame = this.framesCollection[frameNum];
 
     this.framesList.removeChild(deletingFrame);
-    this.renumberFrames();
+    this.renderChangedPreviewsPositions();
 
     if (deletingFrame === this.currentFrame) {
-      this.selectFrame(nextFrameNum);
+      this.selectFramePreview(nextFrameNum);
     }
   }
 
-  duplicateFrame(frameNum) {
+  duplicateFramePreview(frameNum) {
     const targetFrame = this.framesCollection[frameNum];
     const duplicate = this.createFrameLayout(this.framesCollection.length);
     const duplicateFrameNum = frameNum + 1;
 
     this.framesList.insertBefore(duplicate, targetFrame.nextElementSibling);
-    this.renumberFrames();
-    this.selectFrame(duplicateFrameNum);
+    this.renderChangedPreviewsPositions();
+    this.selectFramePreview(duplicateFrameNum);
   }
 
   toggleFrame(frameNum) {
@@ -103,7 +95,7 @@ export default class FramesView extends EventEmitter {
     toggleButtonElem.classList.toggle('toggle_frame-disabled');
   }
 
-  paintFramePreview(dataURL, frameNum) {
+  fillPreviewCanvas(dataURL, frameNum) {
     const img = new Image();
     const givenFrame = this.framesCollection[frameNum];
     const currentFrame = document.querySelector('.preview-active');
@@ -168,8 +160,8 @@ export default class FramesView extends EventEmitter {
 
   init({ currentFrameNumber, listOfFrames }) {
     listOfFrames.forEach(({ dataURL, disabled }, frameNum) => {
-      this.renderNewFrame(disabled);
-      this.paintFramePreview(dataURL, frameNum);
+      this.renderNewFramePreview(disabled);
+      this.fillPreviewCanvas(dataURL, frameNum);
     });
 
     this.addListeners();

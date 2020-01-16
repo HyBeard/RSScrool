@@ -41,7 +41,7 @@ export default class View extends EventEmitter {
 
     this.fpsSlider.addEventListener('input', () => {
       const newFps = this.fpsSlider.value;
-      this.emit('fpsChanged', newFps);
+      this.emit('changeFps', newFps);
     });
   }
 

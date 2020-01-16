@@ -8,15 +8,6 @@ export default class CanvasView extends EventEmitter {
     this.mousePressed = false;
   }
 
-  static createDomElement(tag, classes, props) {
-    const newElement = document.createElement(tag);
-
-    newElement.className = classes;
-    Object.assign(newElement, props);
-
-    return newElement;
-  }
-
   addListeners() {
     const { canvas } = this;
 
@@ -24,6 +15,7 @@ export default class CanvasView extends EventEmitter {
       ev.preventDefault();
       this.mouseBtnCode = ev.button;
       this.mousePressed = true;
+
       this.emit('startDrawing');
     });
 
@@ -43,8 +35,6 @@ export default class CanvasView extends EventEmitter {
       this.mousePressed = false;
       this.emit('endDrawing');
     });
-
-    canvas.addEventListener('contextmenu', (ev) => ev.preventDefault());
   }
 
   init() {

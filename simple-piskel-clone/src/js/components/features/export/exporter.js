@@ -4,7 +4,6 @@ import base64Coder from 'base64-arraybuffer';
 
 import supportFunctions from '../../../helpers/supportFunctions';
 
-
 const exporter = {
   async downloadAsGif(arrayOfImagesUrls, interval, size) {
     if (!arrayOfImagesUrls || !arrayOfImagesUrls.length) return;
@@ -30,12 +29,13 @@ const exporter = {
 
   saveBlobToFilesystem(blob) {
     const fileExtension = blob.type.split('/')[1];
-    const a = document.createElement('a');
     const link = window.URL.createObjectURL(blob);
+    const linkElement = supportFunctions.createDomElement('a', '', {
+      href: link,
+      download: `piskel.${fileExtension}`,
+    });
 
-    a.href = link;
-    a.download = `piskel.${fileExtension}`;
-    a.click();
+    linkElement.click();
     window.URL.revokeObjectURL(link);
   },
 
@@ -84,7 +84,8 @@ const exporter = {
   },
 
   convertDataUrlToBlob(dataUrl) {
-    const arrayBuffer = base64Coder.decode(dataUrl);
+    const base64 = dataUrl.split(',')[1];
+    const arrayBuffer = base64Coder.decode(base64);
     const mimeString = dataUrl
       .split(',')[0]
       .split(':')[1]
