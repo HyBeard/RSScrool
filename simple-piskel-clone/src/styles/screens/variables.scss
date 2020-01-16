@@ -62,3 +62,27 @@ $boxShadow: 0px 2px 1px -1px rgba(0, 0, 0, 0.2), 0px 1px 1px 0px rgba(0, 0, 0, 0
     @include pressed(7px);
   }
 }
+
+%toolButton {
+  box-sizing: border-box;
+  background: $surface;
+  text-align: center;
+  color: $accent;
+  cursor: pointer;
+  box-shadow: $boxShadow;
+
+  &::before {
+    font-family: "Font Awesome 5 Free";
+    font-size: 25px;
+    font-weight: 900;
+    color: $accent;
+  }
+
+  &:hover {
+    background-color: $onSurface;
+  }
+
+  &:active {
+    @include pressed(5px);
+  }
+}

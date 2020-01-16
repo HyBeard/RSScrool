@@ -1,16 +1,30 @@
 .controls {
   display: flex;
-  flex-direction: column;
-  height: 300px;
+  flex-wrap: wrap;
   justify-content: space-around;
+
+  &--button {
+    @extend %toolButton;
+    min-width: 49%;
+    height: 40px;
+    margin: 1px;
+    line-height: 40px;
+    border: none;
+  }
 
   &--img_keyword_input {
     width: 100%;
-    margin-bottom: 5px;
+    margin-top: 15px;
+    margin-bottom: 3px;
     text-align: center;
   }
 
   &--paste_img_btn {
     width: 100%;
   }
+}
+
+.keyboard_shortcuts,
+.paste_img_btn {
+  width: 100%;
 }

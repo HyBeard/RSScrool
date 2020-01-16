@@ -8,7 +8,7 @@ export default class UserInterface extends EventEmitter {
     this.controls = document.querySelector('.controls');
     this.dialogBox = document.querySelector('.dialog_box_wrap');
     this.dialogContent = null;
-    this.sizeSelector = document.querySelector('.controls--size_selector');
+    this.sizeSelector = document.querySelector('.size_selector');
     this.imageQueryInput = document.querySelector('.controls--img_keyword_input');
     this.canvasToolbar = document.querySelector('.canvas_toolbar');
     this.paletteBar = document.querySelector('.palette_bar');
@@ -164,27 +164,27 @@ export default class UserInterface extends EventEmitter {
         target: { classList },
       } = ev;
 
-      if (classList.contains('controls--save_state')) {
+      if (classList.contains('save_state')) {
         this.emit('saveAppState');
         return;
       }
 
-      if (classList.contains('controls--delete_state')) {
+      if (classList.contains('delete_state')) {
         this.emit('deleteAppState');
         return;
       }
 
-      if (classList.contains('controls--download_as_gif')) {
+      if (classList.contains('download_as_gif')) {
         this.emit('saveFileToFilesystem', '.gif');
         return;
       }
 
-      if (classList.contains('controls--download_as_apng')) {
+      if (classList.contains('download_as_apng')) {
         this.emit('saveFileToFilesystem', '.apng');
         return;
       }
 
-      if (classList.contains('controls--paste_img_btn')) {
+      if (classList.contains('paste_img_btn')) {
         const query = this.imageQueryInput.value;
 
         this.emit('pasteImg', query); // TODO:
@@ -192,11 +192,11 @@ export default class UserInterface extends EventEmitter {
         return;
       }
 
-      if (classList.contains('controls--grayscaling')) {
+      if (classList.contains('grayscaling')) {
         this.emit('grayscaleCanvas'); // TODO:
       }
 
-      if (classList.contains('controls--keyboard_shortcuts')) {
+      if (classList.contains('keyboard_shortcuts')) {
         this.toggleShowingKeyboardShortcuts(ev);
       }
     });

@@ -49,7 +49,7 @@
                 class="tools_list--tool_button lighten tools_list--tool_button-disabled"
                 data-name="lighten"
               ></li>
-              <li class="tools_list--tool_button dithering" data-name="dithering"></li>
+              <li class="tools_list--tool_button tools_list--tool_button-disabled dithering" data-name="dithering"></li>
               <li class="tools_list--tool_button paintAll" data-name="paintAll"></li>
               <li
                 class="tools_list--tool_button shapeSelection tools_list--tool_button-disabled"
@@ -114,26 +114,26 @@
             </div>
           </div>
           <div class="workplace--controls controls container">
-            <select name="canvas-size" class="controls--size_selector">
+            <select name="canvas-size" class="controls--button size_selector">
               <option value="16">16x16</option>
               <option value="32" selected>32x32</option>
               <option value="64">64x64</option>
               <option value="128">128x128</option>
             </select>
-            <button class="controls--save_state">Save State</button>
-            <button class="controls--delete_state">Delete State</button>
-            <button class="controls--download_as_gif">Download as .gif</button>
-            <button class="controls--download_as_apng">Download as .apng</button>
-            <button class="controls--grayscaling">Grayscaling</button>
-            <button class="controls--keyboard_shortcuts">Keyboard Shortcuts</button>
+            <button class="controls--button grayscaling">Grayscaling</button>
+            <button class="controls--button save_state">Save State</button>
+            <button class="controls--button delete_state">Delete State</button>
+            <button class="controls--button download_as_gif">.gif</button>
+            <button class="controls--button download_as_apng">.apng</button>
+            <button class="controls--button keyboard_shortcuts">Shortcuts</button>
             <label>
               <input
                 type="search"
                 class="controls--img_keyword_input"
-                placeholder="Draw image by keyword"
+                placeholder="Paste image by keyword"
               />
-              <button class="controls--paste_img_btn">
-                Draw Image
+              <button class="controls--button paste_img_btn">
+                Paste Image
               </button>
             </label>
           </div>

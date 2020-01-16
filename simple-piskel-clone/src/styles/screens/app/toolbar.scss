@@ -11,6 +11,7 @@
     box-sizing: border-box;
     background-color: $accent;
     border: $surface solid;
+    box-shadow: $boxShadow;
     cursor: pointer;
 
     @each $num in 1, 2, 3, 4 {
@@ -42,29 +43,11 @@
   max-width: 115px;
 
   &--tool_button {
-    box-sizing: border-box;
+    @extend %toolButton;
     width: 55px;
     height: 55px;
-    margin: 1px 1px;
-    background: $surface;
-    text-align: center;
     line-height: 55px;
-    cursor: pointer;
-
-    &::before {
-      font-family: "Font Awesome 5 Free";
-      font-size: 25px;
-      font-weight: 900;
-      color: $accent;
-    }
-
-    &:hover {
-      background-color: $onSurface;
-    }
-
-    &:active {
-      @include pressed(5px);
-    }
+    margin: 1px 1px;
 
     &-active {
       outline: 4px solid $primary;
