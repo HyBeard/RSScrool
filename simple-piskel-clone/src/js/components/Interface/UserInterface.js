@@ -187,13 +187,13 @@ export default class UserInterface extends EventEmitter {
       if (classList.contains('paste_img_btn')) {
         const query = this.imageQueryInput.value;
 
-        this.emit('pasteImg', query); // TODO:
+        this.emit('pasteImg', query);
 
         return;
       }
 
       if (classList.contains('grayscaling')) {
-        this.emit('grayscaleCanvas'); // TODO:
+        this.emit('grayscaleCanvas');
       }
 
       if (classList.contains('keyboard_shortcuts')) {

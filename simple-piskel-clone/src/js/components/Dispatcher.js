@@ -101,6 +101,13 @@ export default class Dispatcher extends EventEmitter {
     }
   }
 
+  async pasteReducedRandomImg(query) {
+    const img = await featuresList.loadRandomImg(query);
+
+    this.canvas.model.pasteImgAfterReduceIt(img);
+    this.cacheCanvasAndRedrawPreview();
+  }
+
   addEventsToEmitter() {
     const { canvas, frames, userInterface: ui } = this;
 
@@ -112,6 +119,7 @@ export default class Dispatcher extends EventEmitter {
     ui.on('saveFileToFilesystem', this.downloadFile.bind(this));
     ui.on('changeCanvasSize', this.resizeFramesAndCanvas.bind(this));
     ui.on('changePenSize', this.sendToCanvasNewPenSize.bind(this));
+    ui.on('pasteImg', this.pasteReducedRandomImg.bind(this));
 
     frames.on('framesWasChanged', this.refreshCanvasComponent.bind(this));
 

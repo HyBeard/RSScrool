@@ -93,6 +93,29 @@ const toolsSupport = {
 
     return false;
   },
+
+  imageDataToRgbaIndices(dataImage, cellLength = 1) {
+    const ELEMENTS_ON_ONE_RGBA = 4;
+    const rgbaIndicesArr = [];
+
+    dataImage.forEach((idx, num) => {
+      if ((num * cellLength) % ELEMENTS_ON_ONE_RGBA === 0) {
+        const rgbaColorArr = [
+          idx,
+          dataImage[num + 1],
+          dataImage[num + 2],
+          dataImage[num + 3],
+        ];
+        rgbaIndicesArr.push(this.colorArrToRgbaString(rgbaColorArr));
+      }
+    });
+
+    return rgbaIndicesArr;
+  },
+
+  colorArrToRgbaString(colorArr) {
+    return `rgba(${colorArr[0]},${colorArr[1]},${colorArr[2]},${colorArr[3] / 255})`;
+  },
 };
 
 export default toolsSupport;

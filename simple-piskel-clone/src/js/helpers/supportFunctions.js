@@ -4,6 +4,7 @@ const supportFunctions = {
     return new Promise((resolve, reject) => {
       img.onload = () => resolve(img);
       img.src = src;
+      img.crossOrigin = 'Anonymous';
       img.onerror = () => reject(new Error());
     });
   },

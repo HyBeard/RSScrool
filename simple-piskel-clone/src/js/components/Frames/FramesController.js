@@ -9,43 +9,6 @@ export default class FramesController extends EventEmitter {
     this.view = new FramesView();
   }
 
-  // async handleImageUploading(query) {
-  //   const { view, model } = this;
-
-  //   await model.uploadImage(query);
-
-  //   const { currentFrameDataURL, currentFrameNumber } = model.model;
-
-  //   view.paintFramePreview(currentFrameDataURL, currentFrameNumber);
-  // }
-
-  // handleGrayscaleFiltering() {
-  //   const { view, model } = this;
-
-  //   model.grayscale();
-
-  //   const { currentFrameDataURL, currentFrameNumber } = model.model;
-
-  //   view.paintFramePreview(currentFrameDataURL, currentFrameNumber);
-  // }
-
-  // handleCanvasSizeChanging(size) {
-  //   const { view, model } = this;
-
-  //   model.listOfFrames.forEach((frame, num) => {
-  //     const changingCanvasData = frame.canvasData;
-
-  //     canvasComponent.canvasData = changingCanvasData;
-  //     canvasComponent.changeCanvasSize(size);
-  //     model.listOfFrames[num].canvasData = canvasComponent.canvasData;
-  //   });
-
-  //   canvasComponent.sideCellCount = size;
-  //   canvasComponent.canvasData = model.currentFrameData;
-  //   canvasComponent.fullCanvasRedraw();
-  //   view.renderCanvasSizeInfo(size);
-  // }
-
   addFrame() {
     const { model, view } = this;
 

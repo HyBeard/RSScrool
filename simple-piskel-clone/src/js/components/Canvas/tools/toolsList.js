@@ -7,6 +7,7 @@ import move from './toolsFunctions/move';
 import paintAll from './toolsFunctions/paintAll';
 import paintBucket from './toolsFunctions/paintBucket';
 import resize from './controlsFunctions/resize';
+import getColorIndicesOfReducedImg from './controlsFunctions/reduceImg';
 
 const toolsList = {
   draw,
@@ -18,6 +19,7 @@ const toolsList = {
   rectangle,
   circle,
   move,
+  getColorIndicesOfReducedImg,
 };
 
 export default toolsList;

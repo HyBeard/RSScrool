@@ -153,25 +153,25 @@ export default class CanvasController extends EventEmitter {
     this.model.fullCanvasRedraw();
   }
 
-  // async handleImageUploading(query) {
-  //   const { view, model } = this;
+  async handleImageUploading(query) {
+    const { view, model } = this;
 
-  //   await model.uploadImage(query);
+    await model.uploadImage(query);
 
-  //   const { currentFrameDataURL, currentFrameNumber } = model.framesComponent;
+    const { currentFrameDataURL, currentFrameNumber } = model.framesComponent;
 
-  //   view.paintFramePreview(currentFrameDataURL, currentFrameNumber);
-  // }
+    view.paintFramePreview(currentFrameDataURL, currentFrameNumber);
+  }
 
-  // handleGrayscaleFiltering() {
-  //   const { view, model } = this;
+  handleGrayscaleFiltering() {
+    const { view, model } = this;
 
-  //   model.grayscale();
+    model.grayscale();
 
-  //   const { currentFrameDataURL, currentFrameNumber } = model.framesComponent;
+    const { currentFrameDataURL, currentFrameNumber } = model.framesComponent;
 
-  //   view.paintFramePreview(currentFrameDataURL, currentFrameNumber);
-  // }
+    view.paintFramePreview(currentFrameDataURL, currentFrameNumber);
+  }
 
   addEventsToEmitter() {
     const { view } = this;
