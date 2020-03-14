@@ -1,0 +1,441 @@
+@import './normalize.css';
+@import './fonts.scss';
+@import './weather-icons.css';
+@import '~mapbox-gl/dist/mapbox-gl.css';
+
+$main_color: #ffffff;
+$error-color: #551818;
+$bg-color: #00000060;
+$active-color: #ffffff60;
+$hover-color: #ffffff1a;
+
+$screen-xs: 480px;
+$screen-sm: 640px;
+$screen-md: 760px;
+$screen-lg: 1136px;
+$screen-xl: 1440px;
+
+html {
+  @media screen and (max-width: $screen-md) {
+    font-size: 14px;
+  }
+  @media screen and (max-width: $screen-sm) {
+    font-size: 12px;
+  }
+  @media screen and (max-width: $screen-xs) {
+    font-size: 10px;
+  }
+}
+
+.body {
+  position: relative;
+  margin: 0;
+  min-height: 100%;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  font-family: 'Ubuntu', sans-serif;
+
+  &--preloader {
+    background: url('../assets/icons/loader.gif') center no-repeat, $main_color;
+  }
+}
+
+.wrapper {
+  align-content: center;
+  box-sizing: border-box;
+  min-width: 300px;
+  max-width: 1440px;
+  min-height: 100vh;
+  margin: 0 auto;
+  padding: 1.5%;
+  display: grid;
+  grid-template:
+    'controls search' 80px
+    'location map' auto
+    'weather map' auto
+    'forecast map' auto / 3fr 2fr;
+  grid-column-gap: 1.5%;
+  grid-row-gap: 10px;
+
+  // FIXME: fuck css
+
+  @media screen and (max-width: $screen-lg) {
+    grid-template:
+      'controls' 80px
+      'search' 80px
+      'location' auto
+      'weather' auto
+      'forecast' auto
+      'map' auto / auto;
+    // 'controls search' 80px
+    // 'location location' auto
+    // 'weather weather' auto
+    // 'forecast forecast' auto
+    // 'map map' auto / 1fr 1fr;
+  }
+
+  @media screen and (max-width: $screen-md) {
+    grid-template:
+      'controls' 70px
+      'search' 70px
+      'location' auto
+      'weather' auto
+      'forecast' auto
+      'map' auto / auto;
+  }
+
+  @media screen and (max-width: $screen-xs) {
+    grid-template:
+      'controls' 60px
+      'search' 60px
+      'location' auto
+      'weather' auto
+      'forecast' auto
+      'map' auto / auto;
+    grid-row-gap: 5px;
+  }
+
+  &--hidden {
+    opacity: 0;
+  }
+}
+
+.container {
+  padding: 1rem;
+  border-radius: 10px;
+  background-color: $bg-color;
+  overflow: hidden;
+  filter: drop-shadow(2px 4px 6px black);
+}
+
+.controls {
+  grid-area: controls;
+  position: relative;
+  display: flex;
+  align-items: center;
+  font-size: 1.2rem;
+  color: $main-color;
+
+  &--lang_select {
+    select {
+      height: 50px;
+      margin-right: 5px;
+      padding: 0 20px;
+      border: 1px solid $main_color;
+      box-sizing: content-box;
+      color: $main_color;
+      border-radius: 10px;
+      background-color: transparent;
+      outline: none;
+      text-transform: uppercase;
+      box-sizing: content-box;
+      cursor: pointer;
+
+      @media screen and (max-width: $screen-md) {
+        height: 40px;
+      }
+
+      @media screen and (max-width: $screen-xs) {
+        height: 30px;
+      }
+
+      &:hover {
+        background-color: $hover-color;
+      }
+
+      & option {
+        background: $bg-color;
+      }
+    }
+  }
+
+  &--temperature_units {
+    display: flex;
+    flex: 1 0 auto;
+  }
+
+  &--btn {
+    margin: 0 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 50px;
+    height: 50px;
+    border: 1px solid $main_color;
+    border-radius: 10px;
+    font-weight: bold;
+    cursor: pointer;
+
+    @media screen and (max-width: $screen-md) {
+      width: 40px;
+      height: 40px;
+    }
+
+    @media screen and (max-width: $screen-xs) {
+      width: 30px;
+      height: 30px;
+    }
+
+    &:not(.controls--btn-active):hover {
+      background-color: $hover-color;
+    }
+
+    &-active {
+      background-color: $active-color;
+    }
+  }
+}
+
+.location {
+  grid-area: location;
+  color: $main-color;
+
+  &--name {
+    text-transform: uppercase;
+    font-weight: 500;
+    font-size: 3rem;
+  }
+
+  &--date_info {
+    display: flex;
+    justify-content: space-between;
+    font-size: 1.5rem;
+    margin-top: 0.4em;
+  }
+}
+
+.weather {
+  grid-area: weather;
+  display: inline-grid;
+  grid-template:
+    'temperature icon' 1.2fr
+    'temperature state' 2fr / 3fr 2fr;
+  color: $main-color;
+  border-radius: 10px;
+
+  @media screen and (max-width: $screen-xs) {
+    grid-template:
+      'temperature temperature' 1fr
+      'icon state' 1fr / 1fr 1fr;
+  }
+
+  &--temperature {
+    grid-area: temperature;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16rem;
+    font-weight: 500;
+    letter-spacing: -0.05em;
+
+    @media screen and (max-width: $screen-lg) {
+      font-size: 14rem;
+    }
+
+    @media screen and (max-width: $screen-md) {
+      font-size: 12rem;
+    }
+
+    @media screen and (max-width: $screen-xs) {
+      font-size: 10rem;
+    }
+  }
+
+  &--state {
+    grid-area: state;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 10px;
+  }
+
+  &--state_elem {
+    padding: 10px 0;
+  }
+
+  &--icon_container {
+    grid-area: icon;
+    font-size: 5rem;
+    display: flex;
+    align-items: flex-end;
+
+    @media screen and (max-width: $screen-xs) {
+      font-size: 10rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+  }
+
+  &--location_wrapper {
+    grid-area: location_wrapper;
+  }
+}
+
+.state {
+  text-transform: uppercase;
+  font-size: 1.5rem;
+  font-weight: 500;
+
+  &--summary {
+    min-height: 3.5em;
+  }
+
+  &--wind_units {
+    text-transform: lowercase;
+  }
+}
+
+.forecast {
+  grid-area: forecast;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-column-gap: 10px;
+
+  @media screen and (max-width: $screen-xs) {
+    grid-column-gap: 5px;
+    grid-row-gap: 5px;
+    grid-template: repeat(3, 1fr) / 1fr;
+    color: $main-color;
+    border-radius: 10px;
+  }
+
+  &--item {
+    display: inline-grid;
+    grid-template: 2fr 3fr/ 1fr 1fr;
+    grid-row-gap: 5px;
+    color: $main-color;
+    border-radius: 10px;
+  }
+
+  &--day {
+    grid-column: 1/3;
+    font-size: 2rem;
+    text-align: center;
+  }
+
+  &--temperature {
+    display: flex;
+    justify-content: flex-end;
+    padding-right: 10px;
+    font-size: 4rem;
+  }
+
+  &--icon_container {
+    font-size: 3rem;
+  }
+}
+
+.map_container {
+  grid-area: map;
+  display: flex;
+  padding: 2.5%;
+  flex-direction: column;
+}
+
+.map {
+  width: 100%;
+  height: 100%;
+  opacity: 0.8;
+  border-radius: 10px;
+
+  @media screen and (max-width: $screen-lg) {
+    height: 445px;
+  }
+
+  @media screen and (max-width: $screen-md) {
+    height: 355px;
+  }
+}
+
+.coordinates {
+  margin-top: 2.5%;
+  font-size: 1rem;
+  text-align: right;
+  color: $main-color;
+
+  @media screen and (max-width: $screen-xs) {
+    display: flex;
+    justify-content: space-evenly;
+    font-size: 1.5rem;
+    margin-top: 20px;
+  }
+}
+
+.refresh_image_btn {
+  background: url('../assets/icons/refresh.svg') center no-repeat;
+  background-size: 50%;
+}
+
+.search {
+  grid-area: search;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: $main-color;
+  background-color: $bg-color;
+
+  &--fake_input {
+    display: flex;
+    width: 100%;
+    border: 1px solid $main_color;
+    border-radius: 10px;
+
+    &:focus-within {
+      background-color: $hover-color;
+    }
+  }
+
+  &--query {
+    width: 100%;
+    padding: 0 10px;
+    font-family: 'Ubuntu', sans-serif;
+    font-size: 1rem;
+    color: $main-color;
+    background-color: initial;
+    outline: none;
+    border: none;
+  }
+
+  &--icon {
+    flex:1 0 auto;
+    width: 50px;
+    height: 50px;
+    border-radius: 100%;
+    cursor: pointer;
+
+    &-microphone {
+      position: relative;
+      background: url('../assets/icons/mic.svg') center no-repeat;
+
+      &-active {
+        &::before {
+          content: '';
+          position: absolute;
+          width: 100%;
+          height: 100%;
+          border-radius: 100%;
+          animation: pulse 1s ease infinite alternate-reverse;
+        }
+      }
+    }
+
+    &-loupe {
+      background: url('../assets/icons/search.svg') center no-repeat;
+      border: none;
+      outline: none;
+    }
+  }
+
+  @keyframes pulse {
+    from {
+      background-color: $hover-color;
+    }
+
+    to {
+      background-color: $active-color;
+    }
+  }
+}
