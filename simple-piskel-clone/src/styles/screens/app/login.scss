@@ -1,0 +1,30 @@
+.user_box {
+  display: flex;
+  padding: 10px 1rem;
+  align-items: center;
+  background-color: $dimmingSoft;
+
+  &--content {
+    display: flex;
+    align-items: center;
+    margin-right: 1rem;
+    max-height: 40px;
+  }
+
+  &--avatar {
+    display: inline-block;
+    width: 40px;
+    height: 40px;
+    margin-right: 1rem;
+    border-radius: 100%;
+    background-color: $light;
+    background-size: contain;
+    background-repeat: no-repeat;
+  }
+} 
+
+.auth_btn {
+  @extend %button;
+  padding: 0 1rem;
+  height: 40px;
+}

@@ -1,0 +1,133 @@
+@import "./screens/variables";
+@import "./screens/fonts";
+@import "./screens/app/login.scss";
+@import "./screens/app/toolbar.scss";
+@import "./screens/app/palette";
+@import "./screens/app/frames";
+@import "./screens/app/animatedPreview";
+@import "./screens/app/modalDialog";
+@import "./screens/app/controls";
+
+body {
+  font-family: "Roboto", "Arial", sans-serif;
+  font-weight: 400;
+  margin: 0;
+  line-height: 1.15;
+  color: $light;
+
+  position: relative;
+  margin: 0;
+  min-height: 100%;
+}
+
+.header {
+  height: 60px;
+
+  &--content {
+    height: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 1rem;
+    text-align: center;
+    font-size: 1.5rem;
+    background-color: $primary;
+    color: $weakDark;
+  }
+
+  &--home_link {
+    text-decoration: none;
+    color: inherit;
+  }
+
+  &--user_box {
+    margin-right: -1rem;
+
+    &-hidden {
+      display: none;
+    }
+  }
+
+  &--sign_in {
+    &-hidden {
+      display: none;
+    }
+  }
+}
+
+.logo {
+  font-size: inherit;
+  margin: 0;
+}
+
+.workplace {
+  display: flex;
+  padding: 0 1rem;
+  height: calc(100vh - 60px);
+  background-color: $dark;
+
+  &--left_column {
+    flex-shrink: 0;
+  }
+
+  &--frames_bar {
+    margin: 0 1rem;
+  }
+
+  &--palette_bar {
+    margin: 1rem 0;
+  }
+
+  &--canvas_toolbar {
+    margin: 1rem 0;
+  }
+
+  &--drawing_area {
+    display: flex;
+    flex-grow: 1;
+    margin: 1rem 0;
+    padding: 1rem;
+    align-items: center;
+    box-shadow: $boxShadow;
+  }
+
+  &--right_column {
+    max-width: 266px;
+    margin-left: 1rem;
+    position: relative;
+    flex-grow: 0;
+  }
+
+  &--animation_box {
+    margin: 1rem 0 1rem;
+  }
+
+  &--canvas_info {
+    font-size: 16px;
+    position: absolute;
+    left: 20px;
+    bottom: 20px;
+    color: $primary;
+  }
+}
+
+.canvas_toolbar {
+  &--pen_sizes {
+    margin: 0 auto 10px;
+  }
+
+  &--tools_list {
+    margin: 0 auto;
+  }
+}
+
+.container {
+  padding: 1rem 5px;
+  border-radius: 5px;
+  background-color: $weakDark;
+  box-shadow: $boxShadow;
+}
+
+button:focus {
+  outline: none;
+}

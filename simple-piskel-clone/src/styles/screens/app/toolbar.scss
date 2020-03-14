@@ -1,0 +1,119 @@
+.pen_sizes_list {
+  display: flex;
+  justify-content: space-between;
+  width: 110px;
+  padding: 0;
+  list-style: none;
+
+  &--size {
+    width: 20px;
+    height: 20px;
+    box-sizing: border-box;
+    background-color: $accent;
+    border: $surface solid;
+    box-shadow: $boxShadow;
+    cursor: pointer;
+
+    @each $num in 1, 2, 3, 4 {
+      &:nth-child(#{$num}) {
+        border-width: #{8 * 1 / $num}px;
+      }
+    }
+
+    &:hover {
+      background-color: $onSurface;
+    }
+
+    &:active {
+      @include pressed(2px);
+    }
+
+    &-active {
+      outline: 2px solid $primary;
+      outline-offset: -2px;
+    }
+  }
+}
+
+.tools_list {
+  @extend %listToFlex;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin: 0;
+  max-width: 115px;
+
+  &--tool_button {
+    @extend %toolButton;
+    width: 55px;
+    height: 55px;
+    line-height: 55px;
+    margin: 1px 1px;
+
+    &-active {
+      outline: 4px solid $primary;
+      outline-offset: -4px;
+    }
+
+    &-disabled {
+      opacity: 0.1;
+    }
+  }
+}
+
+.draw::before {
+  content: "\f304";
+}
+
+.paintBucket::before {
+  content: "\f576";
+}
+
+.eyedropper::before {
+  content: "\f1fb";
+}
+
+.circle::before {
+  content: "\f111";
+  font-weight: 400;
+}
+
+.move::before {
+  content: "\f0b2";
+}
+
+.stroke::before {
+  content: "\f5ae";
+}
+
+.lighten::before {
+  content: "\f042";
+}
+
+.dithering::before {
+  content: "\f43c";
+}
+
+.rectangle::before {
+  content: "\f0c8";
+  font-weight: 400;
+}
+
+.paintAll::before {
+  content: "\f5aa";
+}
+
+.shapeSelection::before {
+  content: "\f0d0";
+}
+
+.rectangleSelection::before {
+  content: "\f065";
+}
+
+.eraser::before {
+  content: "\f12d";
+}
+
+.mirrorDraw::before {
+  content: "\f7a5";
+}

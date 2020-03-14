@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Piskel-Clone</title>
+  </head>
+
+  <body>
+    <header class="header">
+      <div class="header--content">
+        <a href="./index.html" class="header--home_link">
+          <h1 class="logo">Piskel Clone</h1>
+        </a>
+        <button class="header--sign_in auth_btn">Sign In / Authorize</button>
+        <div class="header--user_box header--user_box-hidden user_box">
+          <div class="user_box--content">
+            <span class="user_box--avatar"></span>
+            <span class="user_box--name"></span>
+          </div>
+          <button class="user_box--sign_out auth_btn">Sign Out</button>
+        </div>
+      </div>
+    </header>
+    <main>
+      <div class="dialog_box_wrap"></div>
+      <div class="workplace">
+        <aside class="workplace--left_column">
+          <div class="workplace--canvas_toolbar canvas_toolbar container">
+            <ul class="canvas_toolbar--pen_sizes pen_sizes_list">
+              <li class="pen_sizes_list--size pen_sizes_list--size-active" data-pen-size="1"></li>
+              <li class="pen_sizes_list--size" data-pen-size="2"></li>
+              <li class="pen_sizes_list--size" data-pen-size="3"></li>
+              <li class="pen_sizes_list--size" data-pen-size="4"></li>
+            </ul>
+            <ul class="canvas_toolbar--tools_list tools_list">
+              <li
+                class="tools_list--tool_button tools_list--tool_button-active draw"
+                data-name="draw"
+              ></li>
+              <li class="tools_list--tool_button stroke" data-name="stroke"></li>
+              <li class="tools_list--tool_button paintBucket" data-name="paintBucket"></li>
+              <li class="tools_list--tool_button eyedropper" data-name="eyedropper"></li>
+              <li class="tools_list--tool_button rectangle" data-name="rectangle"></li>
+              <li class="tools_list--tool_button circle" data-name="circle"></li>
+              <li class="tools_list--tool_button move" data-name="move"></li>
+              <li
+                class="tools_list--tool_button lighten tools_list--tool_button-disabled"
+                data-name="lighten"
+              ></li>
+              <li class="tools_list--tool_button tools_list--tool_button-disabled dithering" data-name="dithering"></li>
+              <li class="tools_list--tool_button paintAll" data-name="paintAll"></li>
+              <li
+                class="tools_list--tool_button shapeSelection tools_list--tool_button-disabled"
+                data-name="shapeSelection"
+              ></li>
+              <li
+                class="tools_list--tool_button rectangleSelection tools_list--tool_button-disabled"
+                data-name="rectangleSelection"
+              ></li>
+              <li class="tools_list--tool_button eraser" data-name="eraser"></li>
+              <li class="tools_list--tool_button mirrorDraw" data-name="mirrorDraw"></li>
+            </ul>
+          </div>
+          <div class="workplace--palette_bar palette_bar container">
+            <ul class="palette_bar--palette palette">
+              <li class="palette--color" style="background-color: rgb(128, 0, 0)"></li>
+              <li class="palette--color" style="background-color: rgb(178, 34, 34)"></li>
+              <li class="palette--color" style="background-color: rgb(255, 69, 0)"></li>
+              <li class="palette--color" style="background-color: rgb(139, 69, 19)"></li>
+              <li class="palette--color" style="background-color: rgb(205, 133, 63)"></li>
+              <li class="palette--color" style="background-color: rgb(218, 165, 32)"></li>
+              <li class="palette--color" style="background-color: rgb(255, 255, 0)"></li>
+              <li class="palette--color" style="background-color: rgb(240, 230, 140)"></li>
+              <li class="palette--color" style="background-color: rgb(0, 100, 0)"></li>
+              <li class="palette--color" style="background-color: rgb(50, 205, 50)"></li>
+              <li class="palette--color" style="background-color: rgb(46, 139, 87)"></li>
+              <li class="palette--color" style="background-color: rgb(0, 0, 205)"></li>
+              <li class="palette--color" style="background-color: rgb(65, 105, 225)"></li>
+              <li class="palette--color" style="background-color: rgb(30, 144, 255)"></li>
+              <li class="palette--color" style="background-color: rgb(72, 61, 139)"></li>
+              <li class="palette--color" style="background-color: rgb(148, 0, 211)"></li>
+              <li class="palette--color" style="background-color: rgb(238, 130, 238)"></li>
+              <li class="palette--color" style="background-color: rgb(128, 128, 128)"></li>
+              <li class="palette--color" style="background-color: rgb(0, 0, 0)"></li>
+              <li class="palette--color" style="background-color: rgb(255, 255, 255)"></li>
+            </ul>
+            <div class="palette_bar--last_colors last_colors">
+              <div class="last_colors--color primary_color"></div>
+              <div class="last_colors--swap_colors"></div>
+              <div class="last_colors--color secondary_color"></div>
+            </div>
+          </div>
+        </aside>
+        <div class="workplace--frames_bar frames_bar">
+          <ul class="frames_bar--frames"></ul>
+          <button class="frames_bar--add_frame_btn">Add new frame</button>
+        </div>
+        <section class="workplace--drawing_area container">
+          <div class="canvas_box">
+            <canvas class="canvas_box--canvas" width="512px" height="512px"></canvas>
+          </div>
+        </section>
+        <div class="workplace--right_column">
+          <div class="workplace--animation_box animation_box">
+            <div class="animation_box--inner_wrap">
+              <button class="sticked_btn fullscreen"></button>
+              <div class="animation_box--changeable_bg"></div>
+            </div>
+            <div class="animation_box--fps_el">
+              <input type="range" class="animation_box--fps_slider" min="1" max="24" />
+              <span class="animation_box--fps_value">FPS</span>
+            </div>
+          </div>
+          <div class="workplace--controls controls container">
+            <select name="canvas-size" class="controls--button size_selector">
+              <option value="16">16x16</option>
+              <option value="32" selected>32x32</option>
+              <option value="64">64x64</option>
+              <option value="128">128x128</option>
+            </select>
+            <button class="controls--button grayscaling">Grayscaling</button>
+            <button class="controls--button save_state">Save State</button>
+            <button class="controls--button delete_state">Delete State</button>
+            <button class="controls--button download_as_gif">.gif</button>
+            <button class="controls--button download_as_apng">.apng</button>
+            <button class="controls--button keyboard_shortcuts">Shortcuts</button>
+            <label>
+              <input
+                type="search"
+                class="controls--img_keyword_input"
+                placeholder="Paste image by keyword"
+              />
+              <button class="controls--button paste_img_btn">
+                Paste Image
+              </button>
+            </label>
+          </div>
+          <div class="workplace--canvas_info canvas_info">
+            <span class="canvas_info--size">[32x32]</span>
+            <span class="canvas_info--target_coords"></span>
+          </div>
+        </div>
+      </div>
+    </main>
+  </body>
+</html>

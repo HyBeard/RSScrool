@@ -1,0 +1,88 @@
+$primary: #04a2b3;
+$weakPrimary: #04a2b348;
+$dark: #2a323c;
+$weakDark: #323c48;
+$surface: #3d4956;
+$onSurface: #4c5b6b;
+$accent: #98a4b9;
+$light: #dcdcdc;
+$white: #ffffff;
+
+$dimmingSoft: #0000003a;
+$dimmingMedium: #00000080;
+$dimmingHard: #000000cc;
+
+$screen-xs: 480px;
+$screen-sm: 640px;
+$screen-md: 760px;
+$screen-lg: 1136px;
+$screen-xl: 1440px;
+
+$transparentBg: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAMAAABEpIrGAAAABlBMVEXV1dXb29tFGkCIAAAAHklEQVR4AWNghAIGCMDgjwgFCDDSw2M0PSCD0fQAACRcAgF4ciGUAAAAAElFTkSuQmCC")
+  repeat;
+
+$boxShadow: 0px 2px 1px -1px rgba(0, 0, 0, 0.2), 0px 1px 1px 0px rgba(0, 0, 0, 0.14),
+  0px 1px 3px 0px rgba(0, 0, 0, 0.12);
+
+@mixin pressed($width) {
+  outline: $width solid $weakPrimary;
+  outline-style: inset;
+  outline-offset: -$width;
+}
+
+%listToFlex {
+  display: flex;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+%button {
+  display: inline-block;
+  border: 5px solid $surface;
+  border-radius: 5px;
+  color: $surface;
+  box-shadow: $boxShadow;
+  transition: {
+    duration: 0.2s;
+    timing-function: ease;
+    property: color, background-color, border-color;
+  }
+  background-color: buttonface;
+  text-decoration: none;
+  cursor: pointer;
+
+  &:hover {
+    border-color: $onSurface;
+    color: $onSurface;
+    background-color: $white;
+  }
+
+  &:active {
+    @include pressed(7px);
+  }
+}
+
+%toolButton {
+  box-sizing: border-box;
+  background: $surface;
+  text-align: center;
+  color: $accent;
+  cursor: pointer;
+  box-shadow: $boxShadow;
+
+  &::before {
+    font-family: "Font Awesome 5 Free";
+    font-size: 25px;
+    font-weight: 900;
+    color: $accent;
+  }
+
+  &:hover {
+    background-color: $onSurface;
+  }
+
+  &:active {
+    @include pressed(5px);
+  }
+}

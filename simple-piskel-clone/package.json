@@ -1,0 +1,66 @@
+{
+  "name": "piskel-clone",
+  "version": "1.0.0",
+  "description": "Piskel Clone task",
+  "main": "./src/app.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/rolling-scopes-school/hybeard-RS2019Q3.git"
+  },
+  "scripts": {
+    "test": "jest",
+    "coverage:full": "jest --coverage --coverage-reporters=lcov",
+    "build": "npm run clear -s && webpack --progress",
+    "dev": "webpack-dev-server --history-api-fallback --inline --progress --open",
+    "lint": "npx eslint src",
+    "clear": "del-cli dist"
+  },
+  "eslintIgnore": [
+    "dist"
+  ],
+  "author": "Ilya Kaptsevich <kaptsevich.i@gmail.com>",
+  "license": "ISC",
+  "devDependencies": {
+    "@babel/core": "^7.8.3",
+    "@babel/preset-env": "^7.8.3",
+    "autoprefixer": "^9.7.4",
+    "babel-core": "^6.26.3",
+    "babel-loader": "^8.0.6",
+    "css-loader": "^3.4.2",
+    "css-mqpacker": "^7.0.0",
+    "cssnano": "^4.1.10",
+    "del-cli": "^3.0.0",
+    "eslint": "^6.8.0",
+    "eslint-config-airbnb-base": "^14.0.0",
+    "eslint-plugin-import": "^2.20.0",
+    "file-loader": "^4.3.0",
+    "html-loader": "^0.5.5",
+    "html-webpack-plugin": "^3.2.0",
+    "image-webpack-loader": "^6.0.0",
+    "jest": "^24.9.0",
+    "mini-css-extract-plugin": "^0.9.0",
+    "node-sass": "^4.13.0",
+    "postcss-loader": "^3.0.0",
+    "sass": "^1.24.4",
+    "sass-loader": "^8.0.2",
+    "style-loader": "^1.1.2",
+    "uglifyjs-webpack-plugin": "^2.2.0",
+    "webpack": "^4.41.5",
+    "webpack-cli": "^3.3.10",
+    "webpack-dev-server": "^3.10.1"
+  },
+  "dependencies": {
+    "babel-polyfill": "^6.26.0",
+    "base64-arraybuffer": "^0.2.0",
+    "firebase": "^7.6.2",
+    "gif-to-apng": "^0.1.2",
+    "gifshot": "^0.4.5",
+    "sortablejs": "^1.10.2",
+    "upng-js": "^2.1.0"
+  },
+  "jest": {
+    "collectCoverageFrom": [
+      "src/js/**/*.js"
+    ]
+  }
+}
